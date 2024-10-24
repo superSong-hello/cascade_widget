@@ -1,26 +1,44 @@
 
 # Flutter web 级联组件
+改组件支持树形结构选择，支持搜索筛选
 
 ## Preview
-![截屏2024-10-24 15.03.41.png](..%2F..%2F..%2F%E6%88%AA%E5%B1%8F2024-10-24%2015.03.41.png)
-![截屏2024-10-24 15.03.54.png](..%2F..%2F..%2F%E6%88%AA%E5%B1%8F2024-10-24%2015.03.54.png)
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+![<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_1.png" width="400" alt=""/>](screen_1.png)
+![<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_2.png" width="400" alt=""/>](screen_2.png)
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
-const like = 'sample';
+CascadeWidget(
+  list: testList,
+  selectedCallBack: (selectedList) {
+    for (final e in selectedList) {
+      debugPrint('name:${e.name}, id:${e.id}');
+    }
+    },
+  fieldDecoration: FieldDecoration(
+    hintText: '请选择',
+    hintStyle: const TextStyle(color: Colors.black45),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: Colors.grey),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(
+        color: Colors.black87,
+      ),
+    ),
+  ),
+  chipDecoration: const ChipDecoration(
+    backgroundColor: Colors.blueAccent,
+    runSpacing: 2,
+    spacing: 10,
+    labelStyle: TextStyle(
+      color: Colors.white,
+    ),
+    deleteIcon: Icon(Icons.clear_outlined,
+    color: Colors.white, size: 16)),
+),
+
 ```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.

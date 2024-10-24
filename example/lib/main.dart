@@ -163,7 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 100,),
             SizedBox(
               width: 410,
-              child: CascadeWidget(
+              child:
+              CascadeWidget(
                 list: testList,
                 selectedCallBack: (selectedList) {
                   for (final e in selectedList) {
