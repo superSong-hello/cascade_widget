@@ -1,22 +1,9 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+# Flutter web 级联组件
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+## Preview
+![截屏2024-10-24 15.03.41.png](..%2F..%2F..%2F%E6%88%AA%E5%B1%8F2024-10-24%2015.03.41.png)
+![截屏2024-10-24 15.03.54.png](..%2F..%2F..%2F%E6%88%AA%E5%B1%8F2024-10-24%2015.03.54.png)
 
 ## Getting started
 

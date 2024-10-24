@@ -1,7 +1,7 @@
 name: cascade_widget
 description: "Cascade Widget"
 version: 0.0.1
-homepage: https://github.com/superSong-hello/cascade_widget.git
+homepage: https://github.com/superSong-hello/cascade_widget
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
