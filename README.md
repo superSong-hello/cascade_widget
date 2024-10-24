@@ -3,8 +3,8 @@
 改组件支持树形结构选择，支持搜索筛选
 
 ## Preview
-![<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_1.png" width="400" alt=""/>](screen_1.png)
-![<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_2.png" width="400" alt=""/>](screen_2.png)
+[<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_1.png" width="400" alt=""/>](screen_1.png)
+[<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_2.png" width="400" alt=""/>](screen_2.png)
 
 ## Usage
 
