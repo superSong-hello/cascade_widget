@@ -66,6 +66,11 @@ class _CascadeWidgetState extends State<CascadeWidget>
 
     _animation = Tween<double>(begin: 0, end: 1)
         .animate(_animationController); // 定义动画的值范围
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Your code to execute after the widget is rendered
+      widget.selectedCallBack(_cascadeController.selectedList);
+    });
   }
 
   @override
@@ -96,17 +101,16 @@ class _CascadeWidgetState extends State<CascadeWidget>
   @override
   Widget build(BuildContext context) {
     return PopScope(
+      // ignore: deprecated_member_use
       onPopInvoked: (_) async {
         hideOverlay();
       },
       child: _CustomInputDecorator(
-        cascadeController: _cascadeController,
         fieldDecoration: widget.fieldDecoration,
         listenable: _listenable,
-        changeOverlay: () {
-          _cascadeController.isOpen ? hideOverlay() : showOverlay();
-        },
+        changeOverlay: _cascadeController.isOpen ? hideOverlay : showOverlay,
         buttonKey: _buttonKey,
+        cascadeController: _cascadeController,
         chipDecoration: widget.chipDecoration,
         focusNode: _focusNode,
         textEditingController: _textEditingController,
@@ -115,142 +119,139 @@ class _CascadeWidgetState extends State<CascadeWidget>
   }
 
   void showPopup() {
+    /// 更新OverlayEntry数据需要清空之后重新构建
+    if (_overlayEntry != null) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+    }
+
     _overlayEntry = OverlayEntry(
       builder: (context) {
-        return Focus(
-          canRequestFocus: false,
-          skipTraversal: true,
-          child: ListenableBuilder(
-            listenable: _listenable,
-            builder: (ctx, _) {
-              RenderBox? renderBox;
-              final buttonCtx = _buttonKey.currentContext;
-              if (buttonCtx != null) {
-                final renderObject = buttonCtx.findRenderObject();
-                if (renderObject != null) {
-                  renderBox = renderObject as RenderBox;
-                }
+        return ListenableBuilder(
+          listenable: _listenable,
+          builder: (ctx, _) {
+            RenderBox? renderBox;
+            final buttonCtx = _buttonKey.currentContext;
+            if (buttonCtx != null) {
+              final renderObject = buttonCtx.findRenderObject();
+              if (renderObject != null) {
+                renderBox = renderObject as RenderBox;
               }
-              final position = renderBox != null
-                  ? renderBox.localToGlobal(Offset.zero)
-                  : Offset.zero;
-              final height = renderBox != null ? renderBox.size.height : 0;
-              final width = renderBox != null ? renderBox.size.width : 0;
+            }
+            final position = renderBox != null
+                ? renderBox.localToGlobal(Offset.zero)
+                : Offset.zero;
+            final height = renderBox != null ? renderBox.size.height : 0;
+            final width = renderBox != null ? renderBox.size.width : 0;
 
-              /// 获取屏幕宽度
-              double screenWidth = MediaQuery.of(context).size.width;
+            /// 获取屏幕宽度
+            double screenWidth = MediaQuery.of(context).size.width;
 
-              /// 获取屏幕高度
-              double screenHeight = MediaQuery.of(context).size.height;
+            /// 获取屏幕高度
+            double screenHeight = MediaQuery.of(context).size.height;
 
-              return Stack(
-                children: [
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    child: GestureDetector(
-                      onTap: hideOverlay,
-                      child: Container(
-                        height: position.dy,
-                        width: screenWidth,
-                        color: _maskColor,
+            return Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: GestureDetector(
+                    onTap: hideOverlay,
+                    child: Container(
+                      height: position.dy,
+                      width: screenWidth,
+                      color: _maskColor,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: position.dy,
+                  left: 0,
+                  child: GestureDetector(
+                    onTap: hideOverlay,
+                    child: Container(
+                      height: height.toDouble(),
+                      width: position.dx,
+                      color: _maskColor,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: position.dy,
+                  left: position.dx + width,
+                  child: GestureDetector(
+                    onTap: hideOverlay,
+                    child: Container(
+                      height: height.toDouble(),
+                      width: screenWidth - width - position.dx,
+                      color: _maskColor,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: position.dy + height,
+                  left: 0,
+                  child: GestureDetector(
+                    onTap: hideOverlay,
+                    child: Container(
+                      height: screenHeight,
+                      width: screenWidth,
+                      color: _maskColor,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: position.dx + 0,
+                  top: position.dy + height,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: MediaQuery.removePadding(
+                      context: context,
+                      removeTop: true,
+                      removeBottom: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AnimatedBuilder(
+                            animation: _animationController,
+                            builder: (context, child) {
+                              return SizeTransition(
+                                sizeFactor: _animation,
+                                child: SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, -1), // 从顶部开始
+                                    end: Offset.zero,
+                                  ).animate(_animation),
+                                  child: _textEditingController.text.isNotEmpty
+                                      ? _PopupListContentWidget(
+                                          cascadeController: _cascadeController,
+                                          listViewHeight: widget
+                                              .popupDecoration.popupHeight,
+                                          listViewWidth: width.toDouble(),
+                                          popupDecoration:
+                                              widget.popupDecoration,
+                                        )
+                                      : _PopupTreeContentWidget(
+                                          cascadeController: _cascadeController,
+                                          listViewHeight: widget
+                                              .popupDecoration.popupHeight,
+                                          listViewWidth:
+                                              widget.popupDecoration.popupWidth,
+                                          popupDecoration:
+                                              widget.popupDecoration,
+                                        ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: position.dy,
-                    left: 0,
-                    child: GestureDetector(
-                      onTap: hideOverlay,
-                      child: Container(
-                        height: height.toDouble(),
-                        width: screenWidth - position.dx - width,
-                        color: _maskColor,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: position.dy,
-                    left: position.dx + width,
-                    child: GestureDetector(
-                      onTap: hideOverlay,
-                      child: Container(
-                        height: height.toDouble(),
-                        width: screenWidth - width - position.dx,
-                        color: _maskColor,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: position.dy + height,
-                    left: 0,
-                    child: GestureDetector(
-                      onTap: hideOverlay,
-                      child: Container(
-                        height: screenHeight,
-                        width: screenWidth,
-                        color: _maskColor,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: position.dx + 0,
-                    top: position.dy + height,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: MediaQuery.removePadding(
-                        context: context,
-                        removeTop: true,
-                        removeBottom: true,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AnimatedBuilder(
-                              animation: _animationController,
-                              builder: (context, child) {
-                                return SizeTransition(
-                                  sizeFactor: _animation,
-                                  child: SlideTransition(
-                                    position: Tween<Offset>(
-                                      begin: const Offset(0, -1), // 从顶部开始
-                                      end: Offset.zero,
-                                    ).animate(_animation),
-                                    child:
-                                        _textEditingController.text.isNotEmpty
-                                            ? _PopupListContentWidget(
-                                                cascadeController:
-                                                    _cascadeController,
-                                                listViewHeight: widget
-                                                    .popupDecoration
-                                                    .popupHeight,
-                                                listViewWidth: width.toDouble(),
-                                                popupDecoration:
-                                                    widget.popupDecoration,
-                                              )
-                                            : _PopupTreeContentWidget(
-                                                cascadeController:
-                                                    _cascadeController,
-                                                listViewHeight: widget
-                                                    .popupDecoration
-                                                    .popupHeight,
-                                                listViewWidth: widget
-                                                    .popupDecoration.popupWidth,
-                                                popupDecoration:
-                                                    widget.popupDecoration,
-                                              ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -262,11 +263,11 @@ class _CascadeWidgetState extends State<CascadeWidget>
 
   /// show overlay
   void showOverlay() {
-    _animationController.forward();
-    if (_overlayEntry == null) {
-      _cascadeController.isOpen = true;
-      showPopup();
-    }
+    setState(() {
+      _animationController.forward();
+    });
+    _cascadeController.isOpen = true;
+    showPopup();
   }
 
   /// hide overlay
@@ -274,13 +275,14 @@ class _CascadeWidgetState extends State<CascadeWidget>
     _overlayEntry?.remove();
     _overlayEntry = null;
     Future.delayed(Duration.zero, () {
-      /// TODO: -
       _overlayEntry?.remove();
       _overlayEntry = null;
     });
     _textEditingController.text = '';
     _cascadeController.isOpen = false;
-    _animationController.reverse();
+    setState(() {
+      _animationController.reverse();
+    });
   }
 }
 
@@ -352,6 +354,41 @@ class _CustomInputDecorator extends StatelessWidget {
           : [_buildChip(selectedList.first)];
     }
 
+    if (fieldDecoration.isRow) {
+      return Row(
+        children: [
+          if (list != null && list.isNotEmpty)
+            Wrap(
+              spacing: chipDecoration.spacing,
+              runSpacing: chipDecoration.runSpacing,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: list,
+            ),
+          if (list != null && list.isNotEmpty)
+            const SizedBox(
+              width: 5,
+            ),
+          Expanded(
+            child: TextFormField(
+              controller: textEditingController,
+              focusNode: focusNode,
+              style: fieldDecoration.style,
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.zero,
+                isCollapsed: true,
+                border: InputBorder.none, // 设置边框为无
+                // 如果需要在焦点变化时或者输入有错误时也不显示边框，可以设置以下两个属性
+                enabledBorder: InputBorder.none, // 输入框没有焦点时的边框
+                focusedBorder: InputBorder.none, // 输入框有焦点时的边框
+                // 如果有错误提示也不需要边框，可以设置以下属性
+                errorBorder: InputBorder.none, // 当输入有错误时的边框
+                focusedErrorBorder: InputBorder.none, // 当输入有错误且输入框有焦点时的边框
+              ),
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -365,7 +402,12 @@ class _CustomInputDecorator extends StatelessWidget {
         TextFormField(
           controller: textEditingController,
           focusNode: focusNode,
-          decoration: const InputDecoration(
+          style: fieldDecoration.style,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(
+              vertical: fieldDecoration.padding?.top ?? 0,
+            ),
+            isCollapsed: true,
             border: InputBorder.none, // 设置边框为无
             // 如果需要在焦点变化时或者输入有错误时也不显示边框，可以设置以下两个属性
             enabledBorder: InputBorder.none, // 输入框没有焦点时的边框
@@ -435,10 +477,12 @@ class _CustomInputDecorator extends StatelessWidget {
     final prefixIcon = fieldDecoration.prefixIcon;
 
     return InputDecoration(
+      isCollapsed: true,
       enabled: false,
       labelText: fieldDecoration.labelText,
       labelStyle: fieldDecoration.labelStyle,
-      hintText: (textEditingController?.text ?? '').isEmpty
+      hintText: cascadeController.selectedList.isEmpty &&
+              (textEditingController?.text ?? '').isEmpty
           ? fieldDecoration.hintText
           : '',
       hintStyle: fieldDecoration.hintStyle,
@@ -464,7 +508,11 @@ class _CustomInputDecorator extends StatelessWidget {
             changeOverlay?.call();
           }
         },
-        child: const Icon(Icons.clear),
+        child: fieldDecoration.clearIcon ??
+            const Icon(
+              Icons.clear,
+              size: 14,
+            ),
       );
     }
 
@@ -529,16 +577,18 @@ class _PopupListContentWidget extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  height: 44,
+                  height: 32,
                   color: item.isClicked
                       ? defaultActiveColor.withOpacity(0.1)
                       : Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.only(left: 5, right: 12),
                   child: Row(
                     children: [
                       Expanded(
                         child: CustomText(
-                          item.pathName,
+                          popupDecoration.isShowFullPathFromSearch
+                              ? item.pathName
+                              : item.name,
                           style: item.isClicked || (item.isSelected ?? true)
                               ? (popupDecoration.selectedTextStyle ??
                                   TextStyle(
@@ -660,7 +710,7 @@ class _PopupTreeContentWidget extends StatelessWidget {
                   border: Border(
                     right: arrayIndex < cascadeController.uiList.length
                         ? const BorderSide(
-                            color: Colors.black26,
+                            color: Color(0xffF7F7F7),
                           )
                         : BorderSide.none,
                   ),
@@ -672,7 +722,7 @@ class _PopupTreeContentWidget extends StatelessWidget {
                         (item) => GestureDetector(
                           onTap: () => listViewItemClick(item),
                           child: Container(
-                            height: 44,
+                            height: 32,
                             color: item.isClicked
                                 ? (popupDecoration.itemBackgroundColor ??
                                     defaultActiveColor.withOpacity(0.1))
@@ -680,39 +730,52 @@ class _PopupTreeContentWidget extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 5),
                             child: Row(
                               children: [
-                                Checkbox(
-                                  tristate: true,
-                                  value: item.isSelected,
-                                  onChanged: (_) =>
-                                      cascadeController.checkAllItemState(item),
-                                  activeColor:
-                                      popupDecoration.checkBoxActiveColor ??
-                                          defaultActiveColor,
+                                Transform.scale(
+                                  scale: 0.8,
+                                  child: Checkbox(
+                                    tristate: true,
+                                    value: item.isSelected,
+                                    onChanged: (_) => cascadeController
+                                        .checkAllItemState(item),
+                                    activeColor:
+                                        popupDecoration.checkBoxActiveColor ??
+                                            defaultActiveColor,
+                                    side: const BorderSide(
+                                      color: Color(0xffD9D9D9),
+                                    ),
+                                  ),
                                 ),
                                 Expanded(
-                                  child: Text(
-                                    item.name,
-                                    maxLines: 1, // 设置为1行，如果文本过长，则会省略
-                                    overflow:
-                                        TextOverflow.ellipsis, // 文本溢出时显示省略号
-                                    style: item.isClicked ||
-                                            (item.isSelected ?? true)
-                                        ? popupDecoration.selectedTextStyle ??
-                                            TextStyle(
-                                              color: popupDecoration
-                                                      .checkBoxActiveColor ??
-                                                  defaultActiveColor,
-                                            )
-                                        : popupDecoration.textStyle ??
-                                            const TextStyle(
-                                              color: Colors.black,
-                                            ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    child: Text(
+                                      item.name,
+                                      maxLines: 1, // 设置为1行，如果文本过长，则会省略
+                                      overflow:
+                                          TextOverflow.ellipsis, // 文本溢出时显示省略号
+                                      style: item.isClicked ||
+                                              (item.isSelected ?? true)
+                                          ? popupDecoration.selectedTextStyle ??
+                                              TextStyle(
+                                                color: popupDecoration
+                                                        .checkBoxActiveColor ??
+                                                    defaultActiveColor,
+                                              )
+                                          : popupDecoration.textStyle ??
+                                              const TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                    ),
                                   ),
                                 ),
                                 if (item.children.isNotEmpty)
-                                  const Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    size: 16,
+                                  const Padding(
+                                    padding: EdgeInsets.only(right: 6),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      size: 12,
+                                      color: Color(0xff8C8C8C),
+                                    ),
                                   ),
                               ],
                             ),
