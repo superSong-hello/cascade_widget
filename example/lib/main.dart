@@ -151,6 +151,34 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   ];
 
+  final mulList = [
+    DropDownMenuModel(
+      id: '1',
+      name: '选项 1',
+      children: [],
+    ),
+    DropDownMenuModel(
+      id: '2',
+      name: '选项 2',
+      children: [],
+    ),
+    DropDownMenuModel(
+      id: '3',
+      name: '选项 3',
+      children: [],
+    ),
+    DropDownMenuModel(
+      id: '4',
+      name: '选项 4',
+      children: [],
+    ),
+    DropDownMenuModel(
+      id: '5',
+      name: '选项 5',
+      children: [],
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,15 +203,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   hintText: '请选择',
                   hintStyle: const TextStyle(color: Colors.black45),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     borderSide: const BorderSide(color: Colors.grey),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(4),
                     borderSide: const BorderSide(
                       color: Colors.black87,
                     ),
                   ),
+                  isRow: true,
                 ),
                 chipDecoration: const ChipDecoration(
                     backgroundColor: Colors.blueAccent,
@@ -192,8 +221,72 @@ class _MyHomePageState extends State<MyHomePage> {
                     labelStyle: TextStyle(
                       color: Colors.white,
                     ),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
                     deleteIcon: Icon(Icons.clear_outlined,
                         color: Colors.white, size: 16)),
+              ),
+            ),
+            const SizedBox(height: 50),
+            SizedBox(
+              width: 410,
+              child: MultipleSelectWidget(
+                list: mulList,
+                selectedCallBack: (selectedList) {
+                  for (final e in selectedList) {
+                    debugPrint('name:${e.name}, id:${e.id}');
+                  }
+                },
+                fieldDecoration: FieldDecoration(
+                  hintText: 'タイプ選択',
+                  hintStyle: const TextStyle(
+                    color: Colors.black45,
+                    fontSize: 14,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    borderSide: const BorderSide(
+                      color: Colors.black87,
+                    ),
+                  ),
+                  clearIcon: const Icon(
+                    Icons.clear,
+                    size: 14,
+                  ),
+                  style: const TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+                chipDecoration: const ChipDecoration(
+                  backgroundColor: Colors.black12,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  runSpacing: 0,
+                  spacing: 5,
+                  labelStyle: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 12,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  deleteIcon: Icon(
+                    Icons.clear_outlined,
+                    color: Colors.black54,
+                    size: 15,
+                  ),
+                ),
+                popupDecoration: const PopupDecoration(
+                  isShowFullPathFromSearch: false,
+                  popupHeight: 300,
+                  isSingleChoice: true,
+                ),
               ),
             ),
           ],

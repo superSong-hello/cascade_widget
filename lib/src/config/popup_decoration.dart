@@ -8,6 +8,8 @@ class PopupDecoration {
     this.textStyle,
     this.selectedTextStyle,
     this.itemBackgroundColor,
+    this.isShowFullPathFromSearch = true,
+    this.isSingleChoice = false,
   });
 
   /// 弹层单个list的宽度
@@ -27,4 +29,10 @@ class PopupDecoration {
 
   /// item点击背景颜色
   final Color? itemBackgroundColor;
+
+  /// 搜索的时候是否显示全路径（一级/二级/name）
+  final bool isShowFullPathFromSearch;
+
+  /// 针对于非级联操作，是否是单选，默认多选
+  final bool isSingleChoice;
 }

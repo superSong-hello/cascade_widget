@@ -50,6 +50,7 @@ class CascadeWidgetController extends ChangeNotifier {
     setLevelForAllItems(options, 0, '');
     _uiList.addAll([options]);
     _selectedCallBack = selectedCallBack;
+    getSelectedList(list, []);
     notifyListeners();
   }
 
@@ -173,6 +174,7 @@ class CascadeWidgetController extends ChangeNotifier {
     uiList
       ..clear()
       ..addAll([list]);
+    selectedCallBack([]);
     notifyListeners();
   }
 

@@ -15,8 +15,6 @@ class FieldDecoration {
   ///
   /// [disabledBorder] is the border of the dropdown field when it is disabled.
   ///
-  /// [errorBorder] is the border of the dropdown field when there is an error.
-  ///
   /// [suffixIcon] is the icon to display at the end of dropdown field. The
   /// default value is Icon(Icons.arrow_drop_down).
   ///
@@ -45,7 +43,11 @@ class FieldDecoration {
     this.border,
     this.focusedBorder,
     this.disabledBorder,
-    this.suffixIcon = const Icon(Icons.arrow_drop_down),
+    this.suffixIcon = const Icon(
+      Icons.keyboard_arrow_down_rounded,
+      color: Color(0xff8C8C8C),
+      size: 16,
+    ),
     this.prefixIcon,
     this.labelStyle,
     this.borderRadius = 12,
@@ -54,6 +56,9 @@ class FieldDecoration {
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     this.backgroundColor,
     this.showClearIcon = true,
+    this.style,
+    this.clearIcon,
+    this.isRow = true,
   });
 
   /// The label text to display above the dropdown field.
@@ -97,4 +102,13 @@ class FieldDecoration {
 
   /// show clear icon or not in the dropdown field
   final bool showClearIcon;
+
+  /// The style of the input text.
+  final TextStyle? style;
+
+  /// clear icon
+  final Widget? clearIcon;
+
+  /// textField layout is row and column
+  final bool isRow;
 }
