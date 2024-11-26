@@ -2,7 +2,6 @@ name: cascade_widget
 description: "Cascade Widget For Flutter Web"
 version: 1.0.0
 homepage: https://github.com/superSong-hello/cascade_widget
-author: SuperSong<supersong225@gmail.com>
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
