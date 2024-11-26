@@ -237,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 },
                 fieldDecoration: FieldDecoration(
-                  hintText: 'タイプ選択',
+                  hintText: '单选（支持多选）',
                   hintStyle: const TextStyle(
                     color: Colors.black45,
                     fontSize: 14,
