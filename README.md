@@ -4,10 +4,10 @@
 * 组件支持单选多选操作，支持搜索筛选 (support: Web、Android、iOS)
 
 ## Preview
-[<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_1.png" width="400" alt=""/>](screen_1.png)
-[<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_2.png" width="400" alt=""/>](screen_2.png)
-[<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_3.png" width="400" alt=""/>](screen_3.png)
-[<img src="https://github.com/superSong-hello/cascade_widget/blob/master/assets/screen_4.png" width="400" alt=""/>](screen_4.png)
+![Screenshot 1](assets/screen_1.png)
+![Screenshot 2](assets/screen_2.png)
+![Screenshot 3](assets/screen_3.png)
+![Screenshot 4](assets/screen_4.png)
 
 ## Usage
 
