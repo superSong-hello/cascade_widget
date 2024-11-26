@@ -31,7 +31,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   final testList = [
     DropDownMenuModel(
       id: '',
@@ -182,17 +181,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: KeyboardListener(
-        focusNode: FocusNode(),
-        child: Center(
+        body: KeyboardListener(
+      focusNode: FocusNode(),
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            const SizedBox(height: 100,),
+            const SizedBox(
+              height: 100,
+            ),
             SizedBox(
               width: 410,
-              child:
-              CascadeWidget(
+              child: CascadeWidget(
                 list: testList,
                 selectedCallBack: (selectedList) {
                   for (final e in selectedList) {
