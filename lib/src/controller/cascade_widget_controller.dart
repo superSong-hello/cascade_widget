@@ -41,6 +41,8 @@ class CascadeWidgetController extends ChangeNotifier {
 
   bool isOpen = false;
 
+  bool get isShopSearchView => isOpen && _searchQuery.isNotEmpty;
+
   /// 初始化
   void init(
     List<DropDownMenuModel> options,

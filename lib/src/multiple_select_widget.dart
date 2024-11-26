@@ -45,7 +45,6 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   ]);
 
   OverlayEntry? _overlayEntry;
-  final Color _maskColor = Colors.transparent;
 
   @override
   void initState() {
@@ -101,6 +100,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
       },
       child: _CustomInputDecorator(
         fieldDecoration: widget.fieldDecoration,
+        popupDecoration: widget.popupDecoration,
         listenable: _listenable,
         changeOverlay:
             _multipleSelectWidgetController.isOpen ? hideOverlay : showOverlay,
@@ -109,6 +109,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
         chipDecoration: widget.chipDecoration,
         focusNode: _focusNode,
         textEditingController: _textEditingController,
+        hideOverlay: hideOverlay,
       ),
     );
   }
@@ -136,62 +137,8 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
         final height = renderBox != null ? renderBox.size.height : 0;
         final width = renderBox != null ? renderBox.size.width : 0;
 
-        /// 获取屏幕宽度
-        double screenWidth = MediaQuery.of(context).size.width;
-
-        /// 获取屏幕高度
-        double screenHeight = MediaQuery.of(context).size.height;
-
         return Stack(
           children: [
-            Positioned(
-              top: 0,
-              left: 0,
-              child: GestureDetector(
-                onTap: hideOverlay,
-                child: Container(
-                  height: position.dy,
-                  width: screenWidth,
-                  color: _maskColor,
-                ),
-              ),
-            ),
-            Positioned(
-              top: position.dy,
-              left: 0,
-              child: GestureDetector(
-                onTap: hideOverlay,
-                child: Container(
-                  height: height.toDouble(),
-                  width: position.dx,
-                  color: _maskColor,
-                ),
-              ),
-            ),
-            Positioned(
-              top: position.dy,
-              left: position.dx + width,
-              child: GestureDetector(
-                onTap: hideOverlay,
-                child: Container(
-                  height: height.toDouble(),
-                  width: screenWidth - width - position.dx,
-                  color: _maskColor,
-                ),
-              ),
-            ),
-            Positioned(
-              top: position.dy + height,
-              left: 0,
-              child: GestureDetector(
-                onTap: hideOverlay,
-                child: Container(
-                  height: screenHeight,
-                  width: screenWidth,
-                  color: _maskColor,
-                ),
-              ),
-            ),
             Positioned(
               left: position.dx + 0,
               top: position.dy + height,
@@ -253,17 +200,11 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
 
   /// hide overlay
   void hideOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-    Future.delayed(Duration.zero, () {
-      _overlayEntry?.remove();
-      _overlayEntry = null;
-    });
     _textEditingController.text = '';
     _multipleSelectWidgetController.isOpen = false;
-    setState(() {
-      _animationController.reverse();
-    });
+    _animationController.reverse();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 }
 
@@ -271,17 +212,21 @@ class _CustomInputDecorator extends StatelessWidget {
   const _CustomInputDecorator({
     required this.fieldDecoration,
     required this.listenable,
-    this.changeOverlay,
-    this.buttonKey,
+    required this.popupDecoration,
     required this.multipleSelectWidgetController,
     required this.chipDecoration,
+    required this.hideOverlay,
     this.focusNode,
+    this.changeOverlay,
+    this.buttonKey,
     this.textEditingController,
   });
 
   final FieldDecoration fieldDecoration;
 
   final ChipDecoration chipDecoration;
+
+  final PopupDecoration popupDecoration;
 
   final Listenable listenable;
 
@@ -295,6 +240,8 @@ class _CustomInputDecorator extends StatelessWidget {
 
   final TextEditingController? textEditingController;
 
+  final VoidCallback hideOverlay;
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -304,13 +251,40 @@ class _CustomInputDecorator extends StatelessWidget {
       child: ListenableBuilder(
         listenable: listenable,
         builder: (ctx, _) {
-          return InputDecorator(
-            key: buttonKey,
-            isEmpty: true,
-            decoration: _buildDecoration(context),
-            textAlign: TextAlign.start,
-            textAlignVertical: TextAlignVertical.center,
-            child: _buildField(),
+          return TapRegion(
+            child: InputDecorator(
+              key: buttonKey,
+              isEmpty: true,
+              decoration: _buildDecoration(context),
+              textAlign: TextAlign.start,
+              textAlignVertical: TextAlignVertical.center,
+              child: _buildField(),
+            ),
+            onTapInside: (PointerDownEvent event) {},
+            onTapOutside: (PointerDownEvent event) {
+              RenderBox? tapedRenderBox =
+                  buttonKey?.currentContext?.findRenderObject() as RenderBox?;
+              Offset? globalPosition =
+                  tapedRenderBox?.localToGlobal(Offset.zero);
+
+              Rect renderBoxFrame = Rect.fromLTWH(
+                globalPosition?.dx ?? 0,
+                globalPosition?.dy ?? 0,
+                tapedRenderBox?.size.width ?? 0,
+                (tapedRenderBox?.size.height ?? 0) +
+                    popupDecoration.popupHeight,
+              );
+              // debugPrint('dx: ${globalPosition?.dx ?? 0}\ndy: ${globalPosition?.dy ?? 0}\nwidth: ${tapedRenderBox?.size.width ?? 0}\nheight: ${tapedRenderBox?.size.height}',);
+              //
+              // debugPrint('renderBoxFrame: $renderBoxFrame');
+              // debugPrint('event.position: ${event.position}');
+
+              Rect extraRenderBoxFrame = renderBoxFrame.inflate(5);
+              if (extraRenderBoxFrame.contains(event.position)) {
+                return;
+              }
+              hideOverlay();
+            },
           );
         },
       ),
