@@ -4,10 +4,7 @@
 * 组件支持单选多选操作，支持搜索筛选 (support: Web、Android、iOS)
 
 ## Preview
-![Screenshot 1](assets/screen_1.png)
-![Screenshot 2](assets/screen_2.png)
-![Screenshot 3](assets/screen_3.png)
-![Screenshot 4](assets/screen_4.png)
+[<iframe width="800" height="600" src="assets/video.mp4" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>]
 
 ## Usage
 
