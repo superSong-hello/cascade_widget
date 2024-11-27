@@ -24,6 +24,6 @@ flutter:
   assets:
     - assets/
 
-  plugin:
-    platforms:
-      default_package: lib
+#  plugin:
+#    platforms:
+#      default_package: lib
