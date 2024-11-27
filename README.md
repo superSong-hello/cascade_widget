@@ -4,7 +4,7 @@
 * 组件支持单选多选操作，支持搜索筛选 (support: Web、Android、iOS)
 
 ## Preview
-[<iframe width="800" height="600" src="assets/video.mp4" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>]
+![Screenshot 5](assets/screen_5.gif)
 
 ## Usage
 
