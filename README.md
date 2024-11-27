@@ -46,61 +46,61 @@ CascadeWidget(
 
 ```dart
 MultipleSelectWidget(
-                list: mulList,
-                selectedCallBack: (selectedList) {
-                  for (final e in selectedList) {
-                    debugPrint('name:${e.name}, id:${e.id}');
-                  }
-                },
-                fieldDecoration: FieldDecoration(
-                  hintText: '多选',
-                  hintStyle: const TextStyle(
-                    color: Colors.black45,
-                    fontSize: 14,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: const BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: const BorderSide(
-                      color: Colors.black87,
-                    ),
-                  ),
-                  clearIcon: const Icon(
-                    Icons.clear,
-                    size: 14,
-                  ),
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-                chipDecoration: const ChipDecoration(
-                  backgroundColor: Colors.black12,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  runSpacing: 0,
-                  spacing: 5,
-                  labelStyle: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 12,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  deleteIcon: Icon(
-                    Icons.clear_outlined,
-                    color: Colors.black54,
-                    size: 15,
-                  ),
-                ),
-                popupDecoration: const PopupDecoration(
-                  isShowFullPathFromSearch: false,
-                  popupHeight: 300,
-                ),
-              )
+  list: mulList,
+  selectedCallBack: (selectedList) {
+    for (final e in selectedList) {
+      debugPrint('name:${e.name}, id:${e.id}');
+    }
+    },
+  fieldDecoration: FieldDecoration(
+    hintText: '多选',
+    hintStyle: const TextStyle(
+      color: Colors.black45,
+      fontSize: 14,
+    ),
+    padding: const EdgeInsets.symmetric(
+      horizontal: 12,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(4),
+      borderSide: const BorderSide(color: Colors.grey),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(4),
+      borderSide: const BorderSide(
+        color: Colors.black87,
+      ),
+    ),
+    clearIcon: const Icon(
+      Icons.clear,
+      size: 14,
+    ),
+    style: const TextStyle(
+      fontSize: 14,
+    ),
+    ),
+    chipDecoration: const ChipDecoration(
+      backgroundColor: Colors.black12,
+      padding: EdgeInsets.symmetric(
+        horizontal: 6,
+        vertical: 2,
+      ),
+      runSpacing: 0,
+      spacing: 5,
+      labelStyle: TextStyle(
+        color: Colors.black87,
+        fontSize: 12,
+      ),
+      borderRadius: BorderRadius.all(Radius.circular(4)),
+      deleteIcon: Icon(
+        Icons.clear_outlined,
+        color: Colors.black54,
+        size: 15,
+      ),
+    ),
+    popupDecoration: const PopupDecoration(
+      isShowFullPathFromSearch: false,
+      popupHeight: 300,
+    ),
+)
 ```
