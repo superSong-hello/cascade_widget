@@ -205,6 +205,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
     _animationController.reverse();
     _overlayEntry?.remove();
     _overlayEntry = null;
+    setState(() {});
   }
 }
 
@@ -274,11 +275,6 @@ class _CustomInputDecorator extends StatelessWidget {
                 (tapedRenderBox?.size.height ?? 0) +
                     popupDecoration.popupHeight,
               );
-              // debugPrint('dx: ${globalPosition?.dx ?? 0}\ndy: ${globalPosition?.dy ?? 0}\nwidth: ${tapedRenderBox?.size.width ?? 0}\nheight: ${tapedRenderBox?.size.height}',);
-              //
-              // debugPrint('renderBoxFrame: $renderBoxFrame');
-              // debugPrint('event.position: ${event.position}');
-
               Rect extraRenderBoxFrame = renderBoxFrame.inflate(5);
               if (extraRenderBoxFrame.contains(event.position)) {
                 return;

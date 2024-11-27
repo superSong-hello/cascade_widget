@@ -224,6 +224,7 @@ class _CascadeWidgetState extends State<CascadeWidget>
     _animationController.reverse();
     _overlayEntry?.remove();
     _overlayEntry = null;
+    setState(() {});
   }
 }
 

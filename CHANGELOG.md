@@ -1,8 +1,11 @@
+## 1.0.3
+fix bug
+
 ## 1.0.2
-组件截屏提交
+add illustration gif
 
 ## 1.0.1
-组件描述修改
+cascade_widget perfect the content 
 
 ## 1.0.0
-组件发布
+cascade_widget publish
