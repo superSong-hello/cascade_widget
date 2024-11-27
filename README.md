@@ -1,7 +1,7 @@
 
 # Flutter web 级联组件/单选、多选组件
-* 组件支持级联选择，支持搜索筛选 （support: Web）
-* 组件支持单选多选操作，支持搜索筛选 (support: Web、Android、iOS)
+* 组件支持级联选择，支持搜索筛选 
+* 组件支持单选多选操作，支持搜索筛选
 
 ## Preview
 ![Screenshot 5](assets/screen_5.gif)
