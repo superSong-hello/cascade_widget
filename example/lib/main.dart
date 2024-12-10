@@ -33,11 +33,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final testList = [
     DropDownMenuModel(
-      id: '',
+      id: '1',
       name: '一级 1',
       children: [
         DropDownMenuModel(
-          id: '',
+          id: '11',
           name: '二级 1-1',
           children: [
             DropDownMenuModel(
@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         DropDownMenuModel(
-          id: '',
+          id: '12',
           name: '二级 1-2',
           children: [
             DropDownMenuModel(
@@ -71,11 +71,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     ),
     DropDownMenuModel(
-      id: '',
+      id: '2',
       name: '一级 2',
       children: [
         DropDownMenuModel(
-          id: '',
+          id: '21',
           name: '二级 2-1',
           children: [
             DropDownMenuModel(
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         DropDownMenuModel(
-          id: '',
+          id: '22',
           name: '二级 2-2',
           children: [
             DropDownMenuModel(
@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
         DropDownMenuModel(
-          id: '',
+          id: '23',
           name: '二级 2-3',
           children: [
             DropDownMenuModel(
@@ -110,38 +110,38 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     ),
     DropDownMenuModel(
-      id: '',
+      id: '3',
       name: '一级 3',
       children: [
         DropDownMenuModel(
-          id: '',
-          name: '二级 2-1',
+          id: '31',
+          name: '二级 3-1',
           children: [
             DropDownMenuModel(
-              id: '211',
-              name: '三级 2-1-1',
+              id: '311',
+              name: '三级 3-1-1',
               children: [],
             ),
           ],
         ),
         DropDownMenuModel(
-          id: '',
-          name: '二级 2-2',
+          id: '32',
+          name: '二级 3-2',
           children: [
             DropDownMenuModel(
               id: '221',
-              name: '三级 2-2-1',
+              name: '三级 3-2-1',
               children: [],
             ),
           ],
         ),
         DropDownMenuModel(
-          id: '',
-          name: '二级 2-3',
+          id: '3-3',
+          name: '二级 3-3',
           children: [
             DropDownMenuModel(
-              id: '231',
-              name: '三级 2-3-1',
+              id: '331',
+              name: '三级 3-3-1',
               children: [],
             ),
           ],
@@ -181,117 +181,119 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: KeyboardListener(
-      focusNode: FocusNode(),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            const SizedBox(
-              height: 100,
-            ),
-            SizedBox(
-              width: 410,
-              child: CascadeWidget(
-                list: testList,
-                selectedCallBack: (selectedList) {
-                  for (final e in selectedList) {
-                    debugPrint('name:${e.name}, id:${e.id}');
-                  }
-                },
-                fieldDecoration: FieldDecoration(
-                  hintText: '请选择',
-                  hintStyle: const TextStyle(color: Colors.black45),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: const BorderSide(color: Colors.grey),
+      body: KeyboardListener(
+        focusNode: FocusNode(),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              const SizedBox(
+                height: 100,
+              ),
+              SizedBox(
+                width: 410,
+                child: CascadeWidget(
+                  list: testList,
+                  selectedCallBack: (selectedList) {
+                    debugPrint('selected items:');
+                    for (final e in selectedList) {
+                      debugPrint('name:${e.name}, id:${e.id}');
+                    }
+                  },
+                  fieldDecoration: FieldDecoration(
+                    hintText: '请选择',
+                    hintStyle: const TextStyle(color: Colors.black45),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: const BorderSide(
+                        color: Colors.black87,
+                      ),
+                    ),
+                    isRow: true,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: const BorderSide(
-                      color: Colors.black87,
+                  chipDecoration: const ChipDecoration(
+                      backgroundColor: Colors.blueAccent,
+                      runSpacing: 2,
+                      spacing: 10,
+                      labelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                      deleteIcon: Icon(Icons.clear_outlined,
+                          color: Colors.white, size: 16)),
+                ),
+              ),
+              const SizedBox(height: 50),
+              SizedBox(
+                width: 410,
+                child: MultipleSelectWidget(
+                  list: mulList,
+                  selectedCallBack: (selectedList) {
+                    for (final e in selectedList) {
+                      debugPrint('name:${e.name}, id:${e.id}');
+                    }
+                  },
+                  fieldDecoration: FieldDecoration(
+                    hintText: '单选（支持多选）',
+                    hintStyle: const TextStyle(
+                      color: Colors.black45,
+                      fontSize: 14,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: const BorderSide(
+                        color: Colors.black87,
+                      ),
+                    ),
+                    clearIcon: const Icon(
+                      Icons.clear,
+                      size: 14,
+                    ),
+                    style: const TextStyle(
+                      fontSize: 14,
                     ),
                   ),
-                  isRow: true,
-                ),
-                chipDecoration: const ChipDecoration(
-                    backgroundColor: Colors.blueAccent,
-                    runSpacing: 2,
-                    spacing: 10,
+                  chipDecoration: const ChipDecoration(
+                    backgroundColor: Colors.black12,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    runSpacing: 0,
+                    spacing: 5,
                     labelStyle: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black87,
+                      fontSize: 12,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    deleteIcon: Icon(Icons.clear_outlined,
-                        color: Colors.white, size: 16)),
-              ),
-            ),
-            const SizedBox(height: 50),
-            SizedBox(
-              width: 410,
-              child: MultipleSelectWidget(
-                list: mulList,
-                selectedCallBack: (selectedList) {
-                  for (final e in selectedList) {
-                    debugPrint('name:${e.name}, id:${e.id}');
-                  }
-                },
-                fieldDecoration: FieldDecoration(
-                  hintText: '单选（支持多选）',
-                  hintStyle: const TextStyle(
-                    color: Colors.black45,
-                    fontSize: 14,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: const BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: const BorderSide(
-                      color: Colors.black87,
+                    deleteIcon: Icon(
+                      Icons.clear_outlined,
+                      color: Colors.black54,
+                      size: 15,
                     ),
                   ),
-                  clearIcon: const Icon(
-                    Icons.clear,
-                    size: 14,
+                  popupDecoration: const PopupDecoration(
+                    isShowFullPathFromSearch: false,
+                    popupHeight: 300,
+                    isSingleChoice: true,
                   ),
-                  style: const TextStyle(
-                    fontSize: 14,
-                  ),
-                ),
-                chipDecoration: const ChipDecoration(
-                  backgroundColor: Colors.black12,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  runSpacing: 0,
-                  spacing: 5,
-                  labelStyle: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 12,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  deleteIcon: Icon(
-                    Icons.clear_outlined,
-                    color: Colors.black54,
-                    size: 15,
-                  ),
-                ),
-                popupDecoration: const PopupDecoration(
-                  isShowFullPathFromSearch: false,
-                  popupHeight: 300,
-                  isSingleChoice: true,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 }

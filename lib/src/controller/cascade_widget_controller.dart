@@ -136,7 +136,7 @@ class CascadeWidgetController extends ChangeNotifier {
     List<DropDownMenuModel> targetList,
   ) {
     for (final e in originList) {
-      if (e.id.isNotEmpty && (e.isSelected ?? true)) {
+      if (e.id.isNotEmpty && e.children.isEmpty && (e.isSelected ?? true)) {
         targetList.add(e);
       }
       if (e.children.isNotEmpty) {
