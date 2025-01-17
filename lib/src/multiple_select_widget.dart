@@ -131,11 +131,13 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
             renderBox = renderObject as RenderBox;
           }
         }
-        final position = renderBox != null
-            ? renderBox.localToGlobal(Offset.zero)
-            : Offset.zero;
-        final height = renderBox != null ? renderBox.size.height : 0;
-        final width = renderBox != null ? renderBox.size.width : 0;
+        if (renderBox == null || !renderBox.attached) {
+          debugPrint('Failed to build the dropdown\nCode: 08');
+          return const SizedBox.shrink();
+        }
+        final position = renderBox.localToGlobal(Offset.zero);
+        final height = renderBox.size.height;
+        final width = renderBox.size.width;
 
         return Stack(
           children: [

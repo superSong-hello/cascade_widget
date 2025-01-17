@@ -31,6 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final cascadeController = CascadeWidgetController();
   final testList = [
     DropDownMenuModel(
       id: '1',
@@ -180,6 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('controller: ${cascadeController.hashCode}');
     return Scaffold(
       body: KeyboardListener(
         focusNode: FocusNode(),
@@ -194,6 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 410,
                 child: CascadeWidget(
                   list: testList,
+                  controller: cascadeController,
                   selectedCallBack: (selectedList) {
                     debugPrint('selected items:');
                     for (final e in selectedList) {
@@ -226,6 +229,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       deleteIcon: Icon(Icons.clear_outlined,
                           color: Colors.white, size: 16)),
                 ),
+              ),
+              const SizedBox(height: 8),
+              ElevatedButton(
+                onPressed: () {
+                  cascadeController.cancelAllSelected();
+                  setState(() {
+
+                  });
+                },
+                child: const Text('Unselect All'),
               ),
               const SizedBox(height: 50),
               SizedBox(

@@ -16,6 +16,7 @@ class CascadeWidget extends StatefulWidget {
     this.fieldDecoration = const FieldDecoration(),
     this.chipDecoration = const ChipDecoration(),
     this.popupDecoration = const PopupDecoration(),
+    this.controller,
   });
 
   final List<DropDownMenuModel> list;
@@ -28,6 +29,8 @@ class CascadeWidget extends StatefulWidget {
 
   final PopupDecoration popupDecoration;
 
+  final CascadeWidgetController? controller;
+
   @override
   State<CascadeWidget> createState() => _CascadeWidgetState();
 }
@@ -36,7 +39,7 @@ class _CascadeWidgetState extends State<CascadeWidget>
     with SingleTickerProviderStateMixin {
   final GlobalKey _buttonKey = GlobalKey();
   final FocusNode _focusNode = FocusNode();
-  final _cascadeController = CascadeWidgetController();
+  late final CascadeWidgetController _cascadeController = widget.controller ?? CascadeWidgetController();
   final _textEditingController = TextEditingController();
 
   late AnimationController _animationController;
@@ -72,10 +75,28 @@ class _CascadeWidgetState extends State<CascadeWidget>
     });
   }
 
+  // @override
+  // void didUpdateWidget(covariant CascadeWidget oldWidget) {
+  //   debugPrint('=== cascade widget didUpdateWidget');
+  //   if (oldWidget.controller != widget.controller) {
+  //     _cascadeController.dispose();
+  //
+  //     _cascadeController = widget.controller ?? CascadeWidgetController();
+  //     _cascadeController
+  //       ..init(widget.list, widget.selectedCallBack)
+  //       ..refreshPopup = () {
+  //       Future.delayed(const Duration(milliseconds: 100), showPopup);
+  //     };
+  //   }
+  //   super.didUpdateWidget(oldWidget);
+  // }
+
   @override
   void dispose() {
     _animationController.dispose();
-    _cascadeController.dispose();
+    if (widget.controller == null) {
+      _cascadeController.dispose();
+    }
     _focusNode
       ..removeListener(_focusChange)
       ..dispose();
@@ -139,11 +160,13 @@ class _CascadeWidgetState extends State<CascadeWidget>
                 renderBox = renderObject as RenderBox;
               }
             }
-            final position = renderBox != null
-                ? renderBox.localToGlobal(Offset.zero)
-                : Offset.zero;
-            final height = renderBox != null ? renderBox.size.height : 0;
-            final width = renderBox != null ? renderBox.size.width : 0;
+            if (renderBox == null || !renderBox.attached) {
+              debugPrint('Failed to build the dropdown\nCode: 08');
+              return const SizedBox.shrink();
+            }
+            final position = renderBox.localToGlobal(Offset.zero);
+            final height = renderBox.size.height;
+            final width = renderBox.size.width;
 
             return Stack(
               children: [
