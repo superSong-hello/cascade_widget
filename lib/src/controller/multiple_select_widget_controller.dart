@@ -38,6 +38,7 @@ class MultipleSelectWidgetController extends ChangeNotifier {
   ) {
     setItems(options);
     _selectedCallBack = selectedCallBack;
+    getSelectedList();
     notifyListeners();
   }
 

@@ -1,3 +1,6 @@
+## 1.0.6
+fix multiple_select bug.
+
 ## 1.0.5
 Exposed the CascadeWidgetController. Then continue to optimize the current class. 
 
