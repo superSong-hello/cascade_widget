@@ -38,7 +38,6 @@ class FieldDecoration {
   ///
   /// [backgroundColor] is the background color of the dropdown field.
   const FieldDecoration({
-    this.labelText,
     this.hintText = 'Select',
     this.border,
     this.focusedBorder,
@@ -59,10 +58,9 @@ class FieldDecoration {
     this.style,
     this.clearIcon,
     this.isRow = true,
+    this.maxHeight = 200,
+    this.minHeight = 28,
   });
-
-  /// The label text to display above the dropdown field.
-  final String? labelText;
 
   /// The hint text to display in the dropdown field.
   final String? hintText;
@@ -111,4 +109,11 @@ class FieldDecoration {
 
   /// textField layout is row and column
   final bool isRow;
+
+  /// [PopupDecoration().isShowAllSelectedLabel == true]
+  /// field widget max height
+  final double maxHeight;
+
+  /// /// field widget min height
+  final double minHeight;
 }
