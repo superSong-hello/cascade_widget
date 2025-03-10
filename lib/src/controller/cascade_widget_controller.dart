@@ -41,13 +41,25 @@ class CascadeWidgetController extends ChangeNotifier {
 
   bool isOpen = false;
 
+  /// 每次变更刷新
+  bool isRealTimeRefresh = false;
+
   bool get isShopSearchView => isOpen && _searchQuery.isNotEmpty;
 
   /// 初始化
   void init(
     List<DropDownMenuModel> options,
+    List<String>? defaultSelectedIds,
     ValueChanged<List<DropDownMenuModel>> selectedCallBack,
   ) {
+    if (defaultSelectedIds != null && defaultSelectedIds.isNotEmpty) {
+      final selectedArray = _getAllSelectedListFromIds(
+          options, defaultSelectedIds, <DropDownMenuModel>[]);
+      for (final e in selectedArray) {
+        checkCurrentItemFatherNodeState(
+            treeFindPath(options, e, <DropDownMenuModel>[]));
+      }
+    }
     setItems(options);
     setLevelForAllItems(options, 0, '');
     _uiList.addAll([options]);
@@ -103,10 +115,14 @@ class CascadeWidgetController extends ChangeNotifier {
     final tempSelectList = getSelectedList(list, []);
     selectedCallBack(tempSelectList);
 
-    /// 重新刷新弹层UI
-    if ((selectedNum == 0 && _selectedList.isNotEmpty) ||
-        (selectedNum != 0 && _selectedList.isEmpty)) {
+    if (isRealTimeRefresh) {
       refreshPopup.call();
+    } else {
+      /// 重新刷新弹层UI
+      if ((selectedNum == 0 && _selectedList.isNotEmpty) ||
+          (selectedNum != 0 && _selectedList.isEmpty)) {
+        refreshPopup.call();
+      }
     }
   }
 
@@ -147,6 +163,24 @@ class CascadeWidgetController extends ChangeNotifier {
       ..clear()
       ..addAll(targetList);
     return targetList;
+  }
+
+  List<DropDownMenuModel> _getAllSelectedListFromIds(
+    List<DropDownMenuModel> list,
+    List<String> ids,
+    List<DropDownMenuModel> selectList,
+  ) {
+    for (final e in list) {
+      if (e.children.isEmpty) {
+        if (e.id.isNotEmpty && ids.contains(e.id)) {
+          e.isSelected = true;
+          selectList.add(e);
+        }
+      } else {
+        _getAllSelectedListFromIds(e.children, ids, selectList);
+      }
+    }
+    return selectList;
   }
 
   /// 获取所有选中或者待全选的数据
