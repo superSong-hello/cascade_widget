@@ -565,12 +565,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(4),
                       borderSide: const BorderSide(color: Colors.grey),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: const BorderSide(
-                        color: Colors.black87,
-                      ),
-                    ),
                     isRow: false,
                   ),
                   chipDecoration: const ChipDecoration(
@@ -611,12 +605,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
                       borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: const BorderSide(
-                        color: Colors.black87,
-                      ),
                     ),
                     isRow: true,
                   ),
@@ -670,12 +658,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
                       borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: const BorderSide(
-                        color: Colors.black87,
-                      ),
                     ),
                     clearIcon: const Icon(
                       Icons.clear,

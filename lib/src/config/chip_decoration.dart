@@ -20,8 +20,6 @@ class ChipDecoration {
   /// [runSpacing] is the spacing between chip rows (when the chips wrap).
   ///
   /// [borderRadius] is the border radius of the chip.
-  ///
-  /// [wrap] is whether to wrap or not.
   const ChipDecoration({
     this.deleteIcon,
     this.backgroundColor = const Color(0xFFE0E0E0),
@@ -31,7 +29,6 @@ class ChipDecoration {
     this.runSpacing = 12,
     this.labelStyle,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
-    this.wrap = true,
   });
 
   /// The icon to display for deleting a chip.
@@ -57,13 +54,4 @@ class ChipDecoration {
 
   /// The border radius of the chip.
   final BorderRadiusGeometry borderRadius;
-
-  /// Whether to wrap or not
-  ///
-  /// If true, the chips will wrap to the next line
-  /// when they reach the end of the row.
-  ///
-  /// If false, the chips will not wrap and will be displayed in a single line,
-  /// scrolling horizontally if necessary.
-  final bool wrap;
 }
