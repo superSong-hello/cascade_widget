@@ -4,16 +4,10 @@ import 'package:flutter/material.dart';
 class FieldDecoration {
   /// Creates a new instance of [FieldDecoration].
   ///
-  /// [labelText] is the label text to display above the dropdown field.
-  ///
   /// [hintText] is the hint text to display in the dropdown field. The default
   /// value is 'Select'.
   ///
   /// [border] is the border of the dropdown field.
-  ///
-  /// [focusedBorder] is the border of the dropdown field when it is focused.
-  ///
-  /// [disabledBorder] is the border of the dropdown field when it is disabled.
   ///
   /// [suffixIcon] is the icon to display at the end of dropdown field. The
   /// default value is Icon(Icons.arrow_drop_down).
@@ -40,15 +34,12 @@ class FieldDecoration {
   const FieldDecoration({
     this.hintText = 'Select',
     this.border,
-    this.focusedBorder,
-    this.disabledBorder,
     this.suffixIcon = const Icon(
       Icons.keyboard_arrow_down_rounded,
       color: Color(0xff8C8C8C),
       size: 16,
     ),
     this.prefixIcon,
-    this.labelStyle,
     this.borderRadius = 12,
     this.hintStyle,
     this.animateSuffixIcon = true,
@@ -68,20 +59,11 @@ class FieldDecoration {
   /// The border of the dropdown field.
   final InputBorder? border;
 
-  /// The border of the dropdown field when it is focused.
-  final InputBorder? focusedBorder;
-
-  /// The border of the dropdown field when it is disabled.
-  final InputBorder? disabledBorder;
-
   /// The icon to display at the end of dropdown field.
   final Widget? suffixIcon;
 
   /// The icon to display at the start of dropdown field.
   final Widget? prefixIcon;
-
-  /// The style of the label text.
-  final TextStyle? labelStyle;
 
   /// The style of the hint text.
   final TextStyle? hintStyle;

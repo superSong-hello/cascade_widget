@@ -566,7 +566,6 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
     return InputDecoration(
       isCollapsed: true,
       enabled: false,
-      labelStyle: widget.fieldDecoration.labelStyle,
       hintText: widget.cascadeController.selectedList.isEmpty &&
               (widget.textEditingController?.text ?? '').isEmpty
           ? widget.fieldDecoration.hintText
@@ -575,10 +574,8 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
       filled: widget.fieldDecoration.backgroundColor != null,
       fillColor: widget.fieldDecoration.backgroundColor,
       border: widget.fieldDecoration.border ?? border,
-      enabledBorder: widget.fieldDecoration.border ?? border,
-      disabledBorder: widget.fieldDecoration.disabledBorder,
+      disabledBorder: widget.fieldDecoration.border ?? border,
       prefixIcon: prefixIcon,
-      focusedBorder: widget.fieldDecoration.focusedBorder ?? border,
       suffixIcon: _buildSuffixIcon(),
       contentPadding: widget.fieldDecoration.padding,
     );
