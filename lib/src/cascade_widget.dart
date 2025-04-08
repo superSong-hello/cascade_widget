@@ -520,19 +520,31 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(info.name, style: widget.chipDecoration.labelStyle),
-            const SizedBox(width: 4),
-            if (info.id != '-9999')
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: widget.chipDecoration.maxWidth,
+              ),
+              child: Text(
+                info.name,
+                style: widget.chipDecoration.labelStyle,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+            if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')
+              const SizedBox(width: 4),
+            if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')
               InkWell(
                 onTap: () => widget.cascadeController.checkAllItemState(
                   info,
                   isFromChipClick: true,
                 ),
                 child: SizedBox(
-                  width: 16,
-                  height: 16,
+                  width: widget.chipDecoration.closeButtonSize,
+                  height: widget.chipDecoration.closeButtonSize,
                   child: widget.chipDecoration.deleteIcon ??
-                      const Icon(Icons.close, size: 16),
+                      Icon(Icons.close,
+                          size: widget.chipDecoration.closeButtonSize),
                 ),
               ),
           ],

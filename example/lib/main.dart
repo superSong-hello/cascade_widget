@@ -565,9 +565,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(4),
                       borderSide: const BorderSide(color: Colors.grey),
                     ),
-                    isRow: false,
+                    isRow: true,
                   ),
-                  chipDecoration: const ChipDecoration(
+                  chipDecoration: ChipDecoration(
                     backgroundColor: Colors.blueAccent,
                     runSpacing: 2,
                     spacing: 10,
@@ -575,11 +575,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.white,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(4)),
+                    border: Border.all(color: Colors.grey),
                     deleteIcon: Icon(Icons.clear_outlined,
                         color: Colors.white, size: 16),
+                    maxWidth: 100,
                   ),
                   popupConfig: PopupConfig(
-                    isShowAllSelectedLabel: true,
+                    isShowAllSelectedLabel: false,
                     selectedIds: selecteds,
                   ),
                 ),
@@ -609,15 +611,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     isRow: true,
                   ),
                   chipDecoration: const ChipDecoration(
-                      backgroundColor: Colors.blueAccent,
-                      runSpacing: 2,
-                      spacing: 10,
-                      labelStyle: TextStyle(
-                        color: Colors.white,
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                      deleteIcon: Icon(Icons.clear_outlined,
-                          color: Colors.white, size: 16),
+                    backgroundColor: Colors.blueAccent,
+                    runSpacing: 2,
+                    spacing: 10,
+                    labelStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    deleteIcon: Icon(Icons.clear_outlined,
+                        color: Colors.white, size: 16),
                   ),
                   popupConfig: const PopupConfig(
                     isShowAllSelectedLabel: false,
@@ -630,9 +632,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ElevatedButton(
                 onPressed: () {
                   cascadeController.cancelAllSelected();
-                  setState(() {
-
-                  });
+                  setState(() {});
                 },
                 child: const Text('Unselect All'),
               ),
@@ -659,6 +659,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       borderRadius: BorderRadius.circular(4),
                       borderSide: const BorderSide(color: Colors.grey),
                     ),
+                    showClearIcon: false,
                     clearIcon: const Icon(
                       Icons.clear,
                       size: 14,
@@ -680,11 +681,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontSize: 12,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    deleteIcon: Icon(
-                      Icons.clear_outlined,
-                      color: Colors.black54,
-                      size: 15,
-                    ),
+                    // deleteIcon: Icon(
+                    //   Icons.clear_outlined,
+                    //   color: Colors.black54,
+                    //   size: 15,
+                    // ),
                   ),
                   popupConfig: const PopupConfig(
                     isShowFullPathFromSearch: false,

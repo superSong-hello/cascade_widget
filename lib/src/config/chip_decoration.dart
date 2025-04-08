@@ -29,6 +29,8 @@ class ChipDecoration {
     this.runSpacing = 12,
     this.labelStyle,
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
+    this.maxWidth = 160.0,
+    this.closeButtonSize = 16.0,
   });
 
   /// The icon to display for deleting a chip.
@@ -54,4 +56,10 @@ class ChipDecoration {
 
   /// The border radius of the chip.
   final BorderRadiusGeometry borderRadius;
+
+  /// field widget max width
+  final double maxWidth;
+
+  /// close size
+  final double closeButtonSize;
 }
