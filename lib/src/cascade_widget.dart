@@ -57,7 +57,10 @@ class _CascadeWidgetState extends State<CascadeWidget>
     super.initState();
     _cascadeController
       ..init(
-          widget.list, widget.popupConfig.selectedIds, widget.selectedCallBack)
+        widget.list,
+        widget.popupConfig.selectedIds,
+        widget.selectedCallBack,
+      )
       ..isRealTimeRefresh = widget.popupConfig.isShowAllSelectedLabel
       ..refreshPopup = () {
         Future.delayed(const Duration(milliseconds: 100), showPopup);

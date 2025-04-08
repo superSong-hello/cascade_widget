@@ -50,7 +50,11 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   void initState() {
     super.initState();
     _multipleSelectWidgetController
-      ..init(widget.list, widget.selectedCallBack)
+      ..init(
+        widget.list,
+        widget.popupConfig.selectedIds,
+        widget.selectedCallBack,
+      )
       ..refreshPopup = () {
         Future.delayed(const Duration(milliseconds: 100), showPopup);
       };
@@ -170,6 +174,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
                                 listViewHeight: widget.popupConfig.popupHeight,
                                 listViewWidth: width.toDouble(),
                                 popupDecoration: widget.popupConfig,
+                                hideOverlay: hideOverlay,
                               ),
                             ),
                           );
@@ -424,7 +429,17 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(info.name, style: widget.chipDecoration.labelStyle),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: widget.chipDecoration.maxWidth,
+            ),
+            child: Text(
+              info.name,
+              style: widget.chipDecoration.labelStyle,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
           if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')
             const SizedBox(width: 4),
           if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')
@@ -527,6 +542,7 @@ class _PopupListContentWidget extends StatelessWidget {
     required this.listViewHeight,
     required this.listViewWidth,
     required this.popupDecoration,
+    required this.hideOverlay,
   });
 
   final Listenable listenable;
@@ -534,6 +550,7 @@ class _PopupListContentWidget extends StatelessWidget {
   final double listViewHeight;
   final MultipleSelectWidgetController multipleSelectWidgetController;
   final PopupConfig popupDecoration;
+  final VoidCallback hideOverlay;
 
   static Color defaultActiveColor = const Color(0xff0052D9);
 
@@ -570,6 +587,9 @@ class _PopupListContentWidget extends StatelessWidget {
                         selected: !(item.isSelected ?? false),
                         isSingleChoice: popupDecoration.isSingleChoice,
                       );
+                      if (popupDecoration.isSingleChoice) {
+                        hideOverlay();
+                      }
                     },
                     child: Container(
                       height: 32,
@@ -585,11 +605,16 @@ class _PopupListContentWidget extends StatelessWidget {
                             child: Checkbox(
                               tristate: true,
                               value: item.isSelected,
-                              onChanged: (_) =>
-                                  multipleSelectWidgetController.checkItemState(
-                                item,
-                                isSingleChoice: popupDecoration.isSingleChoice,
-                              ),
+                              onChanged: (_) {
+                                multipleSelectWidgetController.checkItemState(
+                                  item,
+                                  isSingleChoice:
+                                      popupDecoration.isSingleChoice,
+                                );
+                                if (popupDecoration.isSingleChoice) {
+                                  hideOverlay();
+                                }
+                              },
                               activeColor:
                                   popupDecoration.checkBoxActiveColor ??
                                       defaultActiveColor,
