@@ -11,36 +11,40 @@
 ```dart
 /// 级联操作
 CascadeWidget(
-  list: testList,
+  list: testList1,
   selectedCallBack: (selectedList) {
     for (final e in selectedList) {
       debugPrint('name:${e.name}, id:${e.id}');
     }
-    },
+  },
   fieldDecoration: FieldDecoration(
+    backgroundColor: Colors.white,
     hintText: '请选择',
     hintStyle: const TextStyle(color: Colors.black45),
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(4),
       borderSide: const BorderSide(color: Colors.grey),
     ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(
-        color: Colors.black87,
-      ),
-    ),
+    isRow: true,
   ),
-  chipDecoration: const ChipDecoration(
+  chipDecoration: ChipDecoration(
     backgroundColor: Colors.blueAccent,
     runSpacing: 2,
     spacing: 10,
     labelStyle: TextStyle(
       color: Colors.white,
     ),
+    borderRadius: BorderRadius.all(Radius.circular(4)),
+    border: Border.all(color: Colors.grey),
     deleteIcon: Icon(Icons.clear_outlined,
-    color: Colors.white, size: 16)),
-),
+    color: Colors.white, size: 16),
+    maxWidth: 100,
+  ),
+  popupConfig: PopupConfig(
+    isShowAllSelectedLabel: false,
+    selectedIds: selecteds,
+  ),
+)
 
 ```
 
@@ -51,9 +55,9 @@ MultipleSelectWidget(
     for (final e in selectedList) {
       debugPrint('name:${e.name}, id:${e.id}');
     }
-    },
+  },
   fieldDecoration: FieldDecoration(
-    hintText: '多选',
+    hintText: '单选（支持多选）',
     hintStyle: const TextStyle(
       color: Colors.black45,
       fontSize: 14,
@@ -65,12 +69,7 @@ MultipleSelectWidget(
       borderRadius: BorderRadius.circular(4),
       borderSide: const BorderSide(color: Colors.grey),
     ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(4),
-      borderSide: const BorderSide(
-        color: Colors.black87,
-      ),
-    ),
+    showClearIcon: false,
     clearIcon: const Icon(
       Icons.clear,
       size: 14,
@@ -78,29 +77,30 @@ MultipleSelectWidget(
     style: const TextStyle(
       fontSize: 14,
     ),
+  ),
+  chipDecoration: const ChipDecoration(
+    backgroundColor: Colors.black12,
+    padding: EdgeInsets.symmetric(
+      horizontal: 6,
+      vertical: 2,
     ),
-    chipDecoration: const ChipDecoration(
-      backgroundColor: Colors.black12,
-      padding: EdgeInsets.symmetric(
-        horizontal: 6,
-        vertical: 2,
-      ),
-      runSpacing: 0,
-      spacing: 5,
-      labelStyle: TextStyle(
-        color: Colors.black87,
-        fontSize: 12,
-      ),
-      borderRadius: BorderRadius.all(Radius.circular(4)),
-      deleteIcon: Icon(
-        Icons.clear_outlined,
-        color: Colors.black54,
-        size: 15,
-      ),
+    runSpacing: 0,
+    spacing: 5,
+    labelStyle: TextStyle(
+      color: Colors.black87,
+      fontSize: 12,
     ),
-    popupDecoration: const PopupDecoration(
-      isShowFullPathFromSearch: false,
-      popupHeight: 300,
-    ),
+  borderRadius: BorderRadius.all(Radius.circular(4)),
+// deleteIcon: Icon(
+//   Icons.clear_outlined,
+//   color: Colors.black54,
+//   size: 15,
+// ),
+  ),
+  popupConfig: const PopupConfig(
+    isShowFullPathFromSearch: false,
+    popupHeight: 300,
+    isSingleChoice: true,
+  ),
 )
 ```
