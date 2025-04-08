@@ -34,8 +34,17 @@ class MultipleSelectWidgetController extends ChangeNotifier {
   /// 初始化
   void init(
     List<DropDownMenuModel> options,
+    List<String>? defaultSelectedIds,
     ValueChanged<List<DropDownMenuModel>> selectedCallBack,
   ) {
+    if (defaultSelectedIds != null && defaultSelectedIds.isNotEmpty) {
+      _getAllSelectedListFromIds(
+        options,
+        defaultSelectedIds,
+        <DropDownMenuModel>[],
+      );
+    }
+
     setItems(options);
     _selectedCallBack = selectedCallBack;
     getSelectedList();
@@ -77,6 +86,24 @@ class MultipleSelectWidgetController extends ChangeNotifier {
     selectedCallBack(getSelectedList());
 
     notifyListeners();
+  }
+
+  List<DropDownMenuModel> _getAllSelectedListFromIds(
+    List<DropDownMenuModel> list,
+    List<String> ids,
+    List<DropDownMenuModel> selectList,
+  ) {
+    for (final e in list) {
+      if (e.children.isEmpty) {
+        if (e.id.isNotEmpty && ids.contains(e.id)) {
+          e.isSelected = true;
+          selectList.add(e);
+        }
+      } else {
+        _getAllSelectedListFromIds(e.children, ids, selectList);
+      }
+    }
+    return selectList;
   }
 
   /// 获取所有选中的有效数据

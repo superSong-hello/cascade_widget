@@ -509,7 +509,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final mulList = [
     DropDownMenuModel(
       id: '1',
-      name: '选项 1',
+      name: '测试选择item回显的长度 选项 1',
       children: [],
     ),
     DropDownMenuModel(
@@ -681,16 +681,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontSize: 12,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    // deleteIcon: Icon(
-                    //   Icons.clear_outlined,
-                    //   color: Colors.black54,
-                    //   size: 15,
-                    // ),
+                    maxWidth: 100,
+                    deleteIcon: Icon(
+                      Icons.clear_outlined,
+                      color: Colors.black54,
+                      size: 15,
+                    ),
                   ),
                   popupConfig: const PopupConfig(
                     isShowFullPathFromSearch: false,
                     popupHeight: 300,
-                    isSingleChoice: true,
+                    isSingleChoice: false,
+                    selectedIds: ['1'],
                   ),
                 ),
               ),
