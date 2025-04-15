@@ -359,6 +359,7 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
                 controller: widget.textEditingController,
                 focusNode: widget.focusNode,
                 style: widget.fieldDecoration.style,
+                canRequestFocus: widget.popupConfig.canRequestFocus,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   isCollapsed: true,
@@ -394,6 +395,7 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
             controller: widget.textEditingController,
             focusNode: widget.focusNode,
             style: widget.fieldDecoration.style,
+            canRequestFocus: widget.popupConfig.canRequestFocus,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(
                 vertical: widget.fieldDecoration.padding?.top ?? 0,
