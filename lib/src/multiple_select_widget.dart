@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'widgets/bubble_widget.dart';
 import 'config/chip_decoration.dart';
@@ -87,6 +88,8 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
     if (_focusNode.hasFocus) {
       /// 获取焦点
       showOverlay();
+    } else {
+      // hideOverlay();
     }
   }
 
@@ -102,18 +105,32 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
       onPopInvoked: (_) async {
         hideOverlay();
       },
-      child: _CustomInputDecorator(
-        fieldDecoration: widget.fieldDecoration,
-        popupConfig: widget.popupConfig,
-        listenable: _listenable,
-        changeOverlay:
-            _multipleSelectWidgetController.isOpen ? hideOverlay : showOverlay,
-        buttonKey: _buttonKey,
-        multipleSelectWidgetController: _multipleSelectWidgetController,
-        chipDecoration: widget.chipDecoration,
-        focusNode: _focusNode,
-        textEditingController: _textEditingController,
-        hideOverlay: hideOverlay,
+      child: Focus(
+        onFocusChange: (value) {
+          // debugPrint('$_focusNode: $value');
+        },
+        onKeyEvent: (_, event) {
+          // 监听 Tab 键
+          if (event is KeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.tab) {
+            return KeyEventResult.handled; // 阻止焦点切换
+          }
+          return KeyEventResult.ignored;
+        },
+        child: _CustomInputDecorator(
+          fieldDecoration: widget.fieldDecoration,
+          popupConfig: widget.popupConfig,
+          listenable: _listenable,
+          changeOverlay: _multipleSelectWidgetController.isOpen
+              ? hideOverlay
+              : showOverlay,
+          buttonKey: _buttonKey,
+          multipleSelectWidgetController: _multipleSelectWidgetController,
+          chipDecoration: widget.chipDecoration,
+          focusNode: _focusNode,
+          textEditingController: _textEditingController,
+          hideOverlay: hideOverlay,
+        ),
       ),
     );
   }
