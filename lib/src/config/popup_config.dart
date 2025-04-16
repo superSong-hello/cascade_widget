@@ -15,7 +15,7 @@ class PopupConfig {
     this.disabled = false,
     this.disabledColor,
     this.isShowSearchInput = true,
-    this.canRequestFocus = false,
+    this.canRequestFocus = true,
   });
 
   /// 弹层单个list的宽度

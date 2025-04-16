@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'config/chip_decoration.dart';
 import 'config/field_decoration.dart';
@@ -128,6 +129,8 @@ class _CascadeWidgetState extends State<CascadeWidget>
     if (_focusNode.hasFocus) {
       /// 获取焦点
       showOverlay();
+    } else {
+      // hideOverlay();
     }
   }
 
@@ -143,18 +146,31 @@ class _CascadeWidgetState extends State<CascadeWidget>
       onPopInvoked: (_) async {
         hideOverlay();
       },
-      child: _CustomInputDecorator(
-        fieldDecoration: widget.fieldDecoration,
-        popupConfig: widget.popupConfig,
-        listenable: _listenable,
-        changeOverlay: _cascadeController.isOpen ? hideOverlay : showOverlay,
-        hideOverlay: hideOverlay,
-        buttonKey: _buttonKey,
-        cascadeController: _cascadeController,
-        chipDecoration: widget.chipDecoration,
-        focusNode: _focusNode,
-        textEditingController: _textEditingController,
-        scrollController: _scrollController,
+      child: Focus(
+        onFocusChange: (value) {
+          // debugPrint('$_focusNode: $value');
+        },
+        onKeyEvent: (_, event) {
+          // 监听 Tab 键
+          if (event is KeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.tab) {
+            return KeyEventResult.handled; // 阻止焦点切换
+          }
+          return KeyEventResult.ignored;
+        },
+        child: _CustomInputDecorator(
+          fieldDecoration: widget.fieldDecoration,
+          popupConfig: widget.popupConfig,
+          listenable: _listenable,
+          changeOverlay: _cascadeController.isOpen ? hideOverlay : showOverlay,
+          hideOverlay: hideOverlay,
+          buttonKey: _buttonKey,
+          cascadeController: _cascadeController,
+          chipDecoration: widget.chipDecoration,
+          focusNode: _focusNode,
+          textEditingController: _textEditingController,
+          scrollController: _scrollController,
+        ),
       ),
     );
   }
