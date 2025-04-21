@@ -16,6 +16,8 @@ class PopupConfig {
     this.disabledColor,
     this.isShowSearchInput = true,
     this.canRequestFocus = true,
+    this.isShowOverlay = false,
+    this.overlayColor = Colors.transparent,
   });
 
   /// 弹层单个list的宽度
@@ -59,4 +61,10 @@ class PopupConfig {
 
   /// 搜索框是否可以获取焦点
   final bool canRequestFocus;
+
+  /// 是否追加遮罩层
+  final bool isShowOverlay;
+
+  /// 遮罩层颜色
+  final Color overlayColor;
 }
