@@ -203,8 +203,65 @@ class _CascadeWidgetState extends State<CascadeWidget>
             final height = renderBox.size.height;
             final width = renderBox.size.width;
 
+            /// 获取屏幕宽度
+            double screenWidth = MediaQuery.of(context).size.width;
+
+            /// 获取屏幕高度
+            double screenHeight = MediaQuery.of(context).size.height;
+            final Color maskColor = widget.popupConfig.overlayColor;
+
             return Stack(
               children: [
+                if (widget.popupConfig.isShowOverlay) ...[
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: GestureDetector(
+                      onTap: hideOverlay,
+                      child: Container(
+                        height: position.dy,
+                        width: screenWidth,
+                        color: maskColor,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: position.dy,
+                    left: 0,
+                    child: GestureDetector(
+                      onTap: hideOverlay,
+                      child: Container(
+                        height: height.toDouble(),
+                        width: position.dx,
+                        color: maskColor,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: position.dy,
+                    left: position.dx + width,
+                    child: GestureDetector(
+                      onTap: hideOverlay,
+                      child: Container(
+                        height: height.toDouble(),
+                        width: screenWidth - width - position.dx,
+                        color: maskColor,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: position.dy + height,
+                    left: 0,
+                    child: GestureDetector(
+                      onTap: hideOverlay,
+                      child: Container(
+                        height: screenHeight,
+                        width: screenWidth,
+                        color: maskColor,
+                      ),
+                    ),
+                  )
+                ],
                 Positioned(
                   left: position.dx + 0,
                   top: position.dy + height,
