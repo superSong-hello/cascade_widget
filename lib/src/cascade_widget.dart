@@ -69,11 +69,13 @@ class _CascadeWidgetState extends State<CascadeWidget>
         /// 显示所有标签的时候，勾选新的会滑到最底部
         if (widget.popupConfig.isShowAllSelectedLabel) {
           Future.delayed(const Duration(milliseconds: 50), () {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-            );
+            if (_scrollController.positions.isNotEmpty) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOut,
+              );
+            }
           });
         }
       };
@@ -463,7 +465,7 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
 
   Widget _buildField() {
     final selectedList = widget.cascadeController.selectedList;
-    List<Widget>? list;
+    List<Widget> list = [];
     if (selectedList.isNotEmpty) {
       if (widget.popupConfig.isShowAllSelectedLabel) {
         list = selectedList.map((e) => _buildChip(e)).toList();
@@ -484,16 +486,97 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
     }
 
     if (widget.fieldDecoration.isRow) {
-      return Row(
-        children: [
-          if (list != null && list.isNotEmpty)
+      var rowList = <Widget>[];
+      if (widget.popupConfig.isShowAllSelectedLabel) {
+        if (list.isEmpty) {
+          rowList = <Widget>[
+            if (widget.popupConfig.isShowSearchInput)
+              Expanded(
+                child: TextFormField(
+                  controller: widget.textEditingController,
+                  focusNode: widget.focusNode,
+                  style: widget.fieldDecoration.style,
+                  canRequestFocus: widget.popupConfig.canRequestFocus,
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.zero,
+                    isCollapsed: true,
+                    border: InputBorder.none,
+                    // 设置边框为无
+                    // 如果需要在焦点变化时或者输入有错误时也不显示边框，可以设置以下两个属性
+                    enabledBorder: InputBorder.none,
+                    // 输入框没有焦点时的边框
+                    focusedBorder: InputBorder.none,
+                    // 输入框有焦点时的边框
+                    // 如果有错误提示也不需要边框，可以设置以下属性
+                    errorBorder: InputBorder.none,
+                    // 当输入有错误时的边框
+                    focusedErrorBorder: InputBorder.none, // 当输入有错误且输入框有焦点时的边框
+                  ),
+                ),
+              ),
+          ];
+        } else {
+          if (widget.popupConfig.isShowSearchInput) {
+            final vertical = widget.chipDecoration.padding.vertical / 2;
+            list.add(Container(
+              width: 80,
+              padding: EdgeInsets.only(top: vertical),
+              child: TextFormField(
+                controller: widget.textEditingController,
+                focusNode: widget.focusNode,
+                style: widget.fieldDecoration.style,
+                canRequestFocus: widget.popupConfig.canRequestFocus,
+                decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.zero,
+                  isCollapsed: true,
+                  border: InputBorder.none,
+                  // 设置边框为无
+                  // 如果需要在焦点变化时或者输入有错误时也不显示边框，可以设置以下两个属性
+                  enabledBorder: InputBorder.none,
+                  // 输入框没有焦点时的边框
+                  focusedBorder: InputBorder.none,
+                  // 输入框有焦点时的边框
+                  // 如果有错误提示也不需要边框，可以设置以下属性
+                  errorBorder: InputBorder.none,
+                  // 当输入有错误时的边框
+                  focusedErrorBorder: InputBorder.none, // 当输入有错误且输入框有焦点时的边框
+                ),
+              ),
+            ));
+          }
+          rowList = <Widget>[
+            if (list.isNotEmpty)
+              Expanded(
+                  child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: widget.fieldDecoration.maxHeight,
+                  minHeight: widget.fieldDecoration.minHeight,
+                ),
+                child: ListView(
+                  controller: widget.scrollController,
+                  shrinkWrap: true,
+                  children: [
+                    Wrap(
+                      spacing: 8, // 水平方向的间距
+                      runSpacing: 4, // 垂直方向的间距
+                      children: list,
+                    ),
+                    // TextField(),
+                  ],
+                ),
+              )),
+          ];
+        }
+      } else {
+        rowList = <Widget>[
+          if (list.isNotEmpty)
             Wrap(
               spacing: widget.chipDecoration.spacing,
               runSpacing: widget.chipDecoration.runSpacing,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: list,
             ),
-          if (list != null && list.isNotEmpty)
+          if (list.isNotEmpty)
             const SizedBox(
               width: 5,
             ),
@@ -521,14 +604,18 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
                 ),
               ),
             ),
-        ],
+        ];
+      }
+
+      return Row(
+        children: rowList,
       );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (list != null && list.isNotEmpty)
+        if (list.isNotEmpty)
           if (widget.popupConfig.isShowAllSelectedLabel)
             ConstrainedBox(
               constraints: BoxConstraints(
@@ -548,7 +635,7 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
                 ],
               ),
             ),
-        if (list != null && list.isNotEmpty)
+        if (list.isNotEmpty)
           if (!widget.popupConfig.isShowAllSelectedLabel)
             Wrap(
               spacing: widget.chipDecoration.spacing,
