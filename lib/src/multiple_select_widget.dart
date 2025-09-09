@@ -671,7 +671,7 @@ class _PopupListContentWidget extends StatelessWidget {
                       height: 32,
                       color: item.isClicked
                           ? (popupDecoration.itemBackgroundColor ??
-                              defaultActiveColor.withOpacity(0.1))
+                              defaultActiveColor.withValues(alpha: 0.1))
                           : Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 5),
                       child: Row(

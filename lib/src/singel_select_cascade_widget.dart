@@ -4,13 +4,14 @@ import 'package:flutter/services.dart';
 import 'config/chip_decoration.dart';
 import 'config/field_decoration.dart';
 import 'config/popup_config.dart';
-import 'controller/cascade_widget_controller.dart';
+import 'controller/single_select_cascade_widget_controller.dart';
 import 'model/drop_down_menu_model.dart';
 import 'widgets/bubble_widget.dart';
 import 'widgets/custom_text.dart';
 
-class CascadeWidget extends StatefulWidget {
-  const CascadeWidget({
+/// TODO：- 临时做的级联选择单选，后期会合并到级联控件中
+class SingleSelectCascadeWidget extends StatefulWidget {
+  const SingleSelectCascadeWidget({
     super.key,
     required this.list,
     required this.selectedCallBack,
@@ -30,18 +31,19 @@ class CascadeWidget extends StatefulWidget {
 
   final PopupConfig popupConfig;
 
-  final CascadeWidgetController? controller;
+  final SingleSelectCascadeWidgetController? controller;
 
   @override
-  State<CascadeWidget> createState() => _CascadeWidgetState();
+  State<SingleSelectCascadeWidget> createState() =>
+      _SingleSelectCascadeWidgetState();
 }
 
-class _CascadeWidgetState extends State<CascadeWidget>
+class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
     with SingleTickerProviderStateMixin {
   final GlobalKey _buttonKey = GlobalKey();
   final FocusNode _focusNode = FocusNode();
-  late final CascadeWidgetController _cascadeController =
-      widget.controller ?? CascadeWidgetController();
+  late final SingleSelectCascadeWidgetController _cascadeController =
+      widget.controller ?? SingleSelectCascadeWidgetController();
   final _textEditingController = TextEditingController();
   final _scrollController = ScrollController();
 
@@ -64,6 +66,7 @@ class _CascadeWidgetState extends State<CascadeWidget>
       )
       ..isRealTimeRefresh = widget.popupConfig.isShowAllSelectedLabel
       ..refreshPopup = () {
+        debugPrint('====== refreshPopup');
         Future.delayed(const Duration(milliseconds: 100), showPopup);
 
         /// 显示所有标签的时候，勾选新的会滑到最底部
@@ -102,7 +105,7 @@ class _CascadeWidgetState extends State<CascadeWidget>
   //   if (oldWidget.controller != widget.controller) {
   //     _cascadeController.dispose();
   //
-  //     _cascadeController = widget.controller ?? CascadeWidgetController();
+  //     _cascadeController = widget.controller ?? SingleSelectCascadeWidgetController();
   //     _cascadeController
   //       ..init(widget.list, widget.selectedCallBack)
   //       ..refreshPopup = () {
@@ -294,6 +297,7 @@ class _CascadeWidgetState extends State<CascadeWidget>
                                               widget.popupConfig.popupHeight,
                                           listViewWidth: width.toDouble(),
                                           popupConfig: widget.popupConfig,
+                                          hideOverlay: hideOverlay,
                                         )
                                       : _PopupTreeContentWidget(
                                           /// 级联选择
@@ -303,6 +307,7 @@ class _CascadeWidgetState extends State<CascadeWidget>
                                           listViewWidth:
                                               widget.popupConfig.popupWidth,
                                           popupConfig: widget.popupConfig,
+                                          hideOverlay: hideOverlay,
                                         ),
                                 ),
                               );
@@ -372,7 +377,7 @@ class _CustomInputDecorator extends StatefulWidget {
 
   final VoidCallback? changeOverlay;
 
-  final CascadeWidgetController cascadeController;
+  final SingleSelectCascadeWidgetController cascadeController;
 
   final FocusNode? focusNode;
 
@@ -547,24 +552,24 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
           rowList = <Widget>[
             if (list.isNotEmpty)
               Expanded(
-                  child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: widget.fieldDecoration.maxHeight,
-                  minHeight: widget.fieldDecoration.minHeight,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: widget.fieldDecoration.maxHeight,
+                    minHeight: widget.fieldDecoration.minHeight,
+                  ),
+                  child: ListView(
+                    controller: widget.scrollController,
+                    shrinkWrap: true,
+                    children: [
+                      Wrap(
+                        spacing: 8, // 水平方向的间距
+                        runSpacing: 4, // 垂直方向的间距
+                        children: list,
+                      ),
+                    ],
+                  ),
                 ),
-                child: ListView(
-                  controller: widget.scrollController,
-                  shrinkWrap: true,
-                  children: [
-                    Wrap(
-                      spacing: 8, // 水平方向的间距
-                      runSpacing: 4, // 垂直方向的间距
-                      children: list,
-                    ),
-                    // TextField(),
-                  ],
-                ),
-              )),
+              ),
           ];
         }
       } else {
@@ -798,14 +803,14 @@ class _PopupListContentWidget extends StatelessWidget {
     required this.listViewHeight,
     required this.listViewWidth,
     required this.popupConfig,
+    required this.hideOverlay,
   });
 
   final double listViewWidth;
   final double listViewHeight;
-  final CascadeWidgetController cascadeController;
+  final SingleSelectCascadeWidgetController cascadeController;
   final PopupConfig popupConfig;
-
-  static Color defaultActiveColor = const Color(0xff0052D9);
+  final VoidCallback hideOverlay;
 
   @override
   Widget build(BuildContext context) {
@@ -828,53 +833,19 @@ class _PopupListContentWidget extends StatelessWidget {
           ),
           child: ListView(
             children: cascadeController.filteredList.map((item) {
-              return GestureDetector(
-                onTap: () {
-                  cascadeController.checkAllItemState(
-                    item,
-                    isFromChipClick: true,
-                    selected: !(item.isSelected ?? false),
-                  );
-                },
-                child: Container(
-                  height: 32,
-                  color: item.isClicked
-                      ? defaultActiveColor.withValues(alpha: 0.1)
-                      : Colors.white,
-                  padding: const EdgeInsets.only(left: 5, right: 12),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: CustomText(
-                          popupConfig.isShowFullPathFromSearch
-                              ? item.pathName
-                              : item.name,
-                          style: item.isClicked || (item.isSelected ?? true)
-                              ? (popupConfig.selectedTextStyle ??
-                                  TextStyle(
-                                    color: defaultActiveColor,
-                                  ))
-                              : popupConfig.textStyle ??
-                                  const TextStyle(
-                                    color: Colors.black,
-                                  ),
-                        ),
-                      ),
-                      if (item.isSelected ?? false)
-                        Icon(
-                          Icons.check,
-                          size: 16,
-                          color: popupConfig.selectedTextStyle?.color ??
-                              defaultActiveColor,
-                        )
-                      else
-                        const SizedBox(
-                          width: 16,
-                        ),
-                    ],
-                  ),
-                ),
-              );
+              return _SearchListItem(
+                  item: item,
+                  popupConfig: popupConfig,
+                  callback: (DropDownMenuModel item) {
+                    cascadeController.checkAllItemState(
+                      item,
+                      isFromChipClick: true,
+                      selected: !(item.isSelected ?? false),
+                    );
+                    Future.delayed(const Duration(milliseconds: 200), () {
+                      hideOverlay();
+                    });
+                  });
             }).toList(),
           ),
         ),
@@ -923,20 +894,102 @@ class _PopupListContentWidget extends StatelessWidget {
   }
 }
 
+class _SearchListItem extends StatefulWidget {
+  const _SearchListItem({
+    required this.item,
+    required this.popupConfig,
+    required this.callback,
+  });
+
+  final DropDownMenuModel item;
+
+  final ValueChanged<DropDownMenuModel> callback;
+
+  final PopupConfig popupConfig;
+
+  @override
+  State<StatefulWidget> createState() => _SearchListItemState();
+}
+
+class _SearchListItemState extends State<_SearchListItem> {
+  var isHover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          isHover = true;
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          isHover = false;
+        });
+      },
+      child: InkWell(
+        onTap: () => widget.callback(widget.item),
+        child: Container(
+          height: 32,
+          color: isHover
+              ? (widget.popupConfig.itemBackgroundColor ??
+                  defaultActiveColor.withValues(alpha: 0.1))
+              : null,
+          padding: const EdgeInsets.only(left: 5, right: 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomText(
+                  widget.popupConfig.isShowFullPathFromSearch
+                      ? widget.item.pathName
+                      : widget.item.name,
+                  style:
+                      widget.item.isClicked || (widget.item.isSelected ?? true)
+                          ? (widget.popupConfig.selectedTextStyle ??
+                              TextStyle(
+                                color: defaultActiveColor,
+                              ))
+                          : widget.popupConfig.textStyle ??
+                              const TextStyle(
+                                color: Colors.black,
+                              ),
+                ),
+              ),
+              if (widget.item.isSelected ?? false)
+                Icon(
+                  Icons.check,
+                  size: 16,
+                  color: widget.popupConfig.selectedTextStyle?.color ??
+                      defaultActiveColor,
+                )
+              else
+                const SizedBox(
+                  width: 16,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Color defaultActiveColor = const Color(0xff0052D9);
+
 class _PopupTreeContentWidget extends StatelessWidget {
   const _PopupTreeContentWidget({
     required this.cascadeController,
     required this.listViewHeight,
     required this.listViewWidth,
     required this.popupConfig,
+    required this.hideOverlay,
   });
 
   final double listViewWidth;
   final double listViewHeight;
-  final CascadeWidgetController cascadeController;
+  final SingleSelectCascadeWidgetController cascadeController;
   final PopupConfig popupConfig;
-
-  static Color defaultActiveColor = const Color(0xff0052D9);
+  final VoidCallback hideOverlay;
 
   @override
   Widget build(BuildContext context) {
@@ -979,67 +1032,11 @@ class _PopupTreeContentWidget extends StatelessWidget {
                   shrinkWrap: true,
                   children: e
                       .map(
-                        (item) => GestureDetector(
-                          onTap: () => listViewItemClick(item),
-                          child: Container(
-                            height: 32,
-                            color: item.isClicked
-                                ? (popupConfig.itemBackgroundColor ??
-                                    defaultActiveColor.withValues(alpha: 0.1))
-                                : Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Row(
-                              children: [
-                                Transform.scale(
-                                  scale: 0.8,
-                                  child: Checkbox(
-                                    tristate: true,
-                                    value: item.isSelected,
-                                    onChanged: (_) => cascadeController
-                                        .checkAllItemState(item),
-                                    activeColor:
-                                        popupConfig.checkBoxActiveColor ??
-                                            defaultActiveColor,
-                                    side: const BorderSide(
-                                      color: Color(0xffD9D9D9),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(bottom: 2),
-                                    child: Text(
-                                      item.name,
-                                      maxLines: 1, // 设置为1行，如果文本过长，则会省略
-                                      overflow:
-                                          TextOverflow.ellipsis, // 文本溢出时显示省略号
-                                      style: item.isClicked ||
-                                              (item.isSelected ?? true)
-                                          ? popupConfig.selectedTextStyle ??
-                                              TextStyle(
-                                                color: popupConfig
-                                                        .checkBoxActiveColor ??
-                                                    defaultActiveColor,
-                                              )
-                                          : popupConfig.textStyle ??
-                                              const TextStyle(
-                                                color: Colors.black,
-                                              ),
-                                    ),
-                                  ),
-                                ),
-                                if (item.children.isNotEmpty)
-                                  const Padding(
-                                    padding: EdgeInsets.only(right: 6),
-                                    child: Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      size: 12,
-                                      color: Color(0xff8C8C8C),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
+                        (item) => _TreeListItem(
+                          item: item,
+                          popupConfig: popupConfig,
+                          callback: (DropDownMenuModel item) =>
+                              listViewItemClick(item),
                         ),
                       )
                       .toList(),
@@ -1053,6 +1050,15 @@ class _PopupTreeContentWidget extends StatelessWidget {
   }
 
   void listViewItemClick(DropDownMenuModel item) {
+    /// TODO: - 最后一层选中逻辑
+    if (item.children.isEmpty) {
+      cascadeController.checkAllItemState(item);
+      Future.delayed(const Duration(milliseconds: 200), () {
+        hideOverlay();
+      });
+      return;
+    }
+
     /// 取消之前的被选中的状态
     cascadeController.cancelAllClickedState(
       cascadeController.list,
@@ -1089,7 +1095,110 @@ class _PopupTreeContentWidget extends StatelessWidget {
       }
       level++;
     }
+
     cascadeController.setUIItems(tempTree);
+  }
+}
+
+class _TreeListItem extends StatefulWidget {
+  const _TreeListItem({
+    required this.item,
+    required this.popupConfig,
+    required this.callback,
+  });
+
+  final DropDownMenuModel item;
+
+  final ValueChanged<DropDownMenuModel> callback;
+
+  final PopupConfig popupConfig;
+
+  @override
+  State<StatefulWidget> createState() => _TreeListItemState();
+}
+
+class _TreeListItemState extends State<_TreeListItem> {
+  var isHover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          isHover = true;
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          isHover = false;
+        });
+      },
+      child: InkWell(
+        onTap: () => widget.callback(widget.item),
+        child: Container(
+          height: 32,
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          color: isHover
+              ? (widget.popupConfig.itemBackgroundColor ??
+                  defaultActiveColor.withValues(alpha: 0.1))
+              : null,
+          child: Row(
+            children: [
+              if (widget.item.children.isEmpty)
+                SizedBox(
+                  width: 20,
+                  child: widget.item.isSelected ?? false
+                      ? Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Icon(
+                            Icons.done_rounded,
+                            size: 16,
+                            color: widget.popupConfig.checkBoxActiveColor ??
+                                defaultActiveColor,
+                          ),
+                        )
+                      : null,
+                ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text(
+                    widget.item.name,
+                    maxLines: 1, // 设置为1行，如果文本过长，则会省略
+                    overflow: TextOverflow.ellipsis, // 文本溢出时显示省略号
+                    style: widget.item.isClicked ||
+                            (widget.item.isSelected ?? true)
+                        ? widget.popupConfig.selectedTextStyle ??
+                            TextStyle(
+                              color: widget.popupConfig.checkBoxActiveColor ??
+                                  defaultActiveColor,
+                            )
+                        : widget.popupConfig.textStyle ??
+                            const TextStyle(
+                              color: Colors.black,
+                            ),
+                  ),
+                ),
+              ),
+              if (widget.item.children.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(right: 2),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 12,
+                    color: widget.item.isClicked ||
+                            (widget.item.isSelected ?? true)
+                        ? widget.popupConfig.selectedTextStyle?.color ??
+                            widget.popupConfig.checkBoxActiveColor ??
+                            defaultActiveColor
+                        : const Color(0xff8C8C8C),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
