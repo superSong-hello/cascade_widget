@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const Color defaultActiveColor = Color(0xff0052D9);
+
 class PopupConfig {
   const PopupConfig({
     this.popupWidth = 180,

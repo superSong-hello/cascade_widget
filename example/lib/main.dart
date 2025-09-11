@@ -762,6 +762,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 50),
               SizedBox(
                 width: 410,
+                height: 30,
                 child: MultipleSelectWidget(
                   list: mulList,
                   selectedCallBack: (selectedList) {
@@ -773,11 +774,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     hintText: '单选（支持多选）',
                     hintStyle: const TextStyle(
                       color: Colors.black45,
-                      fontSize: 14,
+                      fontSize: 12,
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
                       borderSide: const BorderSide(color: Colors.grey),

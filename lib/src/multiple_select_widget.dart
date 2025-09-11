@@ -628,8 +628,6 @@ class _PopupListContentWidget extends StatelessWidget {
   final PopupConfig popupDecoration;
   final VoidCallback hideOverlay;
 
-  static Color defaultActiveColor = const Color(0xff0052D9);
-
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -655,8 +653,13 @@ class _PopupListContentWidget extends StatelessWidget {
               child: ListView(
                 children:
                     multipleSelectWidgetController.filteredList.map((item) {
-                  return GestureDetector(
-                    onTap: () {
+                  return _ListItem(
+                    item: item,
+                    popupConfig: popupDecoration,
+                    multipleSelectWidgetController:
+                        multipleSelectWidgetController,
+                    hideOverlay: hideOverlay,
+                    callback: (item) {
                       multipleSelectWidgetController.checkItemState(
                         item,
                         isFromChipClick: true,
@@ -667,72 +670,6 @@ class _PopupListContentWidget extends StatelessWidget {
                         hideOverlay();
                       }
                     },
-                    child: Container(
-                      height: 32,
-                      color: item.isClicked
-                          ? (popupDecoration.itemBackgroundColor ??
-                              defaultActiveColor.withValues(alpha: 0.1))
-                          : Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Row(
-                        children: [
-                          Transform.scale(
-                            scale: 0.8,
-                            child: Checkbox(
-                              tristate: true,
-                              value: item.isSelected,
-                              onChanged: (_) {
-                                multipleSelectWidgetController.checkItemState(
-                                  item,
-                                  isSingleChoice:
-                                      popupDecoration.isSingleChoice,
-                                );
-                                if (popupDecoration.isSingleChoice) {
-                                  hideOverlay();
-                                }
-                              },
-                              activeColor:
-                                  popupDecoration.checkBoxActiveColor ??
-                                      defaultActiveColor,
-                              side: const BorderSide(
-                                color: Color(0xffD9D9D9),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              child: Text(
-                                item.name,
-                                maxLines: 1, // 设置为1行，如果文本过长，则会省略
-                                overflow: TextOverflow.ellipsis, // 文本溢出时显示省略号
-                                style:
-                                    item.isClicked || (item.isSelected ?? true)
-                                        ? popupDecoration.selectedTextStyle ??
-                                            TextStyle(
-                                              color: popupDecoration
-                                                      .checkBoxActiveColor ??
-                                                  defaultActiveColor,
-                                            )
-                                        : popupDecoration.textStyle ??
-                                            const TextStyle(
-                                              color: Colors.black,
-                                            ),
-                              ),
-                            ),
-                          ),
-                          if (item.children.isNotEmpty)
-                            const Padding(
-                              padding: EdgeInsets.only(right: 6),
-                              child: Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                size: 12,
-                                color: Color(0xff8C8C8C),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
                   );
                 }).toList(),
               ),
@@ -740,6 +677,115 @@ class _PopupListContentWidget extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _ListItem extends StatefulWidget {
+  const _ListItem({
+    required this.item,
+    required this.popupConfig,
+    required this.callback,
+    required this.multipleSelectWidgetController,
+    required this.hideOverlay,
+  });
+
+  final DropDownMenuModel item;
+
+  final ValueChanged<DropDownMenuModel> callback;
+
+  final PopupConfig popupConfig;
+
+  final MultipleSelectWidgetController multipleSelectWidgetController;
+
+  final VoidCallback hideOverlay;
+
+  @override
+  State<StatefulWidget> createState() => _ListItemState();
+}
+
+class _ListItemState extends State<_ListItem> {
+  var isHover = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          isHover = true;
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          isHover = false;
+        });
+      },
+      child: InkWell(
+          onTap: () => widget.callback(widget.item),
+          child: Container(
+            height: 32,
+            color: isHover
+                ? (widget.popupConfig.itemBackgroundColor ??
+                    defaultActiveColor.withValues(alpha: 0.1))
+                : null,
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: Row(
+              children: [
+                if (!widget.popupConfig.isSingleChoice)
+                  Transform.scale(
+                    scale: 0.8,
+                    child: Checkbox(
+                      tristate: true,
+                      value: widget.item.isSelected,
+                      onChanged: (_) {
+                        widget.multipleSelectWidgetController.checkItemState(
+                          widget.item,
+                          isSingleChoice: widget.popupConfig.isSingleChoice,
+                        );
+                        if (widget.popupConfig.isSingleChoice) {
+                          widget.hideOverlay();
+                        }
+                      },
+                      activeColor: widget.popupConfig.checkBoxActiveColor ??
+                          defaultActiveColor,
+                      side: const BorderSide(
+                        color: Color(0xffD9D9D9),
+                      ),
+                    ),
+                  ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Text(
+                      widget.item.name,
+                      maxLines: 1, // 设置为1行，如果文本过长，则会省略
+                      overflow: TextOverflow.ellipsis, // 文本溢出时显示省略号
+                      style: widget.item.isClicked ||
+                              (widget.item.isSelected ?? true)
+                          ? widget.popupConfig.selectedTextStyle ??
+                              TextStyle(
+                                color: widget.popupConfig.checkBoxActiveColor ??
+                                    defaultActiveColor,
+                              )
+                          : widget.popupConfig.textStyle ??
+                              const TextStyle(
+                                color: Colors.black,
+                              ),
+                    ),
+                  ),
+                ),
+                if (widget.item.children.isNotEmpty)
+                  const Padding(
+                    padding: EdgeInsets.only(right: 6),
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 12,
+                      color: Color(0xff8C8C8C),
+                    ),
+                  ),
+              ],
+            ),
+          )),
     );
   }
 }

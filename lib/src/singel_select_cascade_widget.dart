@@ -946,7 +946,7 @@ class _SearchListItemState extends State<_SearchListItem> {
                   style:
                       widget.item.isClicked || (widget.item.isSelected ?? true)
                           ? (widget.popupConfig.selectedTextStyle ??
-                              TextStyle(
+                              const TextStyle(
                                 color: defaultActiveColor,
                               ))
                           : widget.popupConfig.textStyle ??
@@ -973,8 +973,6 @@ class _SearchListItemState extends State<_SearchListItem> {
     );
   }
 }
-
-Color defaultActiveColor = const Color(0xff0052D9);
 
 class _PopupTreeContentWidget extends StatelessWidget {
   const _PopupTreeContentWidget({
