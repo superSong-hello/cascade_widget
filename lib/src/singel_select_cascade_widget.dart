@@ -66,7 +66,6 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
       )
       ..isRealTimeRefresh = widget.popupConfig.isShowAllSelectedLabel
       ..refreshPopup = () {
-        debugPrint('====== refreshPopup');
         Future.delayed(const Duration(milliseconds: 100), showPopup);
 
         /// 显示所有标签的时候，勾选新的会滑到最底部
@@ -694,11 +693,11 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
               constraints: BoxConstraints(
                 maxWidth: widget.chipDecoration.maxWidth,
               ),
-              child: Text(
-                info.name,
+              child: CustomText(
+                widget.chipDecoration.isShowFullPathFromSelectedTag
+                    ? info.pathName
+                    : info.name,
                 style: widget.chipDecoration.labelStyle,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
               ),
             ),
             if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')

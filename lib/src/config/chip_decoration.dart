@@ -31,6 +31,7 @@ class ChipDecoration {
     this.borderRadius = const BorderRadius.all(Radius.circular(12)),
     this.maxWidth = 160.0,
     this.closeButtonSize = 16.0,
+    this.isShowFullPathFromSelectedTag = false,
   });
 
   /// The icon to display for deleting a chip.
@@ -62,4 +63,7 @@ class ChipDecoration {
 
   /// close size
   final double closeButtonSize;
+
+  /// 选中的标签是否显示全路径（一级/二级/name）
+  final bool isShowFullPathFromSelectedTag;
 }

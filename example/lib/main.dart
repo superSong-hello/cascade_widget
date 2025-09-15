@@ -854,7 +854,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     border: Border.all(color: Colors.grey),
                     deleteIcon: const Icon(Icons.clear_outlined,
                         color: Colors.white, size: 16),
-                    maxWidth: 100,
+                    maxWidth: 250,
+                    isShowFullPathFromSelectedTag: true,
                   ),
                   popupConfig: const PopupConfig(
                     isShowSearchInput: true,
