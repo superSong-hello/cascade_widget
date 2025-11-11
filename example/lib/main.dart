@@ -626,6 +626,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final selecteds = ['112', '211'];
 
+  final singleList = [
+    DropDownMenuModel(
+      id: '1',
+      name: '测试选择item回显的长度 选项 1',
+      children: [],
+    ),
+    DropDownMenuModel(
+      id: '2',
+      name: '选项 2',
+      children: [],
+    ),
+    DropDownMenuModel(
+      id: '3',
+      name: '选项 3',
+      children: [],
+    ),
+    DropDownMenuModel(
+      id: '4',
+      name: '选项 4',
+      children: [],
+    ),
+    DropDownMenuModel(
+      id: '5',
+      name: '选项 5',
+      children: [],
+    ),
+  ];
+
   final mulList = [
     DropDownMenuModel(
       id: '1',
@@ -663,10 +691,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const SizedBox(
                 height: 100,
               ),
+              const Text('级联(选择内容显示全)：'),
               SizedBox(
                 width: 410,
                 child: CascadeWidget(
@@ -691,12 +721,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     backgroundColor: Colors.blueAccent,
                     runSpacing: 2,
                     spacing: 10,
-                    labelStyle: TextStyle(
+                    labelStyle: const TextStyle(
                       color: Colors.white,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    borderRadius: const BorderRadius.all(Radius.circular(4)),
                     border: Border.all(color: Colors.grey),
-                    deleteIcon: Icon(Icons.clear_outlined,
+                    deleteIcon: const Icon(Icons.clear_outlined,
                         color: Colors.white, size: 16),
                     maxWidth: 100,
                   ),
@@ -712,6 +742,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(
                 height: 50,
               ),
+              const Text('级联(选择内容只显示1个，其它显示+n)：'),
               SizedBox(
                 width: 410,
                 child: CascadeWidget(
@@ -759,12 +790,58 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 child: const Text('Unselect All'),
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 40),
+              const Text('级联单选：'),
+              SizedBox(
+                width: 410,
+                child: SingleSelectCascadeWidget(
+                  list: testList2,
+                  selectedCallBack: (selectedList) {
+                    debugPrint('selected items:');
+                    for (final e in selectedList) {
+                      debugPrint('name:${e.name}, id:${e.id}');
+                    }
+                  },
+                  fieldDecoration: FieldDecoration(
+                    backgroundColor: Colors.white,
+                    hintText: '请选择',
+                    hintStyle: const TextStyle(color: Colors.black45),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    isRow: true,
+                  ),
+                  chipDecoration: ChipDecoration(
+                    backgroundColor: Colors.blue,
+                    runSpacing: 2,
+                    spacing: 10,
+                    labelStyle: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    borderRadius: const BorderRadius.all(Radius.circular(4)),
+                    border: Border.all(color: Colors.grey),
+                    deleteIcon: const Icon(Icons.clear_outlined,
+                        color: Colors.white, size: 16),
+                    maxWidth: 250,
+                    isShowFullPathFromSelectedTag: true,
+                  ),
+                  popupConfig: const PopupConfig(
+                    isShowSearchInput: true,
+                    isShowAllSelectedLabel: false,
+                    selectedIds: [],
+                    isShowOverlay: true,
+                    // overlayColor: Colors.tealAccent,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              const Text('单选：'),
               SizedBox(
                 width: 410,
                 height: 30,
                 child: MultipleSelectWidget(
-                  list: mulList,
+                  list: singleList,
                   selectedCallBack: (selectedList) {
                     for (final e in selectedList) {
                       debugPrint('name:${e.name}, id:${e.id}');
@@ -820,52 +897,69 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              const SizedBox(height: 20),
-              const Text('级联单选：'),
+              const SizedBox(height: 40),
+              const Text('多选：'),
               SizedBox(
                 width: 410,
-                child: SingleSelectCascadeWidget(
-                  list: testList2,
+                height: 30,
+                child: MultipleSelectWidget(
+                  list: mulList,
                   selectedCallBack: (selectedList) {
-                    debugPrint('selected items:');
                     for (final e in selectedList) {
                       debugPrint('name:${e.name}, id:${e.id}');
                     }
                   },
                   fieldDecoration: FieldDecoration(
-                    backgroundColor: Colors.white,
-                    hintText: '请选择',
-                    hintStyle: const TextStyle(color: Colors.black45),
+                    hintText: '单选（支持多选）',
+                    hintStyle: const TextStyle(
+                      color: Colors.black45,
+                      fontSize: 12,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
                       borderSide: const BorderSide(color: Colors.grey),
                     ),
-                    isRow: true,
-                  ),
-                  chipDecoration: ChipDecoration(
-                    backgroundColor: Colors.blue,
-                    runSpacing: 2,
-                    spacing: 10,
-                    labelStyle: const TextStyle(
-                      color: Colors.white,
+                    showClearIcon: false,
+                    clearIcon: const Icon(
+                      Icons.clear,
+                      size: 14,
                     ),
-                    borderRadius: const BorderRadius.all(Radius.circular(4)),
-                    border: Border.all(color: Colors.grey),
-                    deleteIcon: const Icon(Icons.clear_outlined,
-                        color: Colors.white, size: 16),
-                    maxWidth: 250,
-                    isShowFullPathFromSelectedTag: true,
+                    style: const TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                  chipDecoration: const ChipDecoration(
+                    backgroundColor: Colors.black12,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    runSpacing: 0,
+                    spacing: 5,
+                    labelStyle: TextStyle(
+                      color: Colors.black87,
+                      fontSize: 12,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    maxWidth: 100,
+                    deleteIcon: Icon(
+                      Icons.clear_outlined,
+                      color: Colors.black54,
+                      size: 15,
+                    ),
                   ),
                   popupConfig: const PopupConfig(
-                    isShowSearchInput: true,
-                    isShowAllSelectedLabel: false,
+                    isShowFullPathFromSearch: false,
+                    popupHeight: 300,
+                    isSingleChoice: false,
                     selectedIds: [],
                     isShowOverlay: true,
                     // overlayColor: Colors.tealAccent,
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
