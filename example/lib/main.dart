@@ -36,233 +36,76 @@ class _MyHomePageState extends State<MyHomePage> {
   final testList = [
     DropDownMenuModel(
       id: '1',
-      name: '一级 1',
+      name: 'Level 1',
       children: [
         DropDownMenuModel(
           id: '11',
-          name: '二级 1-1',
+          name: 'Level 1-1',
           children: [
-            DropDownMenuModel(
-              id: '111',
-              name: '三级 1-1-1',
-              children: [],
-            ),
-            DropDownMenuModel(
-              id: '112',
-              name: '三级 1-1-2',
-              children: [],
-            ),
-            DropDownMenuModel(
-              id: '113',
-              name: '三级 1-1-3',
-              children: [],
-            ),
+            DropDownMenuModel(id: '111', name: 'Level 1-1-1', children: []),
+            DropDownMenuModel(id: '112', name: 'Level 1-1-2', children: []),
+            DropDownMenuModel(id: '113', name: 'Level 1-1-3', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '12',
-          name: '二级 1-2',
+          name: 'Level 1-2',
           children: [
-            DropDownMenuModel(
-              id: '121',
-              name: '三级 1-2-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '121', name: 'Level 1-2-1', children: []),
           ],
         ),
       ],
     ),
     DropDownMenuModel(
       id: '2',
-      name: '一级 2',
+      name: 'Level 2',
       children: [
         DropDownMenuModel(
           id: '21',
-          name: '二级 2-1',
+          name: 'Level 2-1',
           children: [
-            DropDownMenuModel(
-              id: '211',
-              name: '三级 2-1-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '211', name: 'Level 2-1-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '22',
-          name: '二级 2-2',
+          name: 'Level 2-2',
           children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 2-2-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '221', name: 'Level 2-2-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '23',
-          name: '二级 2-3',
+          name: 'Level 2-3',
           children: [
-            DropDownMenuModel(
-              id: '231',
-              name: '三级 2-3-1 2-3-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '231', name: 'Level 2-3-1', children: []),
           ],
         ),
       ],
     ),
     DropDownMenuModel(
       id: '3',
-      name: '一级 3',
+      name: 'Level 3',
       children: [
         DropDownMenuModel(
           id: '31',
-          name: '二级 3-1',
+          name: 'Level 3-1',
           children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3 - 1 - 1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '311', name: 'Level 3-1-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '32',
-          name: '二级 3-2',
+          name: 'Level 3-2',
           children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 321',
-              children: [],
-            ),
+            DropDownMenuModel(id: '321', name: 'Level 3-2-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '3-3',
-          name: '二级 3-3',
+          name: 'Level 3-3',
           children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3  3  1',
-              children: [],
-            ),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: '一级 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: '二级 3-1',
-          children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3-1-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: '二级 3-2',
-          children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 3-2-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: '二级 3-3',
-          children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3-3-1',
-              children: [],
-            ),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: '一级 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: '二级 3-1',
-          children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3-1-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: '二级 3-2',
-          children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 3-2-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: '二级 3-3',
-          children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3-3-1',
-              children: [],
-            ),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: '一级 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: '二级 3-1',
-          children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3-1-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: '二级 3-2',
-          children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 3-2-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: '二级 3-3',
-          children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3-3-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '331', name: 'Level 3-3-1', children: []),
           ],
         ),
       ],
@@ -272,233 +115,84 @@ class _MyHomePageState extends State<MyHomePage> {
   final testList1 = [
     DropDownMenuModel(
       id: '1',
-      name: '一级 1',
+      name: 'Level 1',
       children: [
         DropDownMenuModel(
           id: '11',
-          name: '二级 1-1',
+          name: 'Level 1-1',
           children: [
             DropDownMenuModel(
-              id: '111',
-              name: '一级 1/二级 1-1/三级 1-1-1',
-              children: [],
-            ),
+                id: '111', name: 'Level 1/Level 1-1/Level 1-1-1', children: []),
             DropDownMenuModel(
-              id: '112',
-              name: '一级/二级/三级 1-1-2',
-              children: [],
-            ),
+                id: '112', name: 'Level 1/Level 1-1/Level 1-1-2', children: []),
             DropDownMenuModel(
-              id: '113',
-              name: '一级/二级/三级 1-1-3',
-              children: [],
-            ),
+                id: '113', name: 'Level 1/Level 1-1/Level 1-1-3', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '12',
-          name: '二级 1-2',
+          name: 'Level 1-2',
           children: [
-            DropDownMenuModel(
-              id: '121',
-              name: '三级 1-2-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '121', name: 'Level 1-2-1', children: []),
           ],
         ),
       ],
     ),
     DropDownMenuModel(
       id: '2',
-      name: '一级 2',
+      name: 'Level 2',
       children: [
         DropDownMenuModel(
           id: '21',
-          name: '二级 2-1',
+          name: 'Level 2-1',
           children: [
             DropDownMenuModel(
-              id: '211',
-              name: '一级 2/二级 2-1/三级 2-1-1',
-              children: [],
-            ),
+                id: '211', name: 'Level 2/Level 2-1/Level 2-1-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '22',
-          name: '二级 2-2',
+          name: 'Level 2-2',
           children: [
             DropDownMenuModel(
-              id: '221',
-              name: '测试长度超出一行怎么解决 一级 2/二级 2-2三级 2-2-1',
-              children: [],
-            ),
+                id: '221',
+                name:
+                    'This is a very long text to test wrapping in the dropdown Level 2/Level 2-2/Level 2-2-1',
+                children: []),
           ],
         ),
         DropDownMenuModel(
           id: '23',
-          name: '二级 2-3',
+          name: 'Level 2-3',
           children: [
-            DropDownMenuModel(
-              id: '231',
-              name: '三级 2-3-1 2-3-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '231', name: 'Level 2-3-1', children: []),
           ],
         ),
       ],
     ),
     DropDownMenuModel(
       id: '3',
-      name: '一级 3',
+      name: 'Level 3',
       children: [
         DropDownMenuModel(
           id: '31',
-          name: '二级 3-1',
+          name: 'Level 3-1',
           children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3 - 1 - 1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '311', name: 'Level 3-1-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '32',
-          name: '二级 3-2',
+          name: 'Level 3-2',
           children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 321',
-              children: [],
-            ),
+            DropDownMenuModel(id: '321', name: 'Level 3-2-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '3-3',
-          name: '二级 3-3',
+          name: 'Level 3-3',
           children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3  3  1',
-              children: [],
-            ),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: '一级 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: '二级 3-1',
-          children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3-1-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: '二级 3-2',
-          children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 3-2-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: '二级 3-3',
-          children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3-3-1',
-              children: [],
-            ),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: '一级 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: '二级 3-1',
-          children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3-1-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: '二级 3-2',
-          children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 3-2-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: '二级 3-3',
-          children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3-3-1',
-              children: [],
-            ),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: '一级 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: '二级 3-1',
-          children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3-1-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: '二级 3-2',
-          children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 3-2-1',
-              children: [],
-            ),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: '二级 3-3',
-          children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3-3-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '331', name: 'Level 3-3-1', children: []),
           ],
         ),
       ],
@@ -508,116 +202,84 @@ class _MyHomePageState extends State<MyHomePage> {
   final testList2 = [
     DropDownMenuModel(
       id: '1',
-      name: '一级 1',
+      name: 'Level 1',
       children: [
         DropDownMenuModel(
           id: '11',
-          name: '二级 1-1',
+          name: 'Level 1-1',
           children: [
             DropDownMenuModel(
-              id: '111',
-              name: '一级 1/二级 1-1/三级 1-1-1',
-              children: [],
-            ),
+                id: '111', name: 'Level 1/Level 1-1/Level 1-1-1', children: []),
             DropDownMenuModel(
-              id: '112',
-              name: '一级/二级/三级 1-1-2',
-              children: [],
-            ),
+                id: '112', name: 'Level 1/Level 1-1/Level 1-1-2', children: []),
             DropDownMenuModel(
-              id: '113',
-              name: '一级/二级/三级 1-1-3',
-              children: [],
-            ),
+                id: '113', name: 'Level 1/Level 1-1/Level 1-1-3', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '12',
-          name: '二级 1-2',
+          name: 'Level 1-2',
           children: [
-            DropDownMenuModel(
-              id: '121',
-              name: '三级 1-2-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '121', name: 'Level 1-2-1', children: []),
           ],
         ),
       ],
     ),
     DropDownMenuModel(
       id: '2',
-      name: '一级 2',
+      name: 'Level 2',
       children: [
         DropDownMenuModel(
           id: '21',
-          name: '二级 2-1',
+          name: 'Level 2-1',
           children: [
             DropDownMenuModel(
-              id: '211',
-              name: '一级 2/二级 2-1/三级 2-1-1',
-              children: [],
-            ),
+                id: '211', name: 'Level 2/Level 2-1/Level 2-1-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '22',
-          name: '二级 2-2',
+          name: 'Level 2-2',
           children: [
             DropDownMenuModel(
-              id: '221',
-              name: '测试长度超出一行怎么解决 一级 2/二级 2-2三级 2-2-1',
-              children: [],
-            ),
+                id: '221',
+                name:
+                    'This is a very long text to test wrapping in the dropdown Level 2/Level 2-2/Level 2-2-1',
+                children: []),
           ],
         ),
         DropDownMenuModel(
           id: '23',
-          name: '二级 2-3',
+          name: 'Level 2-3',
           children: [
-            DropDownMenuModel(
-              id: '231',
-              name: '三级 2-3-1 2-3-1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '231', name: 'Level 2-3-1', children: []),
           ],
         ),
       ],
     ),
     DropDownMenuModel(
       id: '3',
-      name: '一级 3',
+      name: 'Level 3',
       children: [
         DropDownMenuModel(
           id: '31',
-          name: '二级 3-1',
+          name: 'Level 3-1',
           children: [
-            DropDownMenuModel(
-              id: '311',
-              name: '三级 3 - 1 - 1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '311', name: 'Level 3-1-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '32',
-          name: '二级 3-2',
+          name: 'Level 3-2',
           children: [
-            DropDownMenuModel(
-              id: '221',
-              name: '三级 321',
-              children: [],
-            ),
+            DropDownMenuModel(id: '321', name: 'Level 3-2-1', children: []),
           ],
         ),
         DropDownMenuModel(
           id: '3-3',
-          name: '二级 3-3',
+          name: 'Level 3-3',
           children: [
-            DropDownMenuModel(
-              id: '331',
-              name: '三级 3  3  1',
-              children: [],
-            ),
+            DropDownMenuModel(id: '331', name: 'Level 3-3-1', children: []),
           ],
         ),
       ],
@@ -629,27 +291,27 @@ class _MyHomePageState extends State<MyHomePage> {
   final singleList = [
     DropDownMenuModel(
       id: '1',
-      name: '测试选择item回显的长度 选项 1',
+      name: 'This is a long option to test the display 1',
       children: [],
     ),
     DropDownMenuModel(
       id: '2',
-      name: '选项 2',
+      name: 'Option 2',
       children: [],
     ),
     DropDownMenuModel(
       id: '3',
-      name: '选项 3',
+      name: 'Option 3',
       children: [],
     ),
     DropDownMenuModel(
       id: '4',
-      name: '选项 4',
+      name: 'Option 4',
       children: [],
     ),
     DropDownMenuModel(
       id: '5',
-      name: '选项 5',
+      name: 'Option 5',
       children: [],
     ),
   ];
@@ -657,27 +319,27 @@ class _MyHomePageState extends State<MyHomePage> {
   final mulList = [
     DropDownMenuModel(
       id: '1',
-      name: '测试选择item回显的长度 选项 1',
+      name: 'This is a long option to test the display 1',
       children: [],
     ),
     DropDownMenuModel(
       id: '2',
-      name: '选项 2',
+      name: 'Option 2',
       children: [],
     ),
     DropDownMenuModel(
       id: '3',
-      name: '选项 3',
+      name: 'Option 3',
       children: [],
     ),
     DropDownMenuModel(
       id: '4',
-      name: '选项 4',
+      name: 'Option 4',
       children: [],
     ),
     DropDownMenuModel(
       id: '5',
-      name: '选项 5',
+      name: 'Option 5',
       children: [],
     ),
   ];
@@ -696,7 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(
                 height: 100,
               ),
-              const Text('级联(选择内容显示全)：'),
+              const Text('Cascade (show all selected items):'),
               SizedBox(
                 width: 410,
                 child: CascadeWidget(
@@ -709,7 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   fieldDecoration: FieldDecoration(
                     backgroundColor: Colors.white,
-                    hintText: '请选择',
+                    hintText: 'Please select',
                     hintStyle: const TextStyle(color: Colors.black45),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
@@ -742,7 +404,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(
                 height: 50,
               ),
-              const Text('级联(选择内容只显示1个，其它显示+n)：'),
+              const Text('Cascade (show first item +n more):'),
               SizedBox(
                 width: 410,
                 child: CascadeWidget(
@@ -756,7 +418,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   fieldDecoration: FieldDecoration(
                     backgroundColor: Colors.white,
-                    hintText: '请选择',
+                    hintText: 'Please select',
                     hintStyle: const TextStyle(color: Colors.black45),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
@@ -791,7 +453,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: const Text('Unselect All'),
               ),
               const SizedBox(height: 40),
-              const Text('级联单选：'),
+              const Text('Cascade Single Select:'),
               SizedBox(
                 width: 410,
                 child: SingleSelectCascadeWidget(
@@ -804,7 +466,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   fieldDecoration: FieldDecoration(
                     backgroundColor: Colors.white,
-                    hintText: '请选择',
+                    hintText: 'Please select',
                     hintStyle: const TextStyle(color: Colors.black45),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
@@ -836,7 +498,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               const SizedBox(height: 40),
-              const Text('单选：'),
+              const Text('Single Select:'),
               SizedBox(
                 width: 410,
                 height: 30,
@@ -848,7 +510,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   },
                   fieldDecoration: FieldDecoration(
-                    hintText: '单选（支持多选）',
+                    backgroundColor: Colors.white,
+                    hintText: 'Single select',
                     hintStyle: const TextStyle(
                       color: Colors.black45,
                       fontSize: 12,
@@ -898,7 +561,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               const SizedBox(height: 40),
-              const Text('多选：'),
+              const Text('Multiple Select:'),
               SizedBox(
                 width: 410,
                 height: 30,
@@ -910,11 +573,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   },
                   fieldDecoration: FieldDecoration(
-                    hintText: '单选（支持多选）',
+                    hintText: 'Multiple select',
                     hintStyle: const TextStyle(
                       color: Colors.black45,
                       fontSize: 12,
                     ),
+                    backgroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(4),
@@ -955,6 +619,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     isSingleChoice: false,
                     selectedIds: [],
                     isShowOverlay: true,
+                    disabled: true,
+                    // disabledColor: Colors.grey.withValues(alpha: 0.4)
                     // overlayColor: Colors.tealAccent,
                   ),
                 ),

@@ -392,21 +392,9 @@ class _CustomInputDecorator extends StatefulWidget {
 
 class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
   final GlobalKey _key = GlobalKey();
-  double _width = 0;
-  double _height = 0;
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final RenderBox renderBox =
-          _key.currentContext?.findRenderObject() as RenderBox;
-      final size = renderBox.size;
-      setState(() {
-        _width = size.width;
-        _height = size.height;
-      });
-    });
-
     return Stack(
       children: [
         InkWell(
@@ -456,12 +444,12 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
             },
           ),
         ),
-        if (widget.popupConfig.disabled && _width > 0 && _height > 0)
-          _MaskLayer(
-            fieldDecoration: widget.fieldDecoration,
-            popupConfig: widget.popupConfig,
-            width: _width,
-            height: _height,
+        if (widget.popupConfig.disabled)
+          Positioned.fill(
+            child: _MaskLayer(
+              fieldDecoration: widget.fieldDecoration,
+              popupConfig: widget.popupConfig,
+            ),
           ),
       ],
     );
@@ -1203,20 +1191,14 @@ class _MaskLayer extends StatelessWidget {
   const _MaskLayer({
     required this.fieldDecoration,
     required this.popupConfig,
-    this.height,
-    this.width,
   });
 
-  final double? height;
-  final double? width;
   final FieldDecoration fieldDecoration;
   final PopupConfig popupConfig;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
-      height: height,
       decoration: BoxDecoration(
         color: popupConfig.disabledColor ?? Colors.black12,
         borderRadius: (fieldDecoration.border != null &&

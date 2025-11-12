@@ -13,8 +13,6 @@ class MultipleSelectWidgetController extends ChangeNotifier {
 
   late final ValueChanged<List<DropDownMenuModel>> _selectedCallBack;
 
-  late final VoidCallback refreshPopup;
-
   /// 原数据
   List<DropDownMenuModel> get list => _list;
 
@@ -38,23 +36,27 @@ class MultipleSelectWidgetController extends ChangeNotifier {
     ValueChanged<List<DropDownMenuModel>> selectedCallBack,
   ) {
     if (defaultSelectedIds != null && defaultSelectedIds.isNotEmpty) {
-      _getAllSelectedListFromIds(
+      _updateSelectionFromIds(
         options,
         defaultSelectedIds,
-        <DropDownMenuModel>[],
       );
     }
 
     setItems(options);
     _selectedCallBack = selectedCallBack;
-    getSelectedList();
-    notifyListeners();
+    _updateSelectionAndNotify();
   }
 
   void setItems(List<DropDownMenuModel> options) {
     _list
       ..clear()
       ..addAll(options);
+    notifyListeners();
+  }
+
+  void _updateSelectionAndNotify() {
+    final selected = getSelectedList();
+    _selectedCallBack(selected);
     notifyListeners();
   }
 
@@ -83,34 +85,29 @@ class MultipleSelectWidgetController extends ChangeNotifier {
     }
 
     /// call back
-    selectedCallBack(getSelectedList());
-
-    notifyListeners();
+    _updateSelectionAndNotify();
   }
 
-  List<DropDownMenuModel> _getAllSelectedListFromIds(
+  void _updateSelectionFromIds(
     List<DropDownMenuModel> list,
     List<String> ids,
-    List<DropDownMenuModel> selectList,
   ) {
     for (final e in list) {
       if (e.children.isEmpty) {
         if (e.id.isNotEmpty && ids.contains(e.id)) {
           e.isSelected = true;
-          selectList.add(e);
         }
       } else {
-        _getAllSelectedListFromIds(e.children, ids, selectList);
+        _updateSelectionFromIds(e.children, ids);
       }
     }
-    return selectList;
   }
 
   /// 获取所有选中的有效数据
   List<DropDownMenuModel> getSelectedList() {
     final tempSelectList = <DropDownMenuModel>[];
     for (final e in _list) {
-      if (e.isSelected ?? true) {
+      if (e.isSelected == true) {
         tempSelectList.add(e);
       }
     }
@@ -122,11 +119,13 @@ class MultipleSelectWidgetController extends ChangeNotifier {
 
   /// 取消所有的选中状态
   void cancelAllSelected() {
-    getSelectedList().forEach((e) {
-      e.isSelected = false;
-    });
-    selectedList.clear();
-    selectedCallBack([]);
+    for (final e in _list) {
+      if (e.isSelected == true) {
+        e.isSelected = false;
+      }
+    }
+    _selectedList.clear();
+    _selectedCallBack([]);
     notifyListeners();
   }
 

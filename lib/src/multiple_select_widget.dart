@@ -50,15 +50,11 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   @override
   void initState() {
     super.initState();
-    _multipleSelectWidgetController
-      ..init(
-        widget.list,
-        widget.popupConfig.selectedIds,
-        widget.selectedCallBack,
-      )
-      ..refreshPopup = () {
-        Future.delayed(const Duration(milliseconds: 100), showPopup);
-      };
+    _multipleSelectWidgetController.init(
+      widget.list,
+      widget.popupConfig.selectedIds,
+      widget.selectedCallBack,
+    );
     _focusNode.addListener(_focusChange);
     _textEditingController.addListener(_textFieldChange);
 
@@ -170,6 +166,10 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
         return Stack(
           children: [
             if (widget.popupConfig.isShowOverlay) ...[
+              /// The following four Positioned widgets create a mask around the input field
+              /// by creating four rectangles that cover the entire screen except for the area
+              /// occupied by the input field. This allows taps outside the popup to be caught
+              /// to close it, without preventing interaction with the input field itself.
               Positioned(
                 top: 0,
                 left: 0,
@@ -289,7 +289,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   }
 }
 
-class _CustomInputDecorator extends StatefulWidget {
+class _CustomInputDecorator extends StatelessWidget {
   const _CustomInputDecorator({
     required this.fieldDecoration,
     required this.listenable,
@@ -324,39 +324,19 @@ class _CustomInputDecorator extends StatefulWidget {
   final VoidCallback hideOverlay;
 
   @override
-  State<StatefulWidget> createState() => __CustomInputDecoratorState();
-}
-
-class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
-  final GlobalKey _key = GlobalKey();
-  double _width = 0;
-  double _height = 0;
-
-  @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final RenderBox renderBox =
-          _key.currentContext?.findRenderObject() as RenderBox;
-      final size = renderBox.size;
-      setState(() {
-        _width = size.width;
-        _height = size.height;
-      });
-    });
-
     return Stack(
       children: [
         InkWell(
-          key: _key,
           mouseCursor: SystemMouseCursors.grab,
-          onTap: widget.changeOverlay,
-          borderRadius: _getFieldBorderRadius(widget.fieldDecoration),
+          onTap: changeOverlay,
+          borderRadius: _getFieldBorderRadius(fieldDecoration),
           child: ListenableBuilder(
-            listenable: widget.listenable,
+            listenable: listenable,
             builder: (ctx, _) {
               return TapRegion(
                 child: InputDecorator(
-                  key: widget.buttonKey,
+                  key: buttonKey,
                   isEmpty: true,
                   decoration: _buildDecoration(context),
                   textAlign: TextAlign.start,
@@ -365,7 +345,7 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
                 ),
                 onTapInside: (PointerDownEvent event) {},
                 onTapOutside: (PointerDownEvent event) {
-                  RenderBox? tapedRenderBox = widget.buttonKey?.currentContext
+                  RenderBox? tapedRenderBox = buttonKey?.currentContext
                       ?.findRenderObject() as RenderBox?;
                   Offset? globalPosition =
                       tapedRenderBox?.localToGlobal(Offset.zero);
@@ -375,31 +355,31 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
                     globalPosition?.dy ?? 0,
                     tapedRenderBox?.size.width ?? 0,
                     (tapedRenderBox?.size.height ?? 0) +
-                        widget.popupConfig.popupHeight,
+                        popupConfig.popupHeight,
                   );
                   Rect extraRenderBoxFrame = renderBoxFrame.inflate(5);
                   if (extraRenderBoxFrame.contains(event.position)) {
                     return;
                   }
-                  widget.hideOverlay();
+                  hideOverlay();
                 },
               );
             },
           ),
         ),
-        if (widget.popupConfig.disabled && _width > 0 && _height > 0)
-          _MaskLayer(
-            fieldDecoration: widget.fieldDecoration,
-            popupConfig: widget.popupConfig,
-            width: _width,
-            height: _height,
+        if (popupConfig.disabled)
+          Positioned.fill(
+            child: _MaskLayer(
+              fieldDecoration: fieldDecoration,
+              popupConfig: popupConfig,
+            ),
           ),
       ],
     );
   }
 
   Widget _buildField() {
-    final selectedList = widget.multipleSelectWidgetController.selectedList;
+    final selectedList = multipleSelectWidgetController.selectedList;
     List<Widget>? list;
     if (selectedList.isNotEmpty) {
       list = selectedList.length > 1
@@ -416,78 +396,51 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
           : [_buildChip(selectedList.first)];
     }
 
-    if (widget.fieldDecoration.isRow) {
+    final chipsWidget = list != null && list.isNotEmpty
+        ? Wrap(
+            spacing: chipDecoration.spacing,
+            runSpacing: chipDecoration.runSpacing,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: list,
+          )
+        : null;
+
+    final searchField = popupConfig.isShowSearchInput
+        ? TextFormField(
+            controller: textEditingController,
+            focusNode: focusNode,
+            style: fieldDecoration.style,
+            canRequestFocus: popupConfig.canRequestFocus,
+            decoration: InputDecoration(
+              contentPadding: fieldDecoration.isRow
+                  ? EdgeInsets.zero
+                  : EdgeInsets.symmetric(
+                      vertical: fieldDecoration.padding?.top ?? 0,
+                    ),
+              isCollapsed: true,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              focusedErrorBorder: InputBorder.none,
+            ),
+          )
+        : null;
+
+    if (fieldDecoration.isRow) {
       return Row(
         children: [
-          if (list != null && list.isNotEmpty)
-            Wrap(
-              spacing: widget.chipDecoration.spacing,
-              runSpacing: widget.chipDecoration.runSpacing,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: list,
-            ),
-          if (list != null && list.isNotEmpty) const SizedBox(width: 5),
-          if (widget.popupConfig.isShowSearchInput)
-            Expanded(
-              child: TextFormField(
-                controller: widget.textEditingController,
-                focusNode: widget.focusNode,
-                style: widget.fieldDecoration.style,
-                canRequestFocus: widget.popupConfig.canRequestFocus,
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.zero,
-                  isCollapsed: true,
-                  border: InputBorder.none,
-                  // 设置边框为无
-                  // 如果需要在焦点变化时或者输入有错误时也不显示边框，可以设置以下两个属性
-                  enabledBorder: InputBorder.none,
-                  // 输入框没有焦点时的边框
-                  focusedBorder: InputBorder.none,
-                  // 输入框有焦点时的边框
-                  // 如果有错误提示也不需要边框，可以设置以下属性
-                  errorBorder: InputBorder.none,
-                  // 当输入有错误时的边框
-                  focusedErrorBorder: InputBorder.none, // 当输入有错误且输入框有焦点时的边框
-                ),
-              ),
-            ),
+          if (chipsWidget != null) chipsWidget,
+          if (chipsWidget != null) const SizedBox(width: 5),
+          if (searchField != null) Expanded(child: searchField),
         ],
       );
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (list != null && list.isNotEmpty)
-          Wrap(
-            spacing: widget.chipDecoration.spacing,
-            runSpacing: widget.chipDecoration.runSpacing,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: list,
-          ),
-        if (widget.popupConfig.isShowSearchInput)
-          TextFormField(
-            controller: widget.textEditingController,
-            focusNode: widget.focusNode,
-            style: widget.fieldDecoration.style,
-            canRequestFocus: widget.popupConfig.canRequestFocus,
-            decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(
-                vertical: widget.fieldDecoration.padding?.top ?? 0,
-              ),
-              isCollapsed: true,
-              border: InputBorder.none,
-              // 设置边框为无
-              // 如果需要在焦点变化时或者输入有错误时也不显示边框，可以设置以下两个属性
-              enabledBorder: InputBorder.none,
-              // 输入框没有焦点时的边框
-              focusedBorder: InputBorder.none,
-              // 输入框有焦点时的边框
-              // 如果有错误提示也不需要边框，可以设置以下属性
-              errorBorder: InputBorder.none,
-              // 当输入有错误时的边框
-              focusedErrorBorder: InputBorder.none, // 当输入有错误且输入框有焦点时的边框
-            ),
-          ),
+        if (chipsWidget != null) chipsWidget,
+        if (searchField != null) searchField,
       ],
     );
   }
@@ -497,39 +450,38 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
   ) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: widget.chipDecoration.borderRadius,
-        color: widget.chipDecoration.backgroundColor,
-        border: widget.chipDecoration.border,
+        borderRadius: chipDecoration.borderRadius,
+        color: chipDecoration.backgroundColor,
+        border: chipDecoration.border,
       ),
-      padding: widget.chipDecoration.padding,
+      padding: chipDecoration.padding,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: widget.chipDecoration.maxWidth,
+              maxWidth: chipDecoration.maxWidth,
             ),
             child: Text(
               info.name,
-              style: widget.chipDecoration.labelStyle,
+              style: chipDecoration.labelStyle,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
           ),
-          if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')
+          if (chipDecoration.deleteIcon != null && info.id != '-9999')
             const SizedBox(width: 4),
-          if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')
+          if (chipDecoration.deleteIcon != null && info.id != '-9999')
             InkWell(
-              onTap: () => widget.multipleSelectWidgetController.checkItemState(
+              onTap: () => multipleSelectWidgetController.checkItemState(
                 info,
                 isFromChipClick: true,
               ),
               child: SizedBox(
-                width: widget.chipDecoration.closeButtonSize,
-                height: widget.chipDecoration.closeButtonSize,
-                child: widget.chipDecoration.deleteIcon ??
-                    Icon(Icons.close,
-                        size: widget.chipDecoration.closeButtonSize),
+                width: chipDecoration.closeButtonSize,
+                height: chipDecoration.closeButtonSize,
+                child: chipDecoration.deleteIcon ??
+                    Icon(Icons.close, size: chipDecoration.closeButtonSize),
               ),
             ),
         ],
@@ -548,46 +500,46 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
   InputDecoration _buildDecoration(BuildContext context) {
     final theme = Theme.of(context);
 
-    final border = widget.fieldDecoration.border ??
+    final border = fieldDecoration.border ??
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            widget.fieldDecoration.borderRadius,
+            fieldDecoration.borderRadius,
           ),
           borderSide: theme.inputDecorationTheme.border?.borderSide ??
               const BorderSide(),
         );
 
-    final prefixIcon = widget.fieldDecoration.prefixIcon;
+    final prefixIcon = fieldDecoration.prefixIcon;
 
     return InputDecoration(
       isCollapsed: true,
       enabled: false,
-      hintText: widget.multipleSelectWidgetController.selectedList.isEmpty &&
-              (widget.textEditingController?.text ?? '').isEmpty
-          ? widget.fieldDecoration.hintText
+      hintText: multipleSelectWidgetController.selectedList.isEmpty &&
+              (textEditingController?.text ?? '').isEmpty
+          ? fieldDecoration.hintText
           : '',
-      hintStyle: widget.fieldDecoration.hintStyle,
-      filled: widget.fieldDecoration.backgroundColor != null,
-      fillColor: widget.fieldDecoration.backgroundColor,
-      border: widget.fieldDecoration.border ?? border,
-      disabledBorder: widget.fieldDecoration.border ?? border,
+      hintStyle: fieldDecoration.hintStyle,
+      filled: fieldDecoration.backgroundColor != null,
+      fillColor: fieldDecoration.backgroundColor,
+      border: fieldDecoration.border ?? border,
+      disabledBorder: fieldDecoration.border ?? border,
       prefixIcon: prefixIcon,
       suffixIcon: _buildSuffixIcon(),
-      contentPadding: widget.fieldDecoration.padding,
+      contentPadding: fieldDecoration.padding,
     );
   }
 
   Widget? _buildSuffixIcon() {
-    if (widget.fieldDecoration.showClearIcon &&
-        widget.multipleSelectWidgetController.selectedList.isNotEmpty) {
+    if (fieldDecoration.showClearIcon &&
+        multipleSelectWidgetController.selectedList.isNotEmpty) {
       return GestureDetector(
         onTap: () {
-          widget.multipleSelectWidgetController.cancelAllSelected();
-          if (widget.multipleSelectWidgetController.isOpen) {
-            widget.changeOverlay?.call();
+          multipleSelectWidgetController.cancelAllSelected();
+          if (multipleSelectWidgetController.isOpen) {
+            changeOverlay?.call();
           }
         },
-        child: widget.fieldDecoration.clearIcon ??
+        child: fieldDecoration.clearIcon ??
             const Icon(
               Icons.clear,
               size: 14,
@@ -595,18 +547,18 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
       );
     }
 
-    if (widget.fieldDecoration.suffixIcon == null) {
+    if (fieldDecoration.suffixIcon == null) {
       return null;
     }
 
-    if (!widget.fieldDecoration.animateSuffixIcon) {
-      return widget.fieldDecoration.suffixIcon;
+    if (!fieldDecoration.animateSuffixIcon) {
+      return fieldDecoration.suffixIcon;
     }
 
     return AnimatedRotation(
-      turns: widget.multipleSelectWidgetController.isOpen ? 0.5 : 0,
+      turns: multipleSelectWidgetController.isOpen ? 0.5 : 0,
       duration: const Duration(milliseconds: 200),
-      child: widget.fieldDecoration.suffixIcon,
+      child: fieldDecoration.suffixIcon,
     );
   }
 }
@@ -761,7 +713,8 @@ class _ListItemState extends State<_ListItem> {
                       maxLines: 1, // 设置为1行，如果文本过长，则会省略
                       overflow: TextOverflow.ellipsis, // 文本溢出时显示省略号
                       style: widget.item.isClicked ||
-                              (widget.item.isSelected ?? true)
+                              (widget.item.isSelected !=
+                                  false) // This covers true and null
                           ? widget.popupConfig.selectedTextStyle ??
                               TextStyle(
                                 color: widget.popupConfig.checkBoxActiveColor ??
@@ -794,20 +747,14 @@ class _MaskLayer extends StatelessWidget {
   const _MaskLayer({
     required this.fieldDecoration,
     required this.popupConfig,
-    this.height,
-    this.width,
   });
 
-  final double? height;
-  final double? width;
   final FieldDecoration fieldDecoration;
   final PopupConfig popupConfig;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
-      height: height,
       decoration: BoxDecoration(
         color: popupConfig.disabledColor ?? Colors.black12,
         borderRadius: (fieldDecoration.border != null &&
