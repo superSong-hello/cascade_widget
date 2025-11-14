@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 const Color defaultActiveColor = Color(0xff0052D9);
 
+/// Configuration for the popup menu's appearance and behavior.
 class PopupConfig {
+  /// Creates a configuration for the popup menu.
   const PopupConfig({
     this.popupWidth = 180,
     this.popupHeight = 350,
@@ -11,62 +13,43 @@ class PopupConfig {
     this.selectedTextStyle,
     this.itemBackgroundColor,
     this.isShowFullPathFromSearch = true,
-    this.isSingleChoice = false,
-    this.isShowAllSelectedLabel = false,
-    this.selectedIds,
-    this.disabled = false,
-    this.disabledColor,
     this.isShowSearchInput = true,
     this.canRequestFocus = true,
     this.isShowOverlay = false,
     this.overlayColor = Colors.transparent,
   });
 
-  /// 弹层单个list的宽度
+  /// The width of each list view within the popup.
   final double popupWidth;
 
-  /// 弹层的高度
+  /// The height of the popup menu.
   final double popupHeight;
 
-  /// checkbox 选中及待定的颜色
+  /// The color for the checkbox when it is active or in a tristate.
   final Color? checkBoxActiveColor;
 
-  /// item 文字样式
+  /// The default text style for items in the popup list.
   final TextStyle? textStyle;
 
-  /// item 选中的文字样式
+  /// The text style for selected items in the popup list.
   final TextStyle? selectedTextStyle;
 
-  /// item点击背景颜色
+  /// The background color of an item when it is hovered over.
   final Color? itemBackgroundColor;
 
-  /// 搜索的时候是否显示全路径（一级/二级/name）
+  /// Whether to show the full hierarchical path for items in the search results.
+  /// (e.g., "Level 1/Level 2/Item").
   final bool isShowFullPathFromSearch;
 
-  /// 针对于非级联操作，是否是单选，默认多选
-  final bool isSingleChoice;
-
-  /// 选中的标签是否全部显示，默认false
-  final bool isShowAllSelectedLabel;
-
-  /// 首次默认选中标签
-  final List<String>? selectedIds;
-
-  /// 是否禁止点击
-  final bool disabled;
-
-  /// 禁止点击蒙层颜色
-  final Color? disabledColor;
-
-  /// 是否显示搜索输入框
+  /// Whether to display the search input field within the popup.
   final bool isShowSearchInput;
 
-  /// 搜索框是否可以获取焦点
+  /// Whether the search input field can request focus.
   final bool canRequestFocus;
 
-  /// 是否追加遮罩层
+  /// Whether to show a modal overlay behind the popup.
   final bool isShowOverlay;
 
-  /// 遮罩层颜色
+  /// The color of the modal overlay.
   final Color overlayColor;
 }

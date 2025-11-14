@@ -50,7 +50,7 @@ class MultipleSelectWidgetController extends ChangeNotifier {
   void setItems(List<DropDownMenuModel> options) {
     _list
       ..clear()
-      ..addAll(options);
+      ..addAll(DropDownMenuModel.deepCopyList(options));
     notifyListeners();
   }
 

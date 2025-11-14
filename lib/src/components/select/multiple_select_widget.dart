@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'widgets/bubble_widget.dart';
-import 'config/chip_decoration.dart';
-import 'config/field_decoration.dart';
-import 'config/popup_config.dart';
-import 'model/drop_down_menu_model.dart';
-import 'controller/multiple_select_widget_controller.dart';
+import '../../config/chip_decoration.dart';
+import '../../config/field_decoration.dart';
+import '../../config/layout_config.dart';
+import '../../config/popup_config.dart';
+import '../../controller/multiple_select_widget_controller.dart';
+import '../../model/drop_down_menu_model.dart';
+import '../../widgets/bubble_widget.dart';
 
 class MultipleSelectWidget extends StatefulWidget {
   const MultipleSelectWidget({
@@ -16,6 +17,11 @@ class MultipleSelectWidget extends StatefulWidget {
     this.fieldDecoration = const FieldDecoration(),
     this.chipDecoration = const ChipDecoration(),
     this.popupConfig = const PopupConfig(),
+    this.layoutConfig = const LayoutConfig(),
+    this.controller,
+    this.isSingleChoice = false,
+    this.selectedIds,
+    this.enabled = true,
   });
 
   final List<DropDownMenuModel> list;
@@ -28,6 +34,16 @@ class MultipleSelectWidget extends StatefulWidget {
 
   final PopupConfig popupConfig;
 
+  final LayoutConfig layoutConfig;
+
+  final MultipleSelectWidgetController? controller;
+
+  final bool isSingleChoice;
+
+  final List<String>? selectedIds;
+
+  final bool enabled;
+
   @override
   State<MultipleSelectWidget> createState() => _MultipleSelectWidgetState();
 }
@@ -36,8 +52,9 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
     with SingleTickerProviderStateMixin {
   final GlobalKey _buttonKey = GlobalKey();
   final FocusNode _focusNode = FocusNode();
-  final _multipleSelectWidgetController = MultipleSelectWidgetController();
+  late final MultipleSelectWidgetController _multipleSelectWidgetController;
   final _textEditingController = TextEditingController();
+  bool _isInternalController = false;
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -50,9 +67,17 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   @override
   void initState() {
     super.initState();
+
+    if (widget.controller == null) {
+      _multipleSelectWidgetController = MultipleSelectWidgetController();
+      _isInternalController = true;
+    } else {
+      _multipleSelectWidgetController = widget.controller!;
+    }
+
     _multipleSelectWidgetController.init(
       widget.list,
-      widget.popupConfig.selectedIds,
+      widget.selectedIds,
       widget.selectedCallBack,
     );
     _focusNode.addListener(_focusChange);
@@ -68,9 +93,36 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   }
 
   @override
+  void didUpdateWidget(covariant MultipleSelectWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.list != oldWidget.list) {
+      _multipleSelectWidgetController.setItems(widget.list);
+    }
+
+    if (widget.controller != oldWidget.controller) {
+      // If the controller is changed, we need to dispose the old one if it was internal
+      if (_isInternalController) {
+        _multipleSelectWidgetController.dispose();
+      }
+
+      _isInternalController = widget.controller == null;
+      _multipleSelectWidgetController =
+          widget.controller ?? MultipleSelectWidgetController();
+      // Initialize the new controller
+      _multipleSelectWidgetController.init(
+        widget.list,
+        widget.selectedIds,
+        widget.selectedCallBack,
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _animationController.dispose();
-    _multipleSelectWidgetController.dispose();
+    if (_isInternalController) {
+      _multipleSelectWidgetController.dispose();
+    }
     _focusNode
       ..removeListener(_focusChange)
       ..dispose();
@@ -101,6 +153,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
       onPopInvoked: (_) async {
         hideOverlay();
       },
+      canPop: !_multipleSelectWidgetController.isOpen,
       child: Focus(
         onFocusChange: (value) {
           // debugPrint('$_focusNode: $value');
@@ -116,16 +169,20 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
         child: _CustomInputDecorator(
           fieldDecoration: widget.fieldDecoration,
           popupConfig: widget.popupConfig,
+          layoutConfig: widget.layoutConfig,
           listenable: _listenable,
-          changeOverlay: _multipleSelectWidgetController.isOpen
-              ? hideOverlay
-              : showOverlay,
+          changeOverlay: widget.enabled
+              ? (_multipleSelectWidgetController.isOpen
+                  ? hideOverlay
+                  : showOverlay)
+              : null,
           buttonKey: _buttonKey,
           multipleSelectWidgetController: _multipleSelectWidgetController,
           chipDecoration: widget.chipDecoration,
           focusNode: _focusNode,
           textEditingController: _textEditingController,
           hideOverlay: hideOverlay,
+          enabled: widget.enabled,
         ),
       ),
     );
@@ -249,6 +306,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
                                 listViewWidth: width.toDouble(),
                                 popupDecoration: widget.popupConfig,
                                 hideOverlay: hideOverlay,
+                                isSingleChoice: widget.isSingleChoice,
                               ),
                             ),
                           );
@@ -294,6 +352,7 @@ class _CustomInputDecorator extends StatelessWidget {
     required this.fieldDecoration,
     required this.listenable,
     required this.popupConfig,
+    required this.layoutConfig,
     required this.multipleSelectWidgetController,
     required this.chipDecoration,
     required this.hideOverlay,
@@ -301,6 +360,7 @@ class _CustomInputDecorator extends StatelessWidget {
     this.changeOverlay,
     this.buttonKey,
     this.textEditingController,
+    this.enabled = true,
   });
 
   final FieldDecoration fieldDecoration;
@@ -308,6 +368,8 @@ class _CustomInputDecorator extends StatelessWidget {
   final ChipDecoration chipDecoration;
 
   final PopupConfig popupConfig;
+
+  final LayoutConfig layoutConfig;
 
   final Listenable listenable;
 
@@ -322,6 +384,8 @@ class _CustomInputDecorator extends StatelessWidget {
   final TextEditingController? textEditingController;
 
   final VoidCallback hideOverlay;
+
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -367,7 +431,7 @@ class _CustomInputDecorator extends StatelessWidget {
             },
           ),
         ),
-        if (popupConfig.disabled)
+        if (!enabled)
           Positioned.fill(
             child: _MaskLayer(
               fieldDecoration: fieldDecoration,
@@ -412,7 +476,7 @@ class _CustomInputDecorator extends StatelessWidget {
             style: fieldDecoration.style,
             canRequestFocus: popupConfig.canRequestFocus,
             decoration: InputDecoration(
-              contentPadding: fieldDecoration.isRow
+              contentPadding: layoutConfig.isRow
                   ? EdgeInsets.zero
                   : EdgeInsets.symmetric(
                       vertical: fieldDecoration.padding?.top ?? 0,
@@ -427,7 +491,7 @@ class _CustomInputDecorator extends StatelessWidget {
           )
         : null;
 
-    if (fieldDecoration.isRow) {
+    if (layoutConfig.isRow) {
       return Row(
         children: [
           if (chipsWidget != null) chipsWidget,
@@ -571,6 +635,7 @@ class _PopupListContentWidget extends StatelessWidget {
     required this.listViewWidth,
     required this.popupDecoration,
     required this.hideOverlay,
+    required this.isSingleChoice,
   });
 
   final Listenable listenable;
@@ -579,6 +644,7 @@ class _PopupListContentWidget extends StatelessWidget {
   final MultipleSelectWidgetController multipleSelectWidgetController;
   final PopupConfig popupDecoration;
   final VoidCallback hideOverlay;
+  final bool isSingleChoice;
 
   @override
   Widget build(BuildContext context) {
@@ -611,14 +677,15 @@ class _PopupListContentWidget extends StatelessWidget {
                     multipleSelectWidgetController:
                         multipleSelectWidgetController,
                     hideOverlay: hideOverlay,
+                    isSingleChoice: isSingleChoice,
                     callback: (item) {
                       multipleSelectWidgetController.checkItemState(
                         item,
                         isFromChipClick: true,
                         selected: !(item.isSelected ?? false),
-                        isSingleChoice: popupDecoration.isSingleChoice,
+                        isSingleChoice: isSingleChoice,
                       );
-                      if (popupDecoration.isSingleChoice) {
+                      if (isSingleChoice) {
                         hideOverlay();
                       }
                     },
@@ -640,6 +707,7 @@ class _ListItem extends StatefulWidget {
     required this.callback,
     required this.multipleSelectWidgetController,
     required this.hideOverlay,
+    required this.isSingleChoice,
   });
 
   final DropDownMenuModel item;
@@ -651,6 +719,8 @@ class _ListItem extends StatefulWidget {
   final MultipleSelectWidgetController multipleSelectWidgetController;
 
   final VoidCallback hideOverlay;
+
+  final bool isSingleChoice;
 
   @override
   State<StatefulWidget> createState() => _ListItemState();
@@ -683,7 +753,7 @@ class _ListItemState extends State<_ListItem> {
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: Row(
               children: [
-                if (!widget.popupConfig.isSingleChoice)
+                if (!widget.isSingleChoice)
                   Transform.scale(
                     scale: 0.8,
                     child: Checkbox(
@@ -692,9 +762,9 @@ class _ListItemState extends State<_ListItem> {
                       onChanged: (_) {
                         widget.multipleSelectWidgetController.checkItemState(
                           widget.item,
-                          isSingleChoice: widget.popupConfig.isSingleChoice,
+                          isSingleChoice: widget.isSingleChoice,
                         );
-                        if (widget.popupConfig.isSingleChoice) {
+                        if (widget.isSingleChoice) {
                           widget.hideOverlay();
                         }
                       },
@@ -756,7 +826,7 @@ class _MaskLayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: popupConfig.disabledColor ?? Colors.black12,
+        color: fieldDecoration.disabledColor ?? Colors.black12,
         borderRadius: (fieldDecoration.border != null &&
                 fieldDecoration.border is OutlineInputBorder)
             ? (fieldDecoration.border as OutlineInputBorder).borderRadius

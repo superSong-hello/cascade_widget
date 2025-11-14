@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'config/chip_decoration.dart';
-import 'config/field_decoration.dart';
-import 'config/popup_config.dart';
-import 'controller/single_select_cascade_widget_controller.dart';
-import 'model/drop_down_menu_model.dart';
-import 'widgets/bubble_widget.dart';
-import 'widgets/custom_text.dart';
+import '../../config/chip_decoration.dart';
+import '../../config/field_decoration.dart';
+import '../../config/layout_config.dart';
+import '../../config/popup_config.dart';
+import '../../controller/cascade_widget_controller.dart';
+import '../../model/drop_down_menu_model.dart';
+import '../../widgets/bubble_widget.dart';
+import '../../widgets/custom_text.dart';
 
-/// TODO：- 临时做的级联选择单选，后期会合并到级联控件中
-class SingleSelectCascadeWidget extends StatefulWidget {
-  const SingleSelectCascadeWidget({
+class CascadeWidget extends StatefulWidget {
+  const CascadeWidget({
     super.key,
     required this.list,
     required this.selectedCallBack,
     this.fieldDecoration = const FieldDecoration(),
     this.chipDecoration = const ChipDecoration(),
     this.popupConfig = const PopupConfig(),
+    this.layoutConfig = const LayoutConfig(),
     this.controller,
+    this.selectedIds,
+    this.enabled = true,
   });
 
   final List<DropDownMenuModel> list;
@@ -31,21 +34,26 @@ class SingleSelectCascadeWidget extends StatefulWidget {
 
   final PopupConfig popupConfig;
 
-  final SingleSelectCascadeWidgetController? controller;
+  final LayoutConfig layoutConfig;
+
+  final CascadeWidgetController? controller;
+
+  final List<String>? selectedIds;
+
+  final bool enabled;
 
   @override
-  State<SingleSelectCascadeWidget> createState() =>
-      _SingleSelectCascadeWidgetState();
+  State<CascadeWidget> createState() => _CascadeWidgetState();
 }
 
-class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
+class _CascadeWidgetState extends State<CascadeWidget>
     with SingleTickerProviderStateMixin {
   final GlobalKey _buttonKey = GlobalKey();
   final FocusNode _focusNode = FocusNode();
-  late final SingleSelectCascadeWidgetController _cascadeController =
-      widget.controller ?? SingleSelectCascadeWidgetController();
+  late final CascadeWidgetController _cascadeController;
   final _textEditingController = TextEditingController();
   final _scrollController = ScrollController();
+  bool _isInternalController = false;
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -58,18 +66,26 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
   @override
   void initState() {
     super.initState();
+
+    if (widget.controller == null) {
+      _cascadeController = CascadeWidgetController();
+      _isInternalController = true;
+    } else {
+      _cascadeController = widget.controller!;
+    }
+
     _cascadeController
       ..init(
         widget.list,
-        widget.popupConfig.selectedIds,
+        widget.selectedIds,
         widget.selectedCallBack,
       )
-      ..isRealTimeRefresh = widget.popupConfig.isShowAllSelectedLabel
+      ..isRealTimeRefresh = widget.layoutConfig.isShowAllSelectedLabel
       ..refreshPopup = () {
         Future.delayed(const Duration(milliseconds: 100), showPopup);
 
         /// 显示所有标签的时候，勾选新的会滑到最底部
-        if (widget.popupConfig.isShowAllSelectedLabel) {
+        if (widget.layoutConfig.isShowAllSelectedLabel) {
           Future.delayed(const Duration(milliseconds: 50), () {
             if (_scrollController.positions.isNotEmpty) {
               _scrollController.animateTo(
@@ -98,26 +114,46 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
     });
   }
 
-  // @override
-  // void didUpdateWidget(covariant CascadeWidget oldWidget) {
-  //   debugPrint('=== cascade widget didUpdateWidget');
-  //   if (oldWidget.controller != widget.controller) {
-  //     _cascadeController.dispose();
-  //
-  //     _cascadeController = widget.controller ?? SingleSelectCascadeWidgetController();
-  //     _cascadeController
-  //       ..init(widget.list, widget.selectedCallBack)
-  //       ..refreshPopup = () {
-  //       Future.delayed(const Duration(milliseconds: 100), showPopup);
-  //     };
-  //   }
-  //   super.didUpdateWidget(oldWidget);
-  // }
+  @override
+  void didUpdateWidget(covariant CascadeWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.list != oldWidget.list) {
+      _cascadeController.setItems(widget.list);
+    }
+    if (widget.controller != oldWidget.controller) {
+      if (_isInternalController) {
+        _cascadeController.dispose();
+      }
+      _isInternalController = widget.controller == null;
+      _cascadeController = widget.controller ?? CascadeWidgetController();
+      _cascadeController
+        ..init(
+          widget.list,
+          widget.selectedIds,
+          widget.selectedCallBack,
+        )
+        ..isRealTimeRefresh = widget.layoutConfig.isShowAllSelectedLabel
+        ..refreshPopup = () {
+          Future.delayed(const Duration(milliseconds: 100), showPopup);
+          if (widget.layoutConfig.isShowAllSelectedLabel) {
+            Future.delayed(const Duration(milliseconds: 50), () {
+              if (_scrollController.positions.isNotEmpty) {
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
+          }
+        };
+    }
+  }
 
   @override
   void dispose() {
     _animationController.dispose();
-    if (widget.controller == null) {
+    if (_isInternalController) {
       _cascadeController.dispose();
     }
     _focusNode
@@ -146,8 +182,9 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      // ignore: deprecated_member_use
-      onPopInvoked: (_) async {
+      canPop: !_cascadeController.isOpen,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
         hideOverlay();
       },
       child: Focus(
@@ -165,8 +202,11 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
         child: _CustomInputDecorator(
           fieldDecoration: widget.fieldDecoration,
           popupConfig: widget.popupConfig,
+          layoutConfig: widget.layoutConfig,
           listenable: _listenable,
-          changeOverlay: _cascadeController.isOpen ? hideOverlay : showOverlay,
+          changeOverlay: widget.enabled
+              ? (_cascadeController.isOpen ? hideOverlay : showOverlay)
+              : null,
           hideOverlay: hideOverlay,
           buttonKey: _buttonKey,
           cascadeController: _cascadeController,
@@ -174,6 +214,7 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
           focusNode: _focusNode,
           textEditingController: _textEditingController,
           scrollController: _scrollController,
+          enabled: widget.enabled,
         ),
       ),
     );
@@ -296,7 +337,6 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
                                               widget.popupConfig.popupHeight,
                                           listViewWidth: width.toDouble(),
                                           popupConfig: widget.popupConfig,
-                                          hideOverlay: hideOverlay,
                                         )
                                       : _PopupTreeContentWidget(
                                           /// 级联选择
@@ -306,7 +346,6 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
                                           listViewWidth:
                                               widget.popupConfig.popupWidth,
                                           popupConfig: widget.popupConfig,
-                                          hideOverlay: hideOverlay,
                                         ),
                                 ),
                               );
@@ -349,19 +388,21 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
   }
 }
 
-class _CustomInputDecorator extends StatefulWidget {
+class _CustomInputDecorator extends StatelessWidget {
   const _CustomInputDecorator({
     required this.fieldDecoration,
     required this.listenable,
     required this.cascadeController,
     required this.chipDecoration,
     required this.popupConfig,
+    required this.layoutConfig,
     required this.hideOverlay,
     required this.scrollController,
     this.changeOverlay,
     this.buttonKey,
     this.focusNode,
     this.textEditingController,
+    this.enabled = true,
   });
 
   final FieldDecoration fieldDecoration;
@@ -370,13 +411,15 @@ class _CustomInputDecorator extends StatefulWidget {
 
   final PopupConfig popupConfig;
 
+  final LayoutConfig layoutConfig;
+
   final Listenable listenable;
 
   final GlobalKey? buttonKey;
 
   final VoidCallback? changeOverlay;
 
-  final SingleSelectCascadeWidgetController cascadeController;
+  final CascadeWidgetController cascadeController;
 
   final FocusNode? focusNode;
 
@@ -386,28 +429,22 @@ class _CustomInputDecorator extends StatefulWidget {
 
   final ScrollController scrollController;
 
-  @override
-  State<StatefulWidget> createState() => __CustomInputDecoratorState();
-}
-
-class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
-  final GlobalKey _key = GlobalKey();
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         InkWell(
-          key: _key,
           mouseCursor: SystemMouseCursors.grab,
-          onTap: widget.changeOverlay,
-          borderRadius: _getFieldBorderRadius(widget.fieldDecoration),
+          onTap: changeOverlay,
+          borderRadius: _getFieldBorderRadius(fieldDecoration),
           child: ListenableBuilder(
-            listenable: widget.listenable,
+            listenable: listenable,
             builder: (ctx, _) {
               return TapRegion(
                 child: InputDecorator(
-                  key: widget.buttonKey,
+                  key: buttonKey,
                   isEmpty: true,
                   decoration: _buildDecoration(context),
                   textAlign: TextAlign.start,
@@ -416,39 +453,39 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
                 ),
                 onTapInside: (PointerDownEvent event) {},
                 onTapOutside: (PointerDownEvent event) {
-                  RenderBox? tapedRenderBox = widget.buttonKey?.currentContext
+                  RenderBox? tapedRenderBox = buttonKey?.currentContext
                       ?.findRenderObject() as RenderBox?;
                   Offset? globalPosition =
                       tapedRenderBox?.localToGlobal(Offset.zero);
 
-                  final contentWidth = widget.cascadeController.isShopSearchView
+                  final contentWidth = cascadeController.isShopSearchView
                       ? (tapedRenderBox?.size.width ?? 0)
-                      : (widget.popupConfig.popupWidth *
-                          widget.cascadeController.uiList.length);
+                      : (popupConfig.popupWidth *
+                          cascadeController.uiList.length);
                   Rect renderBoxFrame = Rect.fromLTWH(
                     globalPosition?.dx ?? 0,
                     (globalPosition?.dy ?? 0) +
                         (tapedRenderBox?.size.height ?? 0),
                     contentWidth,
                     (tapedRenderBox?.size.height ?? 0) +
-                        widget.popupConfig.popupHeight,
+                        popupConfig.popupHeight,
                   );
                   Rect extraRenderBoxFrame = renderBoxFrame.inflate(5);
                   if (extraRenderBoxFrame.contains(event.position) &&
-                      widget.cascadeController.isOpen) {
+                      cascadeController.isOpen) {
                     return;
                   }
-                  widget.hideOverlay();
+                  hideOverlay();
                 },
               );
             },
           ),
         ),
-        if (widget.popupConfig.disabled)
+        if (!enabled)
           Positioned.fill(
             child: _MaskLayer(
-              fieldDecoration: widget.fieldDecoration,
-              popupConfig: widget.popupConfig,
+              fieldDecoration: fieldDecoration,
+              popupConfig: popupConfig,
             ),
           ),
       ],
@@ -456,10 +493,10 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
   }
 
   Widget _buildField() {
-    final selectedList = widget.cascadeController.selectedList;
+    final selectedList = cascadeController.selectedList;
     List<Widget> list = [];
     if (selectedList.isNotEmpty) {
-      if (widget.popupConfig.isShowAllSelectedLabel) {
+      if (layoutConfig.isShowAllSelectedLabel) {
         list = selectedList.map((e) => _buildChip(e)).toList();
       } else {
         list = selectedList.length > 1
@@ -477,18 +514,18 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
       }
     }
 
-    if (widget.fieldDecoration.isRow) {
+    if (layoutConfig.isRow) {
       var rowList = <Widget>[];
-      if (widget.popupConfig.isShowAllSelectedLabel) {
+      if (layoutConfig.isShowAllSelectedLabel) {
         if (list.isEmpty) {
           rowList = <Widget>[
-            if (widget.popupConfig.isShowSearchInput)
+            if (popupConfig.isShowSearchInput)
               Expanded(
                 child: TextFormField(
-                  controller: widget.textEditingController,
-                  focusNode: widget.focusNode,
-                  style: widget.fieldDecoration.style,
-                  canRequestFocus: widget.popupConfig.canRequestFocus,
+                  controller: textEditingController,
+                  focusNode: focusNode,
+                  style: fieldDecoration.style,
+                  canRequestFocus: popupConfig.canRequestFocus,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.zero,
                     isCollapsed: true,
@@ -508,16 +545,16 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
               ),
           ];
         } else {
-          if (widget.popupConfig.isShowSearchInput) {
-            final vertical = widget.chipDecoration.padding.vertical / 2;
+          if (popupConfig.isShowSearchInput) {
+            final vertical = chipDecoration.padding.vertical / 2;
             list.add(Container(
               width: 80,
               padding: EdgeInsets.only(top: vertical),
               child: TextFormField(
-                controller: widget.textEditingController,
-                focusNode: widget.focusNode,
-                style: widget.fieldDecoration.style,
-                canRequestFocus: widget.popupConfig.canRequestFocus,
+                controller: textEditingController,
+                focusNode: focusNode,
+                style: fieldDecoration.style,
+                canRequestFocus: popupConfig.canRequestFocus,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   isCollapsed: true,
@@ -539,32 +576,32 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
           rowList = <Widget>[
             if (list.isNotEmpty)
               Expanded(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: widget.fieldDecoration.maxHeight,
-                    minHeight: widget.fieldDecoration.minHeight,
-                  ),
-                  child: ListView(
-                    controller: widget.scrollController,
-                    shrinkWrap: true,
-                    children: [
-                      Wrap(
-                        spacing: 8, // 水平方向的间距
-                        runSpacing: 4, // 垂直方向的间距
-                        children: list,
-                      ),
-                    ],
-                  ),
+                  child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: layoutConfig.maxHeight,
+                  minHeight: layoutConfig.minHeight,
                 ),
-              ),
+                child: ListView(
+                  controller: scrollController,
+                  shrinkWrap: true,
+                  children: [
+                    Wrap(
+                      spacing: 8, // 水平方向的间距
+                      runSpacing: 4, // 垂直方向的间距
+                      children: list,
+                    ),
+                    // TextField(),
+                  ],
+                ),
+              )),
           ];
         }
       } else {
         rowList = <Widget>[
           if (list.isNotEmpty)
             Wrap(
-              spacing: widget.chipDecoration.spacing,
-              runSpacing: widget.chipDecoration.runSpacing,
+              spacing: chipDecoration.spacing,
+              runSpacing: chipDecoration.runSpacing,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: list,
             ),
@@ -572,13 +609,13 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
             const SizedBox(
               width: 5,
             ),
-          if (widget.popupConfig.isShowSearchInput)
+          if (popupConfig.isShowSearchInput)
             Expanded(
               child: TextFormField(
-                controller: widget.textEditingController,
-                focusNode: widget.focusNode,
-                style: widget.fieldDecoration.style,
-                canRequestFocus: widget.popupConfig.canRequestFocus,
+                controller: textEditingController,
+                focusNode: focusNode,
+                style: fieldDecoration.style,
+                canRequestFocus: popupConfig.canRequestFocus,
                 decoration: const InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   isCollapsed: true,
@@ -608,14 +645,14 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (list.isNotEmpty)
-          if (widget.popupConfig.isShowAllSelectedLabel)
+          if (layoutConfig.isShowAllSelectedLabel)
             ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: widget.fieldDecoration.maxHeight,
-                minHeight: widget.fieldDecoration.minHeight,
+                maxHeight: layoutConfig.maxHeight,
+                minHeight: layoutConfig.minHeight,
               ),
               child: ListView(
-                controller: widget.scrollController,
+                controller: scrollController,
                 shrinkWrap: true,
                 children: [
                   Wrap(
@@ -628,22 +665,22 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
               ),
             ),
         if (list.isNotEmpty)
-          if (!widget.popupConfig.isShowAllSelectedLabel)
+          if (!layoutConfig.isShowAllSelectedLabel)
             Wrap(
-              spacing: widget.chipDecoration.spacing,
-              runSpacing: widget.chipDecoration.runSpacing,
+              spacing: chipDecoration.spacing,
+              runSpacing: chipDecoration.runSpacing,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: list,
             ),
-        if (widget.popupConfig.isShowSearchInput)
+        if (popupConfig.isShowSearchInput)
           TextFormField(
-            controller: widget.textEditingController,
-            focusNode: widget.focusNode,
-            style: widget.fieldDecoration.style,
-            canRequestFocus: widget.popupConfig.canRequestFocus,
+            controller: textEditingController,
+            focusNode: focusNode,
+            style: fieldDecoration.style,
+            canRequestFocus: popupConfig.canRequestFocus,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(
-                vertical: widget.fieldDecoration.padding?.top ?? 0,
+                vertical: fieldDecoration.padding?.top ?? 0,
               ),
               isCollapsed: true,
               border: InputBorder.none,
@@ -669,39 +706,38 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
     return FittedBox(
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: widget.chipDecoration.borderRadius,
-          color: widget.chipDecoration.backgroundColor,
-          border: widget.chipDecoration.border,
+          borderRadius: chipDecoration.borderRadius,
+          color: chipDecoration.backgroundColor,
+          border: chipDecoration.border,
         ),
-        padding: widget.chipDecoration.padding,
+        padding: chipDecoration.padding,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: widget.chipDecoration.maxWidth,
+                maxWidth: chipDecoration.maxWidth,
               ),
-              child: CustomText(
-                widget.chipDecoration.isShowFullPathFromSelectedTag
-                    ? info.pathName
-                    : info.name,
-                style: widget.chipDecoration.labelStyle,
+              child: Text(
+                info.name,
+                style: chipDecoration.labelStyle,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
-            if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')
+            if (chipDecoration.deleteIcon != null && info.id != '-9999')
               const SizedBox(width: 4),
-            if (widget.chipDecoration.deleteIcon != null && info.id != '-9999')
+            if (chipDecoration.deleteIcon != null && info.id != '-9999')
               InkWell(
-                onTap: () => widget.cascadeController.checkAllItemState(
+                onTap: () => cascadeController.checkAllItemState(
                   info,
                   isFromChipClick: true,
                 ),
                 child: SizedBox(
-                  width: widget.chipDecoration.closeButtonSize,
-                  height: widget.chipDecoration.closeButtonSize,
-                  child: widget.chipDecoration.deleteIcon ??
-                      Icon(Icons.close,
-                          size: widget.chipDecoration.closeButtonSize),
+                  width: chipDecoration.closeButtonSize,
+                  height: chipDecoration.closeButtonSize,
+                  child: chipDecoration.deleteIcon ??
+                      Icon(Icons.close, size: chipDecoration.closeButtonSize),
                 ),
               ),
           ],
@@ -721,46 +757,46 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
   InputDecoration _buildDecoration(BuildContext context) {
     final theme = Theme.of(context);
 
-    final border = widget.fieldDecoration.border ??
+    final border = fieldDecoration.border ??
         OutlineInputBorder(
           borderRadius: BorderRadius.circular(
-            widget.fieldDecoration.borderRadius,
+            fieldDecoration.borderRadius,
           ),
           borderSide: theme.inputDecorationTheme.border?.borderSide ??
               const BorderSide(),
         );
 
-    final prefixIcon = widget.fieldDecoration.prefixIcon;
+    final prefixIcon = fieldDecoration.prefixIcon;
 
     return InputDecoration(
       isCollapsed: true,
       enabled: false,
-      hintText: widget.cascadeController.selectedList.isEmpty &&
-              (widget.textEditingController?.text ?? '').isEmpty
-          ? widget.fieldDecoration.hintText
+      hintText: cascadeController.selectedList.isEmpty &&
+              (textEditingController?.text ?? '').isEmpty
+          ? fieldDecoration.hintText
           : '',
-      hintStyle: widget.fieldDecoration.hintStyle,
-      filled: widget.fieldDecoration.backgroundColor != null,
-      fillColor: widget.fieldDecoration.backgroundColor,
-      border: widget.fieldDecoration.border ?? border,
-      disabledBorder: widget.fieldDecoration.border ?? border,
+      hintStyle: fieldDecoration.hintStyle,
+      filled: fieldDecoration.backgroundColor != null,
+      fillColor: fieldDecoration.backgroundColor,
+      border: fieldDecoration.border ?? border,
+      disabledBorder: fieldDecoration.border ?? border,
       prefixIcon: prefixIcon,
       suffixIcon: _buildSuffixIcon(),
-      contentPadding: widget.fieldDecoration.padding,
+      contentPadding: fieldDecoration.padding,
     );
   }
 
   Widget? _buildSuffixIcon() {
-    if (widget.fieldDecoration.showClearIcon &&
-        widget.cascadeController.selectedList.isNotEmpty) {
+    if (fieldDecoration.showClearIcon &&
+        cascadeController.selectedList.isNotEmpty) {
       return GestureDetector(
         onTap: () {
-          widget.cascadeController.cancelAllSelected();
-          if (widget.cascadeController.isOpen) {
-            widget.changeOverlay?.call();
+          cascadeController.cancelAllSelected();
+          if (cascadeController.isOpen) {
+            changeOverlay?.call();
           }
         },
-        child: widget.fieldDecoration.clearIcon ??
+        child: fieldDecoration.clearIcon ??
             const Icon(
               Icons.clear,
               size: 14,
@@ -768,18 +804,18 @@ class __CustomInputDecoratorState extends State<_CustomInputDecorator> {
       );
     }
 
-    if (widget.fieldDecoration.suffixIcon == null) {
+    if (fieldDecoration.suffixIcon == null) {
       return null;
     }
 
-    if (!widget.fieldDecoration.animateSuffixIcon) {
-      return widget.fieldDecoration.suffixIcon;
+    if (!fieldDecoration.animateSuffixIcon) {
+      return fieldDecoration.suffixIcon;
     }
 
     return AnimatedRotation(
-      turns: widget.cascadeController.isOpen ? 0.5 : 0,
+      turns: cascadeController.isOpen ? 0.5 : 0,
       duration: const Duration(milliseconds: 200),
-      child: widget.fieldDecoration.suffixIcon,
+      child: fieldDecoration.suffixIcon,
     );
   }
 }
@@ -790,14 +826,14 @@ class _PopupListContentWidget extends StatelessWidget {
     required this.listViewHeight,
     required this.listViewWidth,
     required this.popupConfig,
-    required this.hideOverlay,
   });
 
   final double listViewWidth;
   final double listViewHeight;
-  final SingleSelectCascadeWidgetController cascadeController;
+  final CascadeWidgetController cascadeController;
   final PopupConfig popupConfig;
-  final VoidCallback hideOverlay;
+
+  static Color defaultActiveColor = const Color(0xff0052D9);
 
   @override
   Widget build(BuildContext context) {
@@ -820,19 +856,53 @@ class _PopupListContentWidget extends StatelessWidget {
           ),
           child: ListView(
             children: cascadeController.filteredList.map((item) {
-              return _SearchListItem(
-                  item: item,
-                  popupConfig: popupConfig,
-                  callback: (DropDownMenuModel item) {
-                    cascadeController.checkAllItemState(
-                      item,
-                      isFromChipClick: true,
-                      selected: !(item.isSelected ?? false),
-                    );
-                    Future.delayed(const Duration(milliseconds: 200), () {
-                      hideOverlay();
-                    });
-                  });
+              return GestureDetector(
+                onTap: () {
+                  cascadeController.checkAllItemState(
+                    item,
+                    isFromChipClick: true,
+                    selected: !(item.isSelected ?? false),
+                  );
+                },
+                child: Container(
+                  height: 32,
+                  color: item.isClicked
+                      ? defaultActiveColor.withValues(alpha: 0.1)
+                      : Colors.white,
+                  padding: const EdgeInsets.only(left: 5, right: 12),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomText(
+                          popupConfig.isShowFullPathFromSearch
+                              ? item.pathName
+                              : item.name,
+                          style: item.isClicked || (item.isSelected ?? true)
+                              ? (popupConfig.selectedTextStyle ??
+                                  TextStyle(
+                                    color: defaultActiveColor,
+                                  ))
+                              : popupConfig.textStyle ??
+                                  const TextStyle(
+                                    color: Colors.black,
+                                  ),
+                        ),
+                      ),
+                      if (item.isSelected ?? false)
+                        Icon(
+                          Icons.check,
+                          size: 16,
+                          color: popupConfig.selectedTextStyle?.color ??
+                              defaultActiveColor,
+                        )
+                      else
+                        const SizedBox(
+                          width: 16,
+                        ),
+                    ],
+                  ),
+                ),
+              );
             }).toList(),
           ),
         ),
@@ -881,100 +951,20 @@ class _PopupListContentWidget extends StatelessWidget {
   }
 }
 
-class _SearchListItem extends StatefulWidget {
-  const _SearchListItem({
-    required this.item,
-    required this.popupConfig,
-    required this.callback,
-  });
-
-  final DropDownMenuModel item;
-
-  final ValueChanged<DropDownMenuModel> callback;
-
-  final PopupConfig popupConfig;
-
-  @override
-  State<StatefulWidget> createState() => _SearchListItemState();
-}
-
-class _SearchListItemState extends State<_SearchListItem> {
-  var isHover = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) {
-        setState(() {
-          isHover = true;
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          isHover = false;
-        });
-      },
-      child: InkWell(
-        onTap: () => widget.callback(widget.item),
-        child: Container(
-          height: 32,
-          color: isHover
-              ? (widget.popupConfig.itemBackgroundColor ??
-                  defaultActiveColor.withValues(alpha: 0.1))
-              : null,
-          padding: const EdgeInsets.only(left: 5, right: 12),
-          child: Row(
-            children: [
-              Expanded(
-                child: CustomText(
-                  widget.popupConfig.isShowFullPathFromSearch
-                      ? widget.item.pathName
-                      : widget.item.name,
-                  style:
-                      widget.item.isClicked || (widget.item.isSelected ?? true)
-                          ? (widget.popupConfig.selectedTextStyle ??
-                              const TextStyle(
-                                color: defaultActiveColor,
-                              ))
-                          : widget.popupConfig.textStyle ??
-                              const TextStyle(
-                                color: Colors.black,
-                              ),
-                ),
-              ),
-              if (widget.item.isSelected ?? false)
-                Icon(
-                  Icons.check,
-                  size: 16,
-                  color: widget.popupConfig.selectedTextStyle?.color ??
-                      defaultActiveColor,
-                )
-              else
-                const SizedBox(
-                  width: 16,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _PopupTreeContentWidget extends StatelessWidget {
   const _PopupTreeContentWidget({
     required this.cascadeController,
     required this.listViewHeight,
     required this.listViewWidth,
     required this.popupConfig,
-    required this.hideOverlay,
   });
 
   final double listViewWidth;
   final double listViewHeight;
-  final SingleSelectCascadeWidgetController cascadeController;
+  final CascadeWidgetController cascadeController;
   final PopupConfig popupConfig;
-  final VoidCallback hideOverlay;
+
+  static Color defaultActiveColor = const Color(0xff0052D9);
 
   @override
   Widget build(BuildContext context) {
@@ -1017,11 +1007,67 @@ class _PopupTreeContentWidget extends StatelessWidget {
                   shrinkWrap: true,
                   children: e
                       .map(
-                        (item) => _TreeListItem(
-                          item: item,
-                          popupConfig: popupConfig,
-                          callback: (DropDownMenuModel item) =>
-                              listViewItemClick(item),
+                        (item) => GestureDetector(
+                          onTap: () => listViewItemClick(item),
+                          child: Container(
+                            height: 32,
+                            color: item.isClicked
+                                ? (popupConfig.itemBackgroundColor ??
+                                    defaultActiveColor.withValues(alpha: 0.1))
+                                : Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: Row(
+                              children: [
+                                Transform.scale(
+                                  scale: 0.8,
+                                  child: Checkbox(
+                                    tristate: true,
+                                    value: item.isSelected,
+                                    onChanged: (_) => cascadeController
+                                        .checkAllItemState(item),
+                                    activeColor:
+                                        popupConfig.checkBoxActiveColor ??
+                                            defaultActiveColor,
+                                    side: const BorderSide(
+                                      color: Color(0xffD9D9D9),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    child: Text(
+                                      item.name,
+                                      maxLines: 1, // 设置为1行，如果文本过长，则会省略
+                                      overflow:
+                                          TextOverflow.ellipsis, // 文本溢出时显示省略号
+                                      style: item.isClicked ||
+                                              (item.isSelected ?? true)
+                                          ? popupConfig.selectedTextStyle ??
+                                              TextStyle(
+                                                color: popupConfig
+                                                        .checkBoxActiveColor ??
+                                                    defaultActiveColor,
+                                              )
+                                          : popupConfig.textStyle ??
+                                              const TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                    ),
+                                  ),
+                                ),
+                                if (item.children.isNotEmpty)
+                                  const Padding(
+                                    padding: EdgeInsets.only(right: 6),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      size: 12,
+                                      color: Color(0xff8C8C8C),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
                         ),
                       )
                       .toList(),
@@ -1035,15 +1081,6 @@ class _PopupTreeContentWidget extends StatelessWidget {
   }
 
   void listViewItemClick(DropDownMenuModel item) {
-    /// TODO: - 最后一层选中逻辑
-    if (item.children.isEmpty) {
-      cascadeController.checkAllItemState(item);
-      Future.delayed(const Duration(milliseconds: 200), () {
-        hideOverlay();
-      });
-      return;
-    }
-
     /// 取消之前的被选中的状态
     cascadeController.cancelAllClickedState(
       cascadeController.list,
@@ -1080,110 +1117,7 @@ class _PopupTreeContentWidget extends StatelessWidget {
       }
       level++;
     }
-
     cascadeController.setUIItems(tempTree);
-  }
-}
-
-class _TreeListItem extends StatefulWidget {
-  const _TreeListItem({
-    required this.item,
-    required this.popupConfig,
-    required this.callback,
-  });
-
-  final DropDownMenuModel item;
-
-  final ValueChanged<DropDownMenuModel> callback;
-
-  final PopupConfig popupConfig;
-
-  @override
-  State<StatefulWidget> createState() => _TreeListItemState();
-}
-
-class _TreeListItemState extends State<_TreeListItem> {
-  var isHover = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) {
-        setState(() {
-          isHover = true;
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          isHover = false;
-        });
-      },
-      child: InkWell(
-        onTap: () => widget.callback(widget.item),
-        child: Container(
-          height: 32,
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          color: isHover
-              ? (widget.popupConfig.itemBackgroundColor ??
-                  defaultActiveColor.withValues(alpha: 0.1))
-              : null,
-          child: Row(
-            children: [
-              if (widget.item.children.isEmpty)
-                SizedBox(
-                  width: 20,
-                  child: widget.item.isSelected ?? false
-                      ? Padding(
-                          padding: const EdgeInsets.only(right: 4),
-                          child: Icon(
-                            Icons.done_rounded,
-                            size: 16,
-                            color: widget.popupConfig.checkBoxActiveColor ??
-                                defaultActiveColor,
-                          ),
-                        )
-                      : null,
-                ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text(
-                    widget.item.name,
-                    maxLines: 1, // 设置为1行，如果文本过长，则会省略
-                    overflow: TextOverflow.ellipsis, // 文本溢出时显示省略号
-                    style: widget.item.isClicked ||
-                            (widget.item.isSelected ?? true)
-                        ? widget.popupConfig.selectedTextStyle ??
-                            TextStyle(
-                              color: widget.popupConfig.checkBoxActiveColor ??
-                                  defaultActiveColor,
-                            )
-                        : widget.popupConfig.textStyle ??
-                            const TextStyle(
-                              color: Colors.black,
-                            ),
-                  ),
-                ),
-              ),
-              if (widget.item.children.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(right: 2),
-                  child: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 12,
-                    color: widget.item.isClicked ||
-                            (widget.item.isSelected ?? true)
-                        ? widget.popupConfig.selectedTextStyle?.color ??
-                            widget.popupConfig.checkBoxActiveColor ??
-                            defaultActiveColor
-                        : const Color(0xff8C8C8C),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
 
@@ -1200,7 +1134,7 @@ class _MaskLayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: popupConfig.disabledColor ?? Colors.black12,
+        color: fieldDecoration.disabledColor ?? Colors.black12,
         borderRadius: (fieldDecoration.border != null &&
                 fieldDecoration.border is OutlineInputBorder)
             ? (fieldDecoration.border as OutlineInputBorder).borderRadius

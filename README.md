@@ -1,106 +1,91 @@
+# Cascade Widget
 
-# Flutter web 级联组件/单选、多选组件
-* 组件支持级联选择，支持搜索筛选 (support: Web)
-* 组件支持单选多选操作，支持搜索筛选 (support: Web、Android、iOS)
+A versatile Flutter cascade selection widget, offering multi-level cascading dropdowns with single and multiple selection options. Ideal for web and desktop applications.
+
+> **Note:** The `CascadeWidget` and `SingleSelectCascadeWidget` are primarily designed and optimized for Web. The `MultipleSelectWidget` supports Web, Android, and iOS.
 
 ## Preview
-![Screenshot 5](assets/screen_5.gif)
+
+![Preview GIF](assets/screen_5.gif)
+
+## Features
+
+- Multi-level cascade selection (Web optimized).
+- Single and multiple selection modes.
+- Search filtering for easy navigation.
+- Highly customizable UI for input fields, chips, and popups.
+- External controller support for programmatic control (e.g., clearing selections).
+- Supports Web, Android, and iOS (`MultipleSelectWidget`).
+
+## Installation
+
+Add this to your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  cascade_widget: ^2.1.3 # Replace with the latest version
+```
+
+Then run `flutter pub get`.
 
 ## Usage
 
+Here is a basic example of how to use the `CascadeWidget`:
+
 ```dart
-/// 级联操作
+import 'package:cascade_widget/cascade_widget.dart';
+
+// ...
+
 CascadeWidget(
-  list: testList1,
+  list: yourDataList, // Your List<DropDownMenuModel>
   selectedCallBack: (selectedList) {
+    // Handle the selected items
     for (final e in selectedList) {
       debugPrint('name:${e.name}, id:${e.id}');
     }
   },
   fieldDecoration: FieldDecoration(
     backgroundColor: Colors.white,
-    hintText: '请选择',
-    hintStyle: const TextStyle(color: Colors.black45),
+    hintText: 'Please select',
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(4),
       borderSide: const BorderSide(color: Colors.grey),
     ),
-    isRow: true,
   ),
   chipDecoration: ChipDecoration(
     backgroundColor: Colors.blueAccent,
-    runSpacing: 2,
-    spacing: 10,
-    labelStyle: TextStyle(
-      color: Colors.white,
-    ),
-    borderRadius: BorderRadius.all(Radius.circular(4)),
-    border: Border.all(color: Colors.grey),
-    deleteIcon: Icon(Icons.clear_outlined,
-    color: Colors.white, size: 16),
-    maxWidth: 100,
+    labelStyle: const TextStyle(color: Colors.white),
+    deleteIcon: const Icon(Icons.clear_outlined, color: Colors.white, size: 16),
   ),
-  popupConfig: PopupConfig(
+  layoutConfig: const LayoutConfig(
     isShowAllSelectedLabel: false,
-    selectedIds: selecteds,
   ),
 )
-
 ```
+
+### Multiple Select Example
+
+To use it as a standard multi-select or single-select dropdown (non-cascading):
 
 ```dart
 MultipleSelectWidget(
-  list: mulList,
+  list: yourSimpleList,
+  isSingleChoice: true, // Set to false for multiple selections
   selectedCallBack: (selectedList) {
-    for (final e in selectedList) {
-      debugPrint('name:${e.name}, id:${e.id}');
-    }
+    // Handle selection
   },
   fieldDecoration: FieldDecoration(
-    hintText: '单选（支持多选）',
-    hintStyle: const TextStyle(
-      color: Colors.black45,
-      fontSize: 14,
-    ),
-    padding: const EdgeInsets.symmetric(
-      horizontal: 12,
-    ),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(4),
-      borderSide: const BorderSide(color: Colors.grey),
-    ),
-    showClearIcon: false,
-    clearIcon: const Icon(
-      Icons.clear,
-      size: 14,
-    ),
-    style: const TextStyle(
-      fontSize: 14,
-    ),
+    hintText: 'Select an option',
   ),
   chipDecoration: const ChipDecoration(
     backgroundColor: Colors.black12,
-    padding: EdgeInsets.symmetric(
-      horizontal: 6,
-      vertical: 2,
-    ),
-    runSpacing: 0,
-    spacing: 5,
-    labelStyle: TextStyle(
-      color: Colors.black87,
-      fontSize: 12,
-    ),
-  borderRadius: BorderRadius.all(Radius.circular(4)),
-// deleteIcon: Icon(
-//   Icons.clear_outlined,
-//   color: Colors.black54,
-//   size: 15,
-// ),
   ),
   popupConfig: const PopupConfig(
     isShowFullPathFromSearch: false,
     popupHeight: 300,
-    isSingleChoice: true,
   ),
 )
 ```
+
+For more detailed examples, please check out the `/example` folder in the repository.

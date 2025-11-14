@@ -52,17 +52,18 @@ class SingleSelectCascadeWidgetController extends ChangeNotifier {
     List<String>? defaultSelectedIds,
     ValueChanged<List<DropDownMenuModel>> selectedCallBack,
   ) {
+    final copiedOptions = DropDownMenuModel.deepCopyList(options);
     if (defaultSelectedIds != null && defaultSelectedIds.isNotEmpty) {
       final selectedArray = _getAllSelectedListFromIds(
-          options, defaultSelectedIds, <DropDownMenuModel>[]);
+          copiedOptions, defaultSelectedIds, <DropDownMenuModel>[]);
       for (final e in selectedArray) {
         checkCurrentItemFatherNodeState(
-            treeFindPath(options, e, <DropDownMenuModel>[]));
+            treeFindPath(copiedOptions, e, <DropDownMenuModel>[]));
       }
     }
-    setItems(options);
-    setLevelForAllItems(options, 0, '');
-    _uiList.addAll([options]);
+    setItems(copiedOptions);
+    setLevelForAllItems(copiedOptions, 0, '');
+    _uiList.addAll([copiedOptions]);
     _selectedCallBack = selectedCallBack;
     getSelectedList(list, []);
     notifyListeners();
@@ -72,6 +73,7 @@ class SingleSelectCascadeWidgetController extends ChangeNotifier {
     _list
       ..clear()
       ..addAll(options);
+    _searchList.clear();
     notifyListeners();
   }
 
