@@ -215,7 +215,17 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
         final height = renderBox.size.height;
         final width = renderBox.size.width;
 
-        final totalPopupHeight = widget.popupConfig.popupHeight + 16;
+        // Calculate the actual height of the popup based on the content.
+        final itemCount = _multipleSelectWidgetController.filteredList.length;
+        final contentHeight = itemCount * _PopupListContentWidget._itemHeight;
+
+        // Use a tolerance to decide if the content is larger than the max height.
+        final bool isScrollable =
+            (contentHeight - widget.popupConfig.popupHeight) > 0.001;
+        final finalHeight =
+            isScrollable ? widget.popupConfig.popupHeight : contentHeight;
+
+        final totalPopupHeight = finalHeight + 24;
         final topPosition = _isPopupAbove
             ? position.dy - totalPopupHeight
             : position.dy + height;
@@ -313,7 +323,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
                                 listenable: _listenable,
                                 multipleSelectWidgetController:
                                     _multipleSelectWidgetController,
-                                listViewHeight: widget.popupConfig.popupHeight,
+                                listViewHeight: finalHeight,
                                 listViewWidth: width.toDouble(),
                                 popupDecoration: widget.popupConfig,
                                 hideOverlay: hideOverlay,
@@ -686,6 +696,7 @@ class _PopupListContentWidget extends StatelessWidget {
   final VoidCallback hideOverlay;
   final bool isSingleChoice;
   final bool isPopupAbove;
+  static const double _itemHeight = 32.0;
 
   @override
   Widget build(BuildContext context) {
@@ -694,7 +705,7 @@ class _PopupListContentWidget extends StatelessWidget {
       builder: (ctx, _) {
         return Container(
           width: listViewWidth,
-          height: listViewHeight + 16,
+          height: listViewHeight + 32,
           padding: const EdgeInsets.only(left: 4, bottom: 8, right: 4),
           child: BubbleWidget(
             spineType: isPopupAbove ? SpineType.bottom : SpineType.top,
@@ -710,6 +721,7 @@ class _PopupListContentWidget extends StatelessWidget {
                 ),
               ),
               child: ListView(
+                padding: EdgeInsets.zero,
                 children:
                     multipleSelectWidgetController.filteredList.map((item) {
                   return _ListItem(
@@ -786,7 +798,7 @@ class _ListItemState extends State<_ListItem> {
       child: InkWell(
           onTap: () => widget.callback(widget.item),
           child: Container(
-            height: 32,
+            height: _PopupListContentWidget._itemHeight,
             color: isHover
                 ? (widget.popupConfig.itemBackgroundColor ??
                     defaultActiveColor.withValues(alpha: 0.1))
