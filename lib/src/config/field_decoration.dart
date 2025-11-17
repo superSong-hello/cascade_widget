@@ -1,36 +1,38 @@
 import 'package:flutter/material.dart';
 
-/// Represents the decoration for the dropdown field.
+/// Represents the decoration for the dropdown input field.
 class FieldDecoration {
-  /// Creates a new instance of [FieldDecoration].
+  /// Creates a decoration for the dropdown input field.
   ///
-  /// [hintText] is the hint text to display in the dropdown field. The default
+  /// [hintText] is the text to display when the dropdown is empty. The default
   /// value is 'Select'.
   ///
-  /// [border] is the border of the dropdown field.
+  /// [border] is the border to display around the dropdown field.
   ///
-  /// [suffixIcon] is the icon to display at the end of dropdown field. The
-  /// default value is Icon(Icons.arrow_drop_down).
+  /// [suffixIcon] is the icon to display at the end of the dropdown field. The
+  /// default value is Icon(Icons.keyboard_arrow_down_rounded).
   ///
-  /// [prefixIcon] is the icon to display at the start of dropdown field.
+  /// [prefixIcon] is the icon to display at the beginning of the dropdown field.
   ///
-  /// [labelStyle] is the style of the label text.
+  /// [hintStyle] is the style to use for the hint text.
   ///
-  /// [hintStyle] is the style of the hint text.
+  /// [borderRadius] is the border radius of the dropdown field's corners. The
+  /// default value is 12.
   ///
-  /// [borderRadius] is the border radius of the dropdown field. The default
-  /// value is 12.
+  /// [animateSuffixIcon] is whether to animate the suffix icon when the dropdown
+  /// is opened or closed. The default value is true.
   ///
-  /// [animateSuffixIcon] is whether to animate the suffix icon or not when
-  /// dropdown is opened/closed. The default value is true.
-  ///
-  /// [suffixIcon] is the icon to display at the end of dropdown field.
-  ///
-  /// [prefixIcon] is the icon to display at the start of dropdown field.
-  ///
-  /// [padding] is the padding around the dropdown field.
+  /// [padding] is the padding around the dropdown field's content.
   ///
   /// [backgroundColor] is the background color of the dropdown field.
+  ///
+  /// [showClearIcon] is whether to display a clear icon when items are selected.
+  ///
+  /// [style] is the text style for the input field.
+  ///
+  /// [clearIcon] is the icon used to clear all selected items.
+  ///
+  /// [disabledColor] is the color of the overlay when the widget is disabled.
   const FieldDecoration({
     this.hintText = 'Select',
     this.border,
@@ -48,54 +50,45 @@ class FieldDecoration {
     this.showClearIcon = true,
     this.style,
     this.clearIcon,
-    this.isRow = true,
-    this.maxHeight = 200,
-    this.minHeight = 28,
+    this.disabledColor,
   });
 
-  /// The hint text to display in the dropdown field.
+  /// The text to display when the dropdown is empty.
   final String? hintText;
 
-  /// The border of the dropdown field.
+  /// The border to display around the dropdown field.
   final InputBorder? border;
 
-  /// The icon to display at the end of dropdown field.
+  /// The icon to display at the end of the dropdown field.
   final Widget? suffixIcon;
 
-  /// The icon to display at the start of dropdown field.
+  /// The icon to display at the beginning of the dropdown field.
   final Widget? prefixIcon;
 
-  /// The style of the hint text.
+  /// The style to use for the hint text.
   final TextStyle? hintStyle;
 
-  /// The border radius of the dropdown field.
+  /// The border radius of the dropdown field's corners.
   final double borderRadius;
 
-  /// animate the icon or not
+  /// Whether to animate the suffix icon when the dropdown is opened or closed.
   final bool animateSuffixIcon;
 
-  /// padding around the dropdown field
+  /// The padding around the dropdown field's content.
   final EdgeInsets? padding;
 
-  /// background color of the dropdown field
+  /// The background color of the dropdown field.
   final Color? backgroundColor;
 
-  /// show clear icon or not in the dropdown field
+  /// Whether to display a clear icon when items are selected.
   final bool showClearIcon;
 
-  /// The style of the input text.
+  /// The text style for the input field.
   final TextStyle? style;
 
-  /// clear icon
+  /// The icon used to clear all selected items.
   final Widget? clearIcon;
 
-  /// textField layout is row and column
-  final bool isRow;
-
-  /// [PopupDecoration().isShowAllSelectedLabel == true]
-  /// field widget max height
-  final double maxHeight;
-
-  /// /// field widget min height
-  final double minHeight;
+  /// The color of the overlay when the widget is disabled.
+  final Color? disabledColor;
 }

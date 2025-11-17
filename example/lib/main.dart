@@ -1,6 +1,228 @@
 import 'package:cascade_widget/cascade_widget.dart';
 import 'package:flutter/material.dart';
 
+//region Data Sources
+final selecteds = ['112', '211'];
+
+final testList = [
+  DropDownMenuModel(
+    id: '1',
+    name: 'Level 1',
+    children: [
+      DropDownMenuModel(
+        id: '11',
+        name: 'Level 1-1',
+        children: [
+          DropDownMenuModel(id: '111', name: 'Level 1-1-1', children: []),
+          DropDownMenuModel(id: '112', name: 'Level 1-1-2', children: []),
+          DropDownMenuModel(id: '113', name: 'Level 1-1-3', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '12',
+        name: 'Level 1-2',
+        children: [
+          DropDownMenuModel(id: '121', name: 'Level 1-2-1', children: []),
+        ],
+      ),
+    ],
+  ),
+  DropDownMenuModel(
+    id: '2',
+    name: 'Level 2',
+    children: [
+      DropDownMenuModel(
+        id: '21',
+        name: 'Level 2-1',
+        children: [
+          DropDownMenuModel(id: '211', name: 'Level 2-1-1', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '22',
+        name: 'Level 2-2',
+        children: [
+          DropDownMenuModel(id: '221', name: 'Level 2-2-1', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '23',
+        name: 'Level 2-3',
+        children: [
+          DropDownMenuModel(id: '231', name: 'Level 2-3-1', children: []),
+        ],
+      ),
+    ],
+  ),
+  DropDownMenuModel(
+    id: '3',
+    name: 'Level 3',
+    children: [
+      DropDownMenuModel(
+        id: '31',
+        name: 'Level 3-1',
+        children: [
+          DropDownMenuModel(id: '311', name: 'Level 3-1-1', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '32',
+        name: 'Level 3-2',
+        children: [
+          DropDownMenuModel(id: '321', name: 'Level 3-2-1', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '3-3',
+        name: 'Level 3-3',
+        children: [
+          DropDownMenuModel(id: '331', name: 'Level 3-3-1', children: []),
+        ],
+      ),
+    ],
+  ),
+];
+
+final testList1 = [
+  DropDownMenuModel(
+    id: '1',
+    name: 'Level 1',
+    children: [
+      DropDownMenuModel(
+        id: '11',
+        name: 'Level 1-1',
+        children: [
+          DropDownMenuModel(id: '111', name: 'Level 1-1-1', children: []),
+          DropDownMenuModel(id: '112', name: 'Level 1-1-2', children: []),
+          DropDownMenuModel(id: '113', name: 'Level 1-1-3', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '12',
+        name: 'Level 1-2',
+        children: [
+          DropDownMenuModel(id: '121', name: 'Level 1-2-1', children: []),
+        ],
+      ),
+    ],
+  ),
+  DropDownMenuModel(
+    id: '2',
+    name: 'Level 2',
+    children: [
+      DropDownMenuModel(
+        id: '21',
+        name: 'Level 2-1',
+        children: [
+          DropDownMenuModel(id: '211', name: 'Level 2-1-1', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '22',
+        name: 'Level 2-2',
+        children: [
+          DropDownMenuModel(
+              id: '221',
+              name:
+                  'This is a very long text to test wrapping in the dropdown Level 2/Level 2-2/Level 2-2-1',
+              children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '23',
+        name: 'Level 2-3',
+        children: [
+          DropDownMenuModel(id: '231', name: 'Level 2-3-1', children: []),
+        ],
+      ),
+    ],
+  ),
+  DropDownMenuModel(
+    id: '3',
+    name: 'Level 3',
+    children: [
+      DropDownMenuModel(
+        id: '31',
+        name: 'Level 3-1',
+        children: [
+          DropDownMenuModel(id: '311', name: 'Level 3-1-1', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '32',
+        name: 'Level 3-2',
+        children: [
+          DropDownMenuModel(id: '321', name: 'Level 3-2-1', children: []),
+        ],
+      ),
+      DropDownMenuModel(
+        id: '3-3',
+        name: 'Level 3-3',
+        children: [
+          DropDownMenuModel(id: '331', name: 'Level 3-3-1', children: []),
+        ],
+      ),
+    ],
+  ),
+];
+
+final singleList = [
+  DropDownMenuModel(
+    id: '1',
+    name: 'This is a long option to test the display 1',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '2',
+    name: 'Option 2',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '3',
+    name: 'Option 3',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '4',
+    name: 'Option 4',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '5',
+    name: 'Option 5',
+    children: [],
+  ),
+];
+
+final mulList = [
+  DropDownMenuModel(
+    id: '1',
+    name: 'This is a long option to test the display 1',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '2',
+    name: 'Option 2',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '3',
+    name: 'Option 3',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '4',
+    name: 'Option 4',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '5',
+    name: 'Option 5',
+    children: [],
+  ),
+];
+//endregion
+
 void main() {
   runApp(const MyApp());
 }
@@ -33,602 +255,356 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final cascadeController = CascadeWidgetController();
-  final testList = [
-    DropDownMenuModel(
-      id: '1',
-      name: 'Level 1',
-      children: [
-        DropDownMenuModel(
-          id: '11',
-          name: 'Level 1-1',
-          children: [
-            DropDownMenuModel(id: '111', name: 'Level 1-1-1', children: []),
-            DropDownMenuModel(id: '112', name: 'Level 1-1-2', children: []),
-            DropDownMenuModel(id: '113', name: 'Level 1-1-3', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '12',
-          name: 'Level 1-2',
-          children: [
-            DropDownMenuModel(id: '121', name: 'Level 1-2-1', children: []),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '2',
-      name: 'Level 2',
-      children: [
-        DropDownMenuModel(
-          id: '21',
-          name: 'Level 2-1',
-          children: [
-            DropDownMenuModel(id: '211', name: 'Level 2-1-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '22',
-          name: 'Level 2-2',
-          children: [
-            DropDownMenuModel(id: '221', name: 'Level 2-2-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '23',
-          name: 'Level 2-3',
-          children: [
-            DropDownMenuModel(id: '231', name: 'Level 2-3-1', children: []),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: 'Level 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: 'Level 3-1',
-          children: [
-            DropDownMenuModel(id: '311', name: 'Level 3-1-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: 'Level 3-2',
-          children: [
-            DropDownMenuModel(id: '321', name: 'Level 3-2-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: 'Level 3-3',
-          children: [
-            DropDownMenuModel(id: '331', name: 'Level 3-3-1', children: []),
-          ],
-        ),
-      ],
-    ),
-  ];
-
-  final testList1 = [
-    DropDownMenuModel(
-      id: '1',
-      name: 'Level 1',
-      children: [
-        DropDownMenuModel(
-          id: '11',
-          name: 'Level 1-1',
-          children: [
-            DropDownMenuModel(
-                id: '111', name: 'Level 1/Level 1-1/Level 1-1-1', children: []),
-            DropDownMenuModel(
-                id: '112', name: 'Level 1/Level 1-1/Level 1-1-2', children: []),
-            DropDownMenuModel(
-                id: '113', name: 'Level 1/Level 1-1/Level 1-1-3', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '12',
-          name: 'Level 1-2',
-          children: [
-            DropDownMenuModel(id: '121', name: 'Level 1-2-1', children: []),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '2',
-      name: 'Level 2',
-      children: [
-        DropDownMenuModel(
-          id: '21',
-          name: 'Level 2-1',
-          children: [
-            DropDownMenuModel(
-                id: '211', name: 'Level 2/Level 2-1/Level 2-1-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '22',
-          name: 'Level 2-2',
-          children: [
-            DropDownMenuModel(
-                id: '221',
-                name:
-                    'This is a very long text to test wrapping in the dropdown Level 2/Level 2-2/Level 2-2-1',
-                children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '23',
-          name: 'Level 2-3',
-          children: [
-            DropDownMenuModel(id: '231', name: 'Level 2-3-1', children: []),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: 'Level 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: 'Level 3-1',
-          children: [
-            DropDownMenuModel(id: '311', name: 'Level 3-1-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: 'Level 3-2',
-          children: [
-            DropDownMenuModel(id: '321', name: 'Level 3-2-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: 'Level 3-3',
-          children: [
-            DropDownMenuModel(id: '331', name: 'Level 3-3-1', children: []),
-          ],
-        ),
-      ],
-    ),
-  ];
-
-  final testList2 = [
-    DropDownMenuModel(
-      id: '1',
-      name: 'Level 1',
-      children: [
-        DropDownMenuModel(
-          id: '11',
-          name: 'Level 1-1',
-          children: [
-            DropDownMenuModel(
-                id: '111', name: 'Level 1/Level 1-1/Level 1-1-1', children: []),
-            DropDownMenuModel(
-                id: '112', name: 'Level 1/Level 1-1/Level 1-1-2', children: []),
-            DropDownMenuModel(
-                id: '113', name: 'Level 1/Level 1-1/Level 1-1-3', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '12',
-          name: 'Level 1-2',
-          children: [
-            DropDownMenuModel(id: '121', name: 'Level 1-2-1', children: []),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '2',
-      name: 'Level 2',
-      children: [
-        DropDownMenuModel(
-          id: '21',
-          name: 'Level 2-1',
-          children: [
-            DropDownMenuModel(
-                id: '211', name: 'Level 2/Level 2-1/Level 2-1-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '22',
-          name: 'Level 2-2',
-          children: [
-            DropDownMenuModel(
-                id: '221',
-                name:
-                    'This is a very long text to test wrapping in the dropdown Level 2/Level 2-2/Level 2-2-1',
-                children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '23',
-          name: 'Level 2-3',
-          children: [
-            DropDownMenuModel(id: '231', name: 'Level 2-3-1', children: []),
-          ],
-        ),
-      ],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: 'Level 3',
-      children: [
-        DropDownMenuModel(
-          id: '31',
-          name: 'Level 3-1',
-          children: [
-            DropDownMenuModel(id: '311', name: 'Level 3-1-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '32',
-          name: 'Level 3-2',
-          children: [
-            DropDownMenuModel(id: '321', name: 'Level 3-2-1', children: []),
-          ],
-        ),
-        DropDownMenuModel(
-          id: '3-3',
-          name: 'Level 3-3',
-          children: [
-            DropDownMenuModel(id: '331', name: 'Level 3-3-1', children: []),
-          ],
-        ),
-      ],
-    ),
-  ];
-
-  final selecteds = ['112', '211'];
-
-  final singleList = [
-    DropDownMenuModel(
-      id: '1',
-      name: 'This is a long option to test the display 1',
-      children: [],
-    ),
-    DropDownMenuModel(
-      id: '2',
-      name: 'Option 2',
-      children: [],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: 'Option 3',
-      children: [],
-    ),
-    DropDownMenuModel(
-      id: '4',
-      name: 'Option 4',
-      children: [],
-    ),
-    DropDownMenuModel(
-      id: '5',
-      name: 'Option 5',
-      children: [],
-    ),
-  ];
-
-  final mulList = [
-    DropDownMenuModel(
-      id: '1',
-      name: 'This is a long option to test the display 1',
-      children: [],
-    ),
-    DropDownMenuModel(
-      id: '2',
-      name: 'Option 2',
-      children: [],
-    ),
-    DropDownMenuModel(
-      id: '3',
-      name: 'Option 3',
-      children: [],
-    ),
-    DropDownMenuModel(
-      id: '4',
-      name: 'Option 4',
-      children: [],
-    ),
-    DropDownMenuModel(
-      id: '5',
-      name: 'Option 5',
-      children: [],
-    ),
-  ];
+  final mulSelectController = MultipleSelectWidgetController();
+  final singleCascadeSelectController = SingleSelectCascadeWidgetController();
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('controller: ${cascadeController.hashCode}');
     return Scaffold(
-      body: KeyboardListener(
-        focusNode: FocusNode(),
+      appBar: AppBar(
+        title: Text(widget.title),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
+      body: SingleChildScrollView(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const SizedBox(
-                height: 100,
-              ),
-              const Text('Cascade (show all selected items):'),
-              SizedBox(
-                width: 410,
-                child: CascadeWidget(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const _Title('Cascade Widgets (Web Optimized)'),
+                _CascadeExample(
+                  title: 'Show all selected items:',
                   list: testList1,
-                  selectedCallBack: (selectedList) {
-                    debugPrint('selected items:');
-                    for (final e in selectedList) {
-                      debugPrint('name:${e.name}, id:${e.id}');
-                    }
-                  },
-                  fieldDecoration: FieldDecoration(
-                    backgroundColor: Colors.white,
-                    hintText: 'Please select',
-                    hintStyle: const TextStyle(color: Colors.black45),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                    isRow: true,
-                  ),
-                  chipDecoration: ChipDecoration(
-                    backgroundColor: Colors.blueAccent,
-                    runSpacing: 2,
-                    spacing: 10,
-                    labelStyle: const TextStyle(
-                      color: Colors.white,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(4)),
-                    border: Border.all(color: Colors.grey),
-                    deleteIcon: const Icon(Icons.clear_outlined,
-                        color: Colors.white, size: 16),
-                    maxWidth: 100,
-                  ),
-                  popupConfig: PopupConfig(
-                    isShowSearchInput: false,
+                  selectedIds: selecteds,
+                  layoutConfig: const LayoutConfig(
                     isShowAllSelectedLabel: true,
-                    selectedIds: selecteds,
-                    isShowOverlay: true,
-                    // overlayColor: Colors.tealAccent,
                   ),
                 ),
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              const Text('Cascade (show first item +n more):'),
-              SizedBox(
-                width: 410,
-                child: CascadeWidget(
+                _CascadeExample(
+                  title: 'Show first item +n more:',
                   list: testList,
                   controller: cascadeController,
-                  selectedCallBack: (selectedList) {
-                    debugPrint('selected items:');
-                    for (final e in selectedList) {
-                      debugPrint('name:${e.name}, id:${e.id}');
-                    }
-                  },
-                  fieldDecoration: FieldDecoration(
-                    backgroundColor: Colors.white,
-                    hintText: 'Please select',
-                    hintStyle: const TextStyle(color: Colors.black45),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                    isRow: true,
-                  ),
-                  chipDecoration: const ChipDecoration(
-                    backgroundColor: Colors.blueAccent,
-                    runSpacing: 2,
-                    spacing: 10,
-                    labelStyle: TextStyle(
-                      color: Colors.white,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    deleteIcon: Icon(Icons.clear_outlined,
-                        color: Colors.white, size: 16),
-                  ),
-                  popupConfig: const PopupConfig(
+                  layoutConfig: const LayoutConfig(
                     isShowAllSelectedLabel: false,
-                    isShowSearchInput: false,
-                    // selectedIds: selecteds,
+                  ),
+                  isShowSearchInput: true,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () => cascadeController.cancelAllSelected(),
+                    child: const Text('Unselect All'),
                   ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () {
-                  cascadeController.cancelAllSelected();
-                  setState(() {});
-                },
-                child: const Text('Unselect All'),
-              ),
-              const SizedBox(height: 40),
-              const Text('Cascade Single Select:'),
-              SizedBox(
-                width: 410,
-                child: SingleSelectCascadeWidget(
-                  list: testList2,
-                  selectedCallBack: (selectedList) {
-                    debugPrint('selected items:');
-                    for (final e in selectedList) {
-                      debugPrint('name:${e.name}, id:${e.id}');
-                    }
-                  },
-                  fieldDecoration: FieldDecoration(
-                    backgroundColor: Colors.white,
-                    hintText: 'Please select',
-                    hintStyle: const TextStyle(color: Colors.black45),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                    isRow: true,
-                  ),
-                  chipDecoration: ChipDecoration(
-                    backgroundColor: Colors.blue,
-                    runSpacing: 2,
-                    spacing: 10,
-                    labelStyle: const TextStyle(
-                      color: Colors.white,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(4)),
-                    border: Border.all(color: Colors.grey),
-                    deleteIcon: const Icon(Icons.clear_outlined,
-                        color: Colors.white, size: 16),
-                    maxWidth: 250,
-                    isShowFullPathFromSelectedTag: true,
-                  ),
-                  popupConfig: const PopupConfig(
-                    isShowSearchInput: true,
-                    isShowAllSelectedLabel: false,
-                    selectedIds: [],
-                    isShowOverlay: true,
-                    // overlayColor: Colors.tealAccent,
+                _CascadeExample(
+                  title: 'Disabled Cascade Widget:',
+                  list: testList,
+                  enabled: false,
+                ),
+                const SizedBox(height: 40),
+                const _Title('Single Select Cascade Widget (Web Optimized)'),
+                _SingleSelectCascadeExample(
+                  controller: singleCascadeSelectController,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () =>
+                        singleCascadeSelectController.cancelAllSelected(),
+                    child: const Text('Unselect All (Cascade Single Select)'),
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              const Text('Single Select:'),
-              SizedBox(
-                width: 410,
-                height: 30,
-                child: MultipleSelectWidget(
-                  list: singleList,
-                  selectedCallBack: (selectedList) {
-                    for (final e in selectedList) {
-                      debugPrint('name:${e.name}, id:${e.id}');
-                    }
-                  },
-                  fieldDecoration: FieldDecoration(
-                    backgroundColor: Colors.white,
-                    hintText: 'Single select',
-                    hintStyle: const TextStyle(
-                      color: Colors.black45,
-                      fontSize: 12,
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                    showClearIcon: false,
-                    clearIcon: const Icon(
-                      Icons.clear,
-                      size: 14,
-                    ),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                  chipDecoration: const ChipDecoration(
-                    backgroundColor: Colors.black12,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    runSpacing: 0,
-                    spacing: 5,
-                    labelStyle: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 12,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    maxWidth: 100,
-                    deleteIcon: Icon(
-                      Icons.clear_outlined,
-                      color: Colors.black54,
-                      size: 15,
-                    ),
-                  ),
-                  popupConfig: const PopupConfig(
-                    isShowFullPathFromSearch: false,
-                    popupHeight: 300,
-                    isSingleChoice: true,
-                    selectedIds: ['1'],
-                    isShowOverlay: true,
-                    // overlayColor: Colors.tealAccent,
+                const SizedBox(height: 40),
+                const _Title('Multiple/Single Select Widgets'),
+                const _MultipleSelectExample(
+                  title: 'Single Select:',
+                  isSingleChoice: true,
+                  selectedIds: ['1'],
+                ),
+                const _MultipleSelectExample(
+                  title: 'Single Select (No Search):',
+                  isSingleChoice: true,
+                  selectedIds: ['1'],
+                  popupConfig: PopupConfig(isShowSearchInput: false),
+                ),
+                _MultipleSelectExample(
+                  title: 'Multiple Select:',
+                  controller: mulSelectController,
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () => mulSelectController.cancelAllSelected(),
+                    child: const Text('Unselect All (Multiple Select)'),
                   ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              const Text('Multiple Select:'),
-              SizedBox(
-                width: 410,
-                height: 30,
-                child: MultipleSelectWidget(
-                  list: mulList,
-                  selectedCallBack: (selectedList) {
-                    for (final e in selectedList) {
-                      debugPrint('name:${e.name}, id:${e.id}');
-                    }
-                  },
-                  fieldDecoration: FieldDecoration(
-                    hintText: 'Multiple select',
-                    hintStyle: const TextStyle(
-                      color: Colors.black45,
-                      fontSize: 12,
-                    ),
-                    backgroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                    showClearIcon: false,
-                    clearIcon: const Icon(
-                      Icons.clear,
-                      size: 14,
-                    ),
-                    style: const TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                  chipDecoration: const ChipDecoration(
-                    backgroundColor: Colors.black12,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    runSpacing: 0,
-                    spacing: 5,
-                    labelStyle: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 12,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                    maxWidth: 100,
-                    deleteIcon: Icon(
-                      Icons.clear_outlined,
-                      color: Colors.black54,
-                      size: 15,
-                    ),
-                  ),
-                  popupConfig: const PopupConfig(
-                    isShowFullPathFromSearch: false,
-                    popupHeight: 300,
-                    isSingleChoice: false,
-                    selectedIds: [],
-                    isShowOverlay: true,
-                    disabled: true,
-                    // disabledColor: Colors.grey.withValues(alpha: 0.4)
-                    // overlayColor: Colors.tealAccent,
-                  ),
+                // const _MultipleSelectExample(
+                //   title: 'Multiple Select (Column Layout):',
+                //   layoutConfig: LayoutConfig(isRow: false),
+                // ),
+                const _MultipleSelectExample(
+                  title: 'Disabled Multiple Select:',
+                  enabled: false,
                 ),
-              ),
-              const SizedBox(height: 20),
-            ],
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _Title extends StatelessWidget {
+  const _Title(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 40, bottom: 10),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
+    );
+  }
+}
+
+class _Card extends StatelessWidget {
+  const _Card({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: child,
+      ),
+    );
+  }
+}
+
+class _CascadeExample extends StatelessWidget {
+  const _CascadeExample({
+    required this.title,
+    required this.list,
+    this.controller,
+    this.layoutConfig,
+    this.selectedIds,
+    this.enabled = true,
+    this.isShowSearchInput = false,
+  });
+
+  final String title;
+  final List<DropDownMenuModel> list;
+  final CascadeWidgetController? controller;
+  final LayoutConfig? layoutConfig;
+  final List<String>? selectedIds;
+  final bool enabled;
+  final bool isShowSearchInput;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title),
+          const SizedBox(height: 10),
+          CascadeWidget(
+            list: list,
+            controller: controller,
+            layoutConfig: layoutConfig ?? const LayoutConfig(),
+            selectedIds: selectedIds,
+            enabled: enabled,
+            selectedCallBack: (selectedList) {
+              debugPrint('selected items:');
+              for (final e in selectedList) {
+                debugPrint('name:${e.name}, id:${e.id}');
+              }
+            },
+            fieldDecoration: FieldDecoration(
+              backgroundColor: Colors.white,
+              hintText: 'Please select',
+              hintStyle: const TextStyle(color: Colors.black45),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(4),
+                borderSide: const BorderSide(color: Colors.grey),
+              ),
+            ),
+            chipDecoration: ChipDecoration(
+              backgroundColor: Colors.blueAccent,
+              runSpacing: 2,
+              spacing: 10,
+              labelStyle: const TextStyle(
+                color: Colors.white,
+              ),
+              borderRadius: const BorderRadius.all(Radius.circular(4)),
+              border: Border.all(color: Colors.grey),
+              deleteIcon: const Icon(Icons.clear_outlined,
+                  color: Colors.white, size: 16),
+              maxWidth: 100,
+            ),
+            popupConfig: PopupConfig(
+              isShowSearchInput: isShowSearchInput,
+              isShowOverlay: true,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SingleSelectCascadeExample extends StatelessWidget {
+  const _SingleSelectCascadeExample({this.controller});
+  final SingleSelectCascadeWidgetController? controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      child: SingleSelectCascadeWidget(
+        list: testList1, // Using testList1 as testList2 is repetitive
+        controller: controller,
+        selectedCallBack: (selectedList) {
+          debugPrint('selected items:');
+          for (final e in selectedList) {
+            debugPrint('name:${e.name}, id:${e.id}');
+          }
+        },
+        fieldDecoration: FieldDecoration(
+          backgroundColor: Colors.white,
+          hintText: 'Please select',
+          hintStyle: const TextStyle(color: Colors.black45),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+        ),
+        chipDecoration: ChipDecoration(
+          backgroundColor: Colors.blue,
+          runSpacing: 2,
+          spacing: 10,
+          labelStyle: const TextStyle(
+            color: Colors.white,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(4)),
+          border: Border.all(color: Colors.grey),
+          deleteIcon:
+              const Icon(Icons.clear_outlined, color: Colors.white, size: 16),
+          maxWidth: 250,
+          isShowFullPathFromSelectedTag: true,
+        ),
+        popupConfig: const PopupConfig(
+          isShowSearchInput: true,
+          isShowOverlay: true,
+        ),
+        layoutConfig: const LayoutConfig(
+          isShowAllSelectedLabel: false,
+        ),
+        selectedIds: const [],
+      ),
+    );
+  }
+}
+
+class _MultipleSelectExample extends StatelessWidget {
+  const _MultipleSelectExample({
+    required this.title,
+    this.controller,
+    this.isSingleChoice = false,
+    this.selectedIds,
+    this.layoutConfig,
+    this.popupConfig,
+    this.enabled = true,
+  });
+
+  final String title;
+  final MultipleSelectWidgetController? controller;
+  final bool isSingleChoice;
+  final List<String>? selectedIds;
+  final LayoutConfig? layoutConfig;
+  final PopupConfig? popupConfig;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: 410,
+            height: layoutConfig?.isRow == false ? 100 : 40,
+            child: MultipleSelectWidget(
+              list: isSingleChoice ? singleList : mulList,
+              controller: controller,
+              selectedCallBack: (selectedList) {
+                for (final e in selectedList) {
+                  debugPrint('name:${e.name}, id:${e.id}');
+                }
+              },
+              isSingleChoice: isSingleChoice,
+              selectedIds: selectedIds,
+              enabled: enabled,
+              layoutConfig: layoutConfig ?? const LayoutConfig(),
+              popupConfig: popupConfig ??
+                  const PopupConfig(
+                    isShowFullPathFromSearch: false,
+                    popupHeight: 300,
+                    isShowOverlay: true,
+                  ),
+              fieldDecoration: FieldDecoration(
+                backgroundColor: Colors.white,
+                hintText: 'Select...',
+                hintStyle: const TextStyle(
+                  color: Colors.black45,
+                  fontSize: 12,
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: const BorderSide(color: Colors.grey),
+                ),
+                showClearIcon: false,
+                clearIcon: const Icon(
+                  Icons.clear,
+                  size: 14,
+                ),
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              chipDecoration: const ChipDecoration(
+                backgroundColor: Colors.black12,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 2,
+                ),
+                runSpacing: 0,
+                spacing: 5,
+                labelStyle: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 12,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+                maxWidth: 100,
+                deleteIcon: Icon(
+                  Icons.clear_outlined,
+                  color: Colors.black54,
+                  size: 15,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

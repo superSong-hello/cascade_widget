@@ -1,60 +1,74 @@
-## 2.1.3
+## [3.0.0] - 2025-11-14
 
-解决已知 bug
+### BREAKING CHANGES
 
-## 2.1.2
+- Refactored configuration classes for better separation of concerns.
+- Moved layout-related properties (`isRow`, `maxHeight`, `minHeight`, `isShowAllSelectedLabel`) into a new `LayoutConfig` class.
+- Moved `isSingleChoice` and `selectedIds` from `PopupConfig` to be top-level properties on the `MultipleSelectWidget`.
+- Replaced the `disabled` property in `PopupConfig` with a top-level `enabled` property on all widgets for better API clarity.
 
-单选级联控件选中的标签可以显示全路径
+### Features
 
-## 2.1.1
+- Added a new `LayoutConfig` class to control the layout of the field.
+- Improved the example application with more use cases and a clearer, more organized UI.
 
-优化了单选控件 UI
+### Fixes
 
-## 2.1.0
+- Addressed several linter warnings and deprecated API usages.
 
-追加级联单选控件（后期合并到级联控件中）
+## [2.1.3]
 
-## 2.0.6
+- Fixed known bugs.
+- Updated example and fixed `PopScope` deprecation warning.
 
-修复已知 bug
+## [2.1.2]
 
-## 2.0.5
+- Added option to show the full path in the selected tag for the single-select cascade widget.
 
-追加遮罩层，修改遮罩层颜色
+## [2.1.1]
 
-## 2.0.4
+- Improved the UI for the single-select widget.
 
-禁用搜索框可以用 TAB 按钮切换，修复使用多个输入框 tab 切换会导致多个弹层问题
+## [2.1.0]
 
-## 2.0.3
+- Added a new `SingleSelectCascadeWidget`.
 
-开放搜索框的部分属性
+## [2.0.6]
 
-## 2.0.2
+- Fixed known bugs.
 
-1、修复单选多选默认选中问题
-2、修复单选点击 item 弹层关闭
+## [2.0.5]
 
-## 2.0.1
+- Added a modal overlay and an option to customize its color.
 
-1、选中回显标签控制长度
-2、选中回显标签支持隐藏关闭按钮
+## [2.0.4]
 
-## 2.0.0
+- Fixed issues with Tab key navigation, preventing multiple popups from opening.
 
-1、修改了弹框的 config 类
-2、修复 UI 的 bug
+## [2.0.3]
 
-## 1.0.7
+- Exposed more properties for customizing the search input field.
 
-1、追加选中标签全显示
-2、追加禁用操作
-3、追加搜索输入框是否显示
-4、优化了第一次初始化默认选中功能
+## [2.0.2]
+
+- Fixed an issue with default selections in single and multi-select modes.
+- Ensured the popup closes after an item is selected in single-choice mode.
+
+## [2.0.0]
+
+- Refactored the popup configuration class.
+- Fixed various UI bugs.
+
+## [1.0.7]
+
+- Added an option to display all selected tags in the field.
+- Added a disabled state for the widget.
+- Added an option to show or hide the search input field.
+- Improved the initialization logic for default selections.
 
 ## 1.0.6
 
-fix multiple_select bug.
+- fix multiple_select bug.
 
 ## 1.0.5
 

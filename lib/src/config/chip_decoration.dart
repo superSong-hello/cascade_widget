@@ -1,25 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-/// Configuration class for customizing the appearance of
-/// chips in the multi-select dropdown.
+/// Configuration class for customizing the appearance of selected item chips.
 class ChipDecoration {
-  /// Creates a new instance of [ChipDecoration].
-  ///
-  /// [deleteIcon] is the icon to display for deleting a chip.
-  ///
-  /// [backgroundColor] is the background color of the chip.
-  ///
-  /// [labelStyle] is the style of the chip label.
-  ///
-  /// [padding] is the padding around the chip.
-  ///
-  /// [border] is the border of the chip.
-  ///
-  /// [spacing] is the spacing between chips.
-  ///
-  /// [runSpacing] is the spacing between chip rows (when the chips wrap).
-  ///
-  /// [borderRadius] is the border radius of the chip.
+  /// Creates a configuration for chip appearance.
   const ChipDecoration({
     this.deleteIcon,
     this.backgroundColor = const Color(0xFFE0E0E0),
@@ -34,36 +17,37 @@ class ChipDecoration {
     this.isShowFullPathFromSelectedTag = false,
   });
 
-  /// The icon to display for deleting a chip.
+  /// The icon used for the delete button on a chip.
   final Icon? deleteIcon;
 
   /// The background color of the chip.
   final Color? backgroundColor;
 
-  /// The style of the chip label.
+  /// The text style for the chip's label.
   final TextStyle? labelStyle;
 
-  /// The padding around the chip.
+  /// The padding around the content of the chip.
   final EdgeInsets padding;
 
-  /// The border of the chip.
+  /// The border to draw around the chip.
   final BoxBorder border;
 
-  /// The spacing between chips.
+  /// The spacing between chips in the same row.
   final double spacing;
 
-  /// The spacing between chip rows (when the chips wrap).
+  /// The spacing between rows of chips.
   final double runSpacing;
 
-  /// The border radius of the chip.
+  /// The border radius for the chip's corners.
   final BorderRadiusGeometry borderRadius;
 
-  /// field widget max width
+  /// The maximum width for a single chip.
   final double maxWidth;
 
-  /// close size
+  /// The size of the close button icon.
   final double closeButtonSize;
 
-  /// 选中的标签是否显示全路径（一级/二级/name）
+  /// Whether to display the full path of a selected item in the chip label.
+  /// (e.g., "Level 1/Level 2/Item").
   final bool isShowFullPathFromSelectedTag;
 }
