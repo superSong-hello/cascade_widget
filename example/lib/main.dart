@@ -326,7 +326,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: 'Single Select (No Search):',
                   isSingleChoice: true,
                   selectedIds: ['1'],
-                  popupConfig: PopupConfig(isShowSearchInput: false),
+                  popupConfig: PopupConfig(
+                    isShowSearchInput: false,
+                    isShowOverlay: true,
+                  ),
                 ),
                 _MultipleSelectExample(
                   title: 'Multiple Select:',

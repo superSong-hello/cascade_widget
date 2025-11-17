@@ -55,6 +55,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   late final MultipleSelectWidgetController _multipleSelectWidgetController;
   final _textEditingController = TextEditingController();
   bool _isInternalController = false;
+  bool _isPopupAbove = false;
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -183,6 +184,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
           textEditingController: _textEditingController,
           hideOverlay: hideOverlay,
           enabled: widget.enabled,
+          isPopupAbove: _isPopupAbove,
         ),
       ),
     );
@@ -213,12 +215,21 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
         final height = renderBox.size.height;
         final width = renderBox.size.width;
 
+        final totalPopupHeight = widget.popupConfig.popupHeight + 16;
+        final topPosition = _isPopupAbove
+            ? position.dy - totalPopupHeight
+            : position.dy + height;
+
+        final slideBeginOffset =
+            _isPopupAbove ? const Offset(0, 1) : const Offset(0, -1);
+
         /// 获取屏幕宽度
         double screenWidth = MediaQuery.of(context).size.width;
 
         /// 获取屏幕高度
         double screenHeight = MediaQuery.of(context).size.height;
-        final Color maskColor = widget.popupConfig.overlayColor;
+        final Color maskColor = Colors.red
+            .withValues(alpha: 0.5); //widget.popupConfig.overlayColor;
 
         return Stack(
           children: [
@@ -278,7 +289,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
             ],
             Positioned(
               left: position.dx + 0,
-              top: position.dy + height,
+              top: topPosition,
               child: Material(
                 color: Colors.transparent,
                 child: MediaQuery.removePadding(
@@ -295,7 +306,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
                             sizeFactor: _animation,
                             child: SlideTransition(
                               position: Tween<Offset>(
-                                begin: const Offset(0, -1), // 从顶部开始
+                                begin: slideBeginOffset, // 从顶部开始
                                 end: Offset.zero,
                               ).animate(_animation),
                               child: _PopupListContentWidget(
@@ -307,6 +318,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
                                 popupDecoration: widget.popupConfig,
                                 hideOverlay: hideOverlay,
                                 isSingleChoice: widget.isSingleChoice,
+                                isPopupAbove: _isPopupAbove,
                               ),
                             ),
                           );
@@ -329,9 +341,23 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
 
   /// show overlay
   void showOverlay() {
+    final renderBox =
+        _buttonKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final position = renderBox.localToGlobal(Offset.zero);
+    final widgetHeight = renderBox.size.height;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final popupHeight = widget.popupConfig.popupHeight;
+
+    final spaceBelow = screenHeight - (position.dy + widgetHeight);
+    final spaceAbove = position.dy;
+
     setState(() {
-      _animationController.forward();
+      _isPopupAbove = (spaceBelow < popupHeight) && (spaceAbove >= popupHeight);
     });
+
+    _animationController.forward();
     _multipleSelectWidgetController.isOpen = true;
     showPopup();
   }
@@ -361,6 +387,7 @@ class _CustomInputDecorator extends StatelessWidget {
     this.buttonKey,
     this.textEditingController,
     this.enabled = true,
+    this.isPopupAbove = false,
   });
 
   final FieldDecoration fieldDecoration;
@@ -386,6 +413,7 @@ class _CustomInputDecorator extends StatelessWidget {
   final VoidCallback hideOverlay;
 
   final bool enabled;
+  final bool isPopupAbove;
 
   @override
   Widget build(BuildContext context) {
@@ -411,15 +439,26 @@ class _CustomInputDecorator extends StatelessWidget {
                 onTapOutside: (PointerDownEvent event) {
                   RenderBox? tapedRenderBox = buttonKey?.currentContext
                       ?.findRenderObject() as RenderBox?;
+                  if (tapedRenderBox == null) {
+                    hideOverlay();
+                    return;
+                  }
                   Offset? globalPosition =
-                      tapedRenderBox?.localToGlobal(Offset.zero);
+                      tapedRenderBox.localToGlobal(Offset.zero);
+
+                  final widgetHeight = tapedRenderBox.size.height;
+                  final popupHeight =
+                      popupConfig.popupHeight + 16; // Match total height
+
+                  final top =
+                      globalPosition.dy - (isPopupAbove ? popupHeight : 0);
+                  final totalHeight = widgetHeight + popupHeight;
 
                   Rect renderBoxFrame = Rect.fromLTWH(
-                    globalPosition?.dx ?? 0,
-                    globalPosition?.dy ?? 0,
-                    tapedRenderBox?.size.width ?? 0,
-                    (tapedRenderBox?.size.height ?? 0) +
-                        popupConfig.popupHeight,
+                    globalPosition.dx,
+                    top,
+                    tapedRenderBox.size.width,
+                    totalHeight,
                   );
                   Rect extraRenderBoxFrame = renderBoxFrame.inflate(5);
                   if (extraRenderBoxFrame.contains(event.position)) {
@@ -636,6 +675,7 @@ class _PopupListContentWidget extends StatelessWidget {
     required this.popupDecoration,
     required this.hideOverlay,
     required this.isSingleChoice,
+    this.isPopupAbove = false,
   });
 
   final Listenable listenable;
@@ -645,6 +685,7 @@ class _PopupListContentWidget extends StatelessWidget {
   final PopupConfig popupDecoration;
   final VoidCallback hideOverlay;
   final bool isSingleChoice;
+  final bool isPopupAbove;
 
   @override
   Widget build(BuildContext context) {
@@ -656,7 +697,7 @@ class _PopupListContentWidget extends StatelessWidget {
           height: listViewHeight + 16,
           padding: const EdgeInsets.only(left: 4, bottom: 8, right: 4),
           child: BubbleWidget(
-            spineType: SpineType.top,
+            spineType: isPopupAbove ? SpineType.bottom : SpineType.top,
             color: Colors.white,
             elevation: 2,
             child: Container(
