@@ -192,6 +192,41 @@ final singleList = [
     name: 'Option 5',
     children: [],
   ),
+  DropDownMenuModel(
+    id: '6',
+    name: 'Option 6',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '7',
+    name: 'Option 7',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '8',
+    name: 'Option 8',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '9',
+    name: 'Option 9',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '10',
+    name: 'Option 10',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '11',
+    name: 'Option 11',
+    children: [],
+  ),
+  DropDownMenuModel(
+    id: '12',
+    name: 'Option 12',
+    children: [],
+  ),
 ];
 
 final mulList = [
@@ -326,7 +361,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: 'Single Select (No Search):',
                   isSingleChoice: true,
                   selectedIds: ['1'],
-                  popupConfig: PopupConfig(isShowSearchInput: false),
+                  popupConfig: PopupConfig(
+                    isShowSearchInput: false,
+                    isShowOverlay: true,
+                  ),
                 ),
                 _MultipleSelectExample(
                   title: 'Multiple Select:',
@@ -519,6 +557,7 @@ class _MultipleSelectExample extends StatelessWidget {
     this.controller,
     this.isSingleChoice = false,
     this.selectedIds,
+    // ignore: unused_element_parameter
     this.layoutConfig,
     this.popupConfig,
     this.enabled = true,
