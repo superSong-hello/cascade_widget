@@ -238,8 +238,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
 
         /// 获取屏幕高度
         double screenHeight = MediaQuery.of(context).size.height;
-        final Color maskColor = Colors.red
-            .withValues(alpha: 0.5); //widget.popupConfig.overlayColor;
+        final Color maskColor = widget.popupConfig.overlayColor;
 
         return Stack(
           children: [

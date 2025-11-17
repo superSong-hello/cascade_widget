@@ -557,6 +557,7 @@ class _MultipleSelectExample extends StatelessWidget {
     this.controller,
     this.isSingleChoice = false,
     this.selectedIds,
+    // ignore: unused_element_parameter
     this.layoutConfig,
     this.popupConfig,
     this.enabled = true,
