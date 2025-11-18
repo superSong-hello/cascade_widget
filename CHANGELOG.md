@@ -1,3 +1,21 @@
+## [3.0.1] - 2025-11-18
+
+### BREAKING CHANGES
+
+- **Refactored `MultipleSelectWidget`**: The original `MultipleSelectWidget` has been split into two separate, more focused widgets:
+  - `MultipleSelectWidget`: Now exclusively handles multi-selection logic.
+  - `SingleSelectWidget`: A new widget dedicated to single-selection scenarios.
+    The `isSingleChoice` parameter has been removed from `MultipleSelectWidget`. Please use `SingleSelectWidget` for single-choice dropdowns.
+
+### Features
+
+- **Single-Select Searchable Input**: In single-select mode, the input field now displays the selected text and can be edited to search/filter the list. The dropdown is triggered by the suffix icon.
+- **Customizable Empty List Text**: Added `emptyText` and `emptyTextStyle` to `PopupConfig` to allow customization of the message shown when the list is empty for both single and multiple select widgets.
+
+### Fixes
+
+- **Adaptive Chip Width**: The width of selection chips in `MultipleSelectWidget` is now adaptive and dynamically calculated, preventing layout overflow on smaller screens or with long text.
+
 ## [3.0.0] - 2025-11-14
 
 ### BREAKING CHANGES

@@ -1,4 +1,5 @@
 import 'package:cascade_widget/cascade_widget.dart';
+import 'package:cascade_widget/src/components/select/single_select_widget.dart';
 import 'package:flutter/material.dart';
 
 //region Data Sources
@@ -256,6 +257,21 @@ final mulList = [
     children: [],
   ),
 ];
+
+final pureSingleList = [
+  DropDownMenuModel(id: 's1', name: 'Simple Item 1', children: []),
+  DropDownMenuModel(id: 's2', name: 'Simple Item 2', children: []),
+  DropDownMenuModel(id: 's3', name: 'Simple Item 3', children: []),
+  DropDownMenuModel(id: 's4', name: 'Simple Item 4', children: []),
+  DropDownMenuModel(id: 's5', name: 'Simple Item 5', children: []),
+  DropDownMenuModel(id: 's6', name: 'Simple Item 6', children: []),
+  DropDownMenuModel(id: 's7', name: 'Simple Item 7', children: []),
+  DropDownMenuModel(id: 's8', name: 'Simple Item 8', children: []),
+  DropDownMenuModel(id: 's9', name: 'Simple Item 9', children: []),
+  DropDownMenuModel(id: 's10', name: 'Simple Item 10', children: []),
+  DropDownMenuModel(id: 's11', name: 'Simple Item 11', children: []),
+  DropDownMenuModel(id: 's12', name: 'Simple Item 12', children: []),
+];
 //endregion
 
 void main() {
@@ -350,11 +366,40 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: const Text('Unselect All (Cascade Single Select)'),
                   ),
                 ),
+                const _Title('Pure Single Select Widget'),
+                SizedBox(
+                  width: 300,
+                  child: _Card(
+                    child: SingleSelectWidget(
+                      list: pureSingleList,
+                      selectedCallBack: (selectedList) {
+                        debugPrint('Pure single select callback:');
+                        for (final e in selectedList) {
+                          debugPrint('name:${e.name}, id:${e.id}');
+                        }
+                      },
+                      fieldDecoration: FieldDecoration(
+                        backgroundColor: Colors.white,
+                        hintText: 'Please select a simple item',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        showClearIcon: false,
+                      ),
+                      popupConfig: const PopupConfig(
+                        isShowSearchInput: true,
+                        isShowOverlay: true,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 40),
                 const _Title('Multiple/Single Select Widgets'),
                 const _MultipleSelectExample(
                   title: 'Single Select:',
                   isSingleChoice: true,
+                  maxWidth: 200,
                   selectedIds: ['1'],
                 ),
                 const _MultipleSelectExample(
@@ -384,6 +429,35 @@ class _MyHomePageState extends State<MyHomePage> {
                 const _MultipleSelectExample(
                   title: 'Disabled Multiple Select:',
                   enabled: false,
+                ),
+                const _Title(
+                    'Pure Single Select Widget (popup location: above)'),
+                SizedBox(
+                  width: 300,
+                  child: _Card(
+                    child: SingleSelectWidget(
+                      list: pureSingleList,
+                      selectedCallBack: (selectedList) {
+                        debugPrint('Pure single select callback:');
+                        for (final e in selectedList) {
+                          debugPrint('name:${e.name}, id:${e.id}');
+                        }
+                      },
+                      fieldDecoration: FieldDecoration(
+                        backgroundColor: Colors.white,
+                        hintText: 'Please select a simple item',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        showClearIcon: false,
+                      ),
+                      popupConfig: const PopupConfig(
+                        isShowSearchInput: true,
+                        isShowOverlay: true,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -561,6 +635,8 @@ class _MultipleSelectExample extends StatelessWidget {
     this.layoutConfig,
     this.popupConfig,
     this.enabled = true,
+    this.maxWidth = 100,
+    this.width = 410,
   });
 
   final String title;
@@ -570,6 +646,8 @@ class _MultipleSelectExample extends StatelessWidget {
   final LayoutConfig? layoutConfig;
   final PopupConfig? popupConfig;
   final bool enabled;
+  final double maxWidth;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -580,7 +658,7 @@ class _MultipleSelectExample extends StatelessWidget {
           Text(title),
           const SizedBox(height: 10),
           SizedBox(
-            width: 410,
+            width: width,
             height: layoutConfig?.isRow == false ? 100 : 40,
             child: MultipleSelectWidget(
               list: isSingleChoice ? singleList : mulList,
@@ -621,21 +699,21 @@ class _MultipleSelectExample extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              chipDecoration: const ChipDecoration(
+              chipDecoration: ChipDecoration(
                 backgroundColor: Colors.black12,
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 6,
                   vertical: 2,
                 ),
                 runSpacing: 0,
                 spacing: 5,
-                labelStyle: TextStyle(
+                labelStyle: const TextStyle(
                   color: Colors.black87,
                   fontSize: 12,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-                maxWidth: 100,
-                deleteIcon: Icon(
+                borderRadius: const BorderRadius.all(Radius.circular(4)),
+                maxWidth: maxWidth,
+                deleteIcon: const Icon(
                   Icons.clear_outlined,
                   color: Colors.black54,
                   size: 15,
