@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../config/chip_decoration.dart';
 import '../../config/field_decoration.dart';
 import '../../config/layout_config.dart';
 import '../../config/popup_config.dart';
 import '../../controller/multiple_select_widget_controller.dart';
 import '../../model/drop_down_menu_model.dart';
 import '../../widgets/bubble_widget.dart';
-import '../../widgets/custom_text.dart';
 
-class MultipleSelectWidget extends StatefulWidget {
-  const MultipleSelectWidget({
+class SingleSelectWidget extends StatefulWidget {
+  const SingleSelectWidget({
     super.key,
     required this.list,
     required this.selectedCallBack,
     this.fieldDecoration = const FieldDecoration(),
-    this.chipDecoration = const ChipDecoration(),
     this.popupConfig = const PopupConfig(),
     this.layoutConfig = const LayoutConfig(),
     this.controller,
-    this.isSingleChoice = false,
     this.selectedIds,
     this.enabled = true,
   });
@@ -31,25 +27,21 @@ class MultipleSelectWidget extends StatefulWidget {
 
   final FieldDecoration fieldDecoration;
 
-  final ChipDecoration chipDecoration;
-
   final PopupConfig popupConfig;
 
   final LayoutConfig layoutConfig;
 
   final MultipleSelectWidgetController? controller;
 
-  final bool isSingleChoice;
-
   final List<String>? selectedIds;
 
   final bool enabled;
 
   @override
-  State<MultipleSelectWidget> createState() => _MultipleSelectWidgetState();
+  State<SingleSelectWidget> createState() => _SingleSelectWidgetState();
 }
 
-class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
+class _SingleSelectWidgetState extends State<SingleSelectWidget>
     with SingleTickerProviderStateMixin {
   final GlobalKey _buttonKey = GlobalKey();
   final FocusNode _focusNode = FocusNode();
@@ -57,6 +49,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   final _textEditingController = TextEditingController();
   bool _isInternalController = false;
   bool _isPopupAbove = false;
+  bool _isProgrammaticallyChangingText = false;
 
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -95,7 +88,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   }
 
   @override
-  void didUpdateWidget(covariant MultipleSelectWidget oldWidget) {
+  void didUpdateWidget(covariant SingleSelectWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.list != oldWidget.list) {
       _multipleSelectWidgetController.setItems(widget.list);
@@ -144,12 +137,37 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
   }
 
   void _textFieldChange() {
+    if (_isProgrammaticallyChangingText) return;
     showOverlay();
     _multipleSelectWidgetController.setSearchQuery(_textEditingController.text);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_multipleSelectWidgetController.selectedList.isNotEmpty) {
+      final selectedName =
+          _multipleSelectWidgetController.selectedList.first.name;
+      if (!_focusNode.hasFocus) {
+        if (_textEditingController.text != selectedName) {
+          _isProgrammaticallyChangingText = true;
+          _textEditingController.text = selectedName;
+          _textEditingController.selection = TextSelection.fromPosition(
+            TextPosition(offset: selectedName.length),
+          );
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _isProgrammaticallyChangingText = false;
+          });
+        }
+      }
+    } else {
+      if (!_focusNode.hasFocus && _textEditingController.text.isNotEmpty) {
+        _isProgrammaticallyChangingText = true;
+        _textEditingController.clear();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _isProgrammaticallyChangingText = false;
+        });
+      }
+    }
     return PopScope(
       // ignore: deprecated_member_use
       onPopInvoked: (_) async {
@@ -180,7 +198,6 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
               : null,
           buttonKey: _buttonKey,
           multipleSelectWidgetController: _multipleSelectWidgetController,
-          chipDecoration: widget.chipDecoration,
           focusNode: _focusNode,
           textEditingController: _textEditingController,
           hideOverlay: hideOverlay,
@@ -328,7 +345,6 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
                                 listViewWidth: width.toDouble(),
                                 popupDecoration: widget.popupConfig,
                                 hideOverlay: hideOverlay,
-                                isSingleChoice: widget.isSingleChoice,
                                 isPopupAbove: _isPopupAbove,
                               ),
                             ),
@@ -370,7 +386,11 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
 
     _animationController.forward();
     _multipleSelectWidgetController.isOpen = true;
-    showPopup();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (mounted) {
+      showPopup();
+    }
+    // });
   }
 
   /// hide overlay
@@ -391,7 +411,6 @@ class _CustomInputDecorator extends StatelessWidget {
     required this.popupConfig,
     required this.layoutConfig,
     required this.multipleSelectWidgetController,
-    required this.chipDecoration,
     required this.hideOverlay,
     this.focusNode,
     this.changeOverlay,
@@ -402,8 +421,6 @@ class _CustomInputDecorator extends StatelessWidget {
   });
 
   final FieldDecoration fieldDecoration;
-
-  final ChipDecoration chipDecoration;
 
   final PopupConfig popupConfig;
 
@@ -460,161 +477,48 @@ class _CustomInputDecorator extends StatelessWidget {
   }
 
   Widget _buildField() {
-    final selectedList = multipleSelectWidgetController.selectedList;
-    List<Widget>? list;
-    if (selectedList.isNotEmpty) {
-      list = selectedList.length > 1
-          ? [
-              _buildChip(selectedList.first),
-              _buildChip(
-                DropDownMenuModel(
-                  id: '-9999',
-                  name: '+ ${selectedList.length - 1}',
-                  children: [],
-                ),
-              ),
-            ]
-          : [_buildChip(selectedList.first)];
+    final searchField = _buildSearchField();
+    if (searchField != null) {
+      return searchField;
+    } else {
+      // If search is disabled, return static text if available.
+      if (multipleSelectWidgetController.selectedList.isNotEmpty) {
+        return Text(
+          multipleSelectWidgetController.selectedList.first.name,
+          style: fieldDecoration.style,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        );
+      }
+      // Otherwise, nothing is selected and search is disabled, show empty space.
+      return const SizedBox.shrink();
     }
-
-    final chipsWidget = list != null && list.isNotEmpty
-        ? Wrap(
-            spacing: chipDecoration.spacing,
-            runSpacing: chipDecoration.runSpacing,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: list,
-          )
-        : null;
-
-    final searchField = popupConfig.isShowSearchInput
-        ? TextFormField(
-            controller: textEditingController,
-            focusNode: focusNode,
-            style: fieldDecoration.style,
-            canRequestFocus: popupConfig.canRequestFocus,
-            decoration: InputDecoration(
-              contentPadding: layoutConfig.isRow
-                  ? EdgeInsets.zero
-                  : EdgeInsets.symmetric(
-                      vertical: fieldDecoration.padding?.top ?? 0,
-                    ),
-              isCollapsed: true,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              errorBorder: InputBorder.none,
-              focusedErrorBorder: InputBorder.none,
-            ),
-          )
-        : null;
-
-    if (layoutConfig.isRow) {
-      return Row(
-        children: [
-          if (chipsWidget != null) chipsWidget,
-          if (chipsWidget != null) const SizedBox(width: 5),
-          if (searchField != null) Expanded(child: searchField),
-        ],
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (chipsWidget != null) chipsWidget,
-        if (searchField != null) searchField,
-      ],
-    );
   }
 
-  Widget _buildChip(
-    DropDownMenuModel info,
-  ) {
-    // 1. Get available width from the parent decorator.
-    final decoratorContext = buttonKey?.currentContext;
-    double? availableWidth;
-    if (decoratorContext != null) {
-      final box = decoratorContext.findRenderObject() as RenderBox;
-      availableWidth = box.size.width;
+  Widget? _buildSearchField() {
+    if (popupConfig.isShowSearchInput) {
+      return TextFormField(
+        controller: textEditingController,
+        focusNode: focusNode,
+        style: fieldDecoration.style,
+        canRequestFocus: popupConfig.canRequestFocus,
+        decoration: InputDecoration(
+          contentPadding: layoutConfig.isRow
+              ? EdgeInsets.zero
+              : EdgeInsets.symmetric(
+                  vertical: fieldDecoration.padding?.top ?? 0,
+                ),
+          isCollapsed: true,
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          errorBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+        ),
+      );
     }
-
-    // 2. Calculate an adaptive max width for the text.
-    double maxTextWidth = chipDecoration.maxWidth;
-
-    if (availableWidth != null) {
-      // Calculate the max possible width for the text inside the chip,
-      // considering all horizontal spacing elements.
-      final chipHorizontalPadding = chipDecoration.padding.horizontal;
-      final iconWidth =
-          (chipDecoration.deleteIcon != null && info.id != '-9999')
-              ? (chipDecoration.closeButtonSize) + 4.0
-              : 0.0;
-      // 1. Precisely get the content padding from the fieldDecoration.
-      final decoratorHorizontalPadding = fieldDecoration.padding?.horizontal ??
-          24.0; // Default is 12 on each side.
-
-      // 2. Account for the suffix icon. Default icon size is 24.
-      const suffixIconWidth = 24.0;
-
-      // 3. Account for the border. Default is 1px on each side.
-      const borderWidth = 2.0;
-
-      // 4. Add a small safety margin to account for floating point inaccuracies
-      //    and other minor internal paddings.
-      const safetyMargin = 15.0;
-
-      final contentAreaWidth = availableWidth -
-          decoratorHorizontalPadding -
-          suffixIconWidth -
-          borderWidth -
-          safetyMargin;
-      final dynamicMaxTextWidth =
-          contentAreaWidth - chipHorizontalPadding - iconWidth;
-
-      // Use the smaller value between the configured one and the dynamically calculated one.
-      // Ensure the calculated width is positive.
-      if (maxTextWidth > dynamicMaxTextWidth && dynamicMaxTextWidth > 0) {
-        maxTextWidth = dynamicMaxTextWidth;
-      }
-    }
-
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: chipDecoration.borderRadius,
-        color: chipDecoration.backgroundColor,
-        border: chipDecoration.border,
-      ),
-      padding: chipDecoration.padding,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: maxTextWidth,
-            ),
-            child: CustomText(
-              info.name,
-              style: chipDecoration.labelStyle,
-              maxLines: 1,
-            ),
-          ),
-          if (chipDecoration.deleteIcon != null && info.id != '-9999')
-            const SizedBox(width: 4),
-          if (chipDecoration.deleteIcon != null && info.id != '-9999')
-            InkWell(
-              onTap: () => multipleSelectWidgetController.checkItemState(
-                info,
-                isFromChipClick: true,
-              ),
-              child: SizedBox(
-                width: chipDecoration.closeButtonSize,
-                height: chipDecoration.closeButtonSize,
-                child: chipDecoration.deleteIcon ??
-                    Icon(Icons.close, size: chipDecoration.closeButtonSize),
-              ),
-            ),
-        ],
-      ),
-    );
+    // For single choice, we might not want a search field but still want to show the text
+    return null;
   }
 
   BorderRadius? _getFieldBorderRadius(FieldDecoration fieldDecoration) {
@@ -637,6 +541,13 @@ class _CustomInputDecorator extends StatelessWidget {
               const BorderSide(),
         );
 
+    final enabledBorder = border.copyWith(
+      borderSide: theme.inputDecorationTheme.enabledBorder?.borderSide,
+    );
+    final focusedBorder = border.copyWith(
+      borderSide: theme.inputDecorationTheme.focusedBorder?.borderSide,
+    );
+
     final prefixIcon = fieldDecoration.prefixIcon;
 
     return InputDecoration(
@@ -651,6 +562,8 @@ class _CustomInputDecorator extends StatelessWidget {
       fillColor: fieldDecoration.backgroundColor,
       border: fieldDecoration.border ?? border,
       disabledBorder: fieldDecoration.border ?? border,
+      enabledBorder: enabledBorder,
+      focusedBorder: focusedBorder,
       prefixIcon: prefixIcon,
       suffixIcon: _buildSuffixIcon(),
       contentPadding: fieldDecoration.padding,
@@ -663,6 +576,7 @@ class _CustomInputDecorator extends StatelessWidget {
       return GestureDetector(
         onTap: () {
           multipleSelectWidgetController.cancelAllSelected();
+          textEditingController?.clear();
           if (multipleSelectWidgetController.isOpen) {
             changeOverlay?.call();
           }
@@ -679,14 +593,19 @@ class _CustomInputDecorator extends StatelessWidget {
       return null;
     }
 
+    final iconButton = GestureDetector(
+      onTap: changeOverlay,
+      child: fieldDecoration.suffixIcon,
+    );
+
     if (!fieldDecoration.animateSuffixIcon) {
-      return fieldDecoration.suffixIcon;
+      return iconButton;
     }
 
     return AnimatedRotation(
       turns: multipleSelectWidgetController.isOpen ? 0.5 : 0,
       duration: const Duration(milliseconds: 200),
-      child: fieldDecoration.suffixIcon,
+      child: iconButton,
     );
   }
 }
@@ -699,7 +618,6 @@ class _PopupListContentWidget extends StatelessWidget {
     required this.listViewWidth,
     required this.popupDecoration,
     required this.hideOverlay,
-    required this.isSingleChoice,
     this.isPopupAbove = false,
   });
 
@@ -709,7 +627,6 @@ class _PopupListContentWidget extends StatelessWidget {
   final MultipleSelectWidgetController multipleSelectWidgetController;
   final PopupConfig popupDecoration;
   final VoidCallback hideOverlay;
-  final bool isSingleChoice;
   final bool isPopupAbove;
   static const double _itemHeight = 32.0;
 
@@ -746,17 +663,14 @@ class _PopupListContentWidget extends StatelessWidget {
                           multipleSelectWidgetController:
                               multipleSelectWidgetController,
                           hideOverlay: hideOverlay,
-                          isSingleChoice: isSingleChoice,
                           callback: (item) {
                             multipleSelectWidgetController.checkItemState(
                               item,
                               isFromChipClick: true,
                               selected: !(item.isSelected ?? false),
-                              isSingleChoice: isSingleChoice,
+                              isSingleChoice: true,
                             );
-                            if (isSingleChoice) {
-                              hideOverlay();
-                            }
+                            hideOverlay();
                           },
                         );
                       }).toList(),
@@ -782,7 +696,6 @@ class _ListItem extends StatefulWidget {
     required this.callback,
     required this.multipleSelectWidgetController,
     required this.hideOverlay,
-    required this.isSingleChoice,
   });
 
   final DropDownMenuModel item;
@@ -794,8 +707,6 @@ class _ListItem extends StatefulWidget {
   final MultipleSelectWidgetController multipleSelectWidgetController;
 
   final VoidCallback hideOverlay;
-
-  final bool isSingleChoice;
 
   @override
   State<StatefulWidget> createState() => _ListItemState();
@@ -828,28 +739,6 @@ class _ListItemState extends State<_ListItem> {
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: Row(
               children: [
-                if (!widget.isSingleChoice)
-                  Transform.scale(
-                    scale: 0.8,
-                    child: Checkbox(
-                      tristate: true,
-                      value: widget.item.isSelected,
-                      onChanged: (_) {
-                        widget.multipleSelectWidgetController.checkItemState(
-                          widget.item,
-                          isSingleChoice: widget.isSingleChoice,
-                        );
-                        if (widget.isSingleChoice) {
-                          widget.hideOverlay();
-                        }
-                      },
-                      activeColor: widget.popupConfig.checkBoxActiveColor ??
-                          defaultActiveColor,
-                      side: const BorderSide(
-                        color: Color(0xffD9D9D9),
-                      ),
-                    ),
-                  ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 2),

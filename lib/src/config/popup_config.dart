@@ -17,6 +17,8 @@ class PopupConfig {
     this.canRequestFocus = true,
     this.isShowOverlay = false,
     this.overlayColor = Colors.transparent,
+    this.emptyText = 'No data',
+    this.emptyTextStyle,
   });
 
   /// The width of each list view within the popup.
@@ -52,4 +54,10 @@ class PopupConfig {
 
   /// The color of the modal overlay.
   final Color overlayColor;
+
+  /// The text to display when the list is empty.
+  final String emptyText;
+
+  /// The text style for the empty text.
+  final TextStyle? emptyTextStyle;
 }
