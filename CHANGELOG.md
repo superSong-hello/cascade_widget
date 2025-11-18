@@ -9,6 +9,7 @@
 
 ### Features
 
+- **Upward Popup Display**: The popup layer can now intelligently open upwards when there is not enough space below the widget.
 - **Single-Select Searchable Input**: In single-select mode, the input field now displays the selected text and can be edited to search/filter the list. The dropdown is triggered by the suffix icon.
 - **Customizable Empty List Text**: Added `emptyText` and `emptyTextStyle` to `PopupConfig` to allow customization of the message shown when the list is empty for both single and multiple select widgets.
 
