@@ -1,4 +1,10 @@
-## [3.0.2] - 2025-11-19
+## [3.0.3] - 2025-11-19
+
+### Fixes
+
+- **Component Exports**: Ensured that all public components, including the new `SingleSelectWidget`, are correctly exported from the main library file, making them available for import in other projects.
+
+## [3.0.2]
 
 ### Fixes
 

@@ -1,6 +1,6 @@
 name: cascade_widget
 description: "A versatile Flutter cascade selection widget, offering multi-level cascading dropdowns with single and multiple selection options. Ideal for web and desktop applications."
-version: 3.0.2
+version: 3.0.3
 homepage: https://github.com/superSong-hello/cascade_widget
 repository: https://github.com/superSong-hello/cascade_widget
 
