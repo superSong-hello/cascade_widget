@@ -386,11 +386,9 @@ class _SingleSelectWidgetState extends State<SingleSelectWidget>
 
     _animationController.forward();
     _multipleSelectWidgetController.isOpen = true;
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
     if (mounted) {
       showPopup();
     }
-    // });
   }
 
   /// hide overlay
@@ -454,13 +452,59 @@ class _CustomInputDecorator extends StatelessWidget {
           child: ListenableBuilder(
             listenable: listenable,
             builder: (ctx, _) {
-              return InputDecorator(
-                key: buttonKey,
-                isEmpty: true,
-                decoration: _buildDecoration(context),
-                textAlign: TextAlign.start,
-                textAlignVertical: TextAlignVertical.center,
-                child: _buildField(),
+              return TapRegion(
+                child: InputDecorator(
+                  key: buttonKey,
+                  isEmpty: true,
+                  decoration: _buildDecoration(context),
+                  textAlign: TextAlign.start,
+                  textAlignVertical: TextAlignVertical.center,
+                  child: _buildField(),
+                ),
+                onTapInside: (PointerDownEvent event) {},
+                onTapOutside: (PointerDownEvent event) {
+                  RenderBox? tapedRenderBox = buttonKey?.currentContext
+                      ?.findRenderObject() as RenderBox?;
+                  if (tapedRenderBox == null) {
+                    hideOverlay();
+                    return;
+                  }
+                  Offset? globalPosition =
+                      tapedRenderBox.localToGlobal(Offset.zero);
+
+                  final widgetHeight = tapedRenderBox.size.height;
+
+                  // Recalculate actual popup height to create an accurate tap area.
+                  var itemCount =
+                      multipleSelectWidgetController.filteredList.length;
+                  itemCount = itemCount == 0 ? 1 : itemCount;
+                  final contentHeight =
+                      itemCount * _PopupListContentWidget._itemHeight;
+                  final bool isScrollable =
+                      (contentHeight - popupConfig.popupHeight) > 0.001;
+                  final finalHeight =
+                      isScrollable ? popupConfig.popupHeight : contentHeight;
+                  final popupHeight =
+                      finalHeight + 24; // Use the actual total height
+
+                  final top =
+                      globalPosition.dy - (isPopupAbove ? popupHeight : 0);
+                  final totalHeight = widgetHeight + popupHeight;
+
+                  Rect renderBoxFrame = Rect.fromLTWH(
+                    globalPosition.dx,
+                    top,
+                    tapedRenderBox.size.width,
+                    totalHeight,
+                  );
+                  Rect extraRenderBoxFrame = renderBoxFrame.inflate(5);
+                  if (extraRenderBoxFrame.contains(event.position)) {
+                    return;
+                  }
+                  if (multipleSelectWidgetController.isOpen) {
+                    hideOverlay();
+                  }
+                },
               );
             },
           ),
