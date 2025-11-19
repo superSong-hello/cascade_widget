@@ -1,3 +1,9 @@
+## [3.0.2] - 2025-11-19
+
+### Fixes
+
+- **Tap Outside Detection**: Corrected the tap detection area for closing the popup (`onTapOutside`), which was incorrect when the popup's height was dynamically adjusted for short lists.
+
 ## [3.0.1] - 2025-11-18
 
 ### BREAKING CHANGES

@@ -389,7 +389,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       popupConfig: const PopupConfig(
                         isShowSearchInput: true,
-                        isShowOverlay: true,
+                        // isShowOverlay: true,
                       ),
                     ),
                   ),
@@ -454,7 +454,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       popupConfig: const PopupConfig(
                         isShowSearchInput: true,
-                        isShowOverlay: true,
+                        // isShowOverlay: true,
                       ),
                     ),
                   ),
@@ -676,7 +676,7 @@ class _MultipleSelectExample extends StatelessWidget {
                   const PopupConfig(
                     isShowFullPathFromSearch: false,
                     popupHeight: 300,
-                    isShowOverlay: true,
+                    // isShowOverlay: true,
                   ),
               fieldDecoration: FieldDecoration(
                 backgroundColor: Colors.white,
