@@ -247,7 +247,12 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
               debugPrint('Failed to build the dropdown\nCode: 08');
               return const SizedBox.shrink();
             }
-            final position = renderBox.localToGlobal(Offset.zero);
+            final position = renderBox.localToGlobal(
+              Offset.zero,
+              ancestor: Overlay.of(context, rootOverlay: true)
+                  .context
+                  .findRenderObject(),
+            );
             final height = renderBox.size.height;
             final width = renderBox.size.width;
 
@@ -369,7 +374,7 @@ class _SingleSelectCascadeWidgetState extends State<SingleSelectCascadeWidget>
     );
 
     if (_overlayEntry != null) {
-      Overlay.of(context).insert(_overlayEntry!);
+      Overlay.of(context, rootOverlay: true).insert(_overlayEntry!);
     }
   }
 
@@ -460,8 +465,12 @@ class _CustomInputDecorator extends StatelessWidget {
                 onTapOutside: (PointerDownEvent event) {
                   RenderBox? tapedRenderBox = buttonKey?.currentContext
                       ?.findRenderObject() as RenderBox?;
-                  Offset? globalPosition =
-                      tapedRenderBox?.localToGlobal(Offset.zero);
+                  Offset? globalPosition = tapedRenderBox?.localToGlobal(
+                    Offset.zero,
+                    ancestor: Overlay.of(context, rootOverlay: true)
+                        .context
+                        .findRenderObject(),
+                  );
 
                   final contentWidth = cascadeController.isShopSearchView
                       ? (tapedRenderBox?.size.width ?? 0)

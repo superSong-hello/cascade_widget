@@ -1,3 +1,9 @@
+## [3.0.4] - 2026-01-07
+
+### Fixes
+
+- Fixed an issue where pop-ups caused inaccurate positioning in Flutter Web browser scaling.
+
 ## [3.0.3] - 2025-11-19
 
 ### Fixes

@@ -212,7 +212,11 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
           debugPrint('Failed to build the dropdown\nCode: 08');
           return const SizedBox.shrink();
         }
-        final position = renderBox.localToGlobal(Offset.zero);
+        final position = renderBox.localToGlobal(
+          Offset.zero,
+          ancestor:
+              Overlay.of(context, rootOverlay: true).context.findRenderObject(),
+        );
         final height = renderBox.size.height;
         final width = renderBox.size.width;
 
@@ -346,7 +350,7 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
     );
 
     if (_overlayEntry != null) {
-      Overlay.of(context).insert(_overlayEntry!);
+      Overlay.of(context, rootOverlay: true).insert(_overlayEntry!);
     }
   }
 
@@ -356,7 +360,11 @@ class _MultipleSelectWidgetState extends State<MultipleSelectWidget>
         _buttonKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
 
-    final position = renderBox.localToGlobal(Offset.zero);
+    final position = renderBox.localToGlobal(
+      Offset.zero,
+      ancestor:
+          Overlay.of(context, rootOverlay: true).context.findRenderObject(),
+    );
     final widgetHeight = renderBox.size.height;
     final screenHeight = MediaQuery.of(context).size.height;
     final popupHeight = widget.popupConfig.popupHeight;
@@ -454,8 +462,12 @@ class _CustomInputDecorator extends StatelessWidget {
                     hideOverlay();
                     return;
                   }
-                  Offset? globalPosition =
-                      tapedRenderBox.localToGlobal(Offset.zero);
+                  Offset? globalPosition = tapedRenderBox.localToGlobal(
+                    Offset.zero,
+                    ancestor: Overlay.of(context, rootOverlay: true)
+                        .context
+                        .findRenderObject(),
+                  );
 
                   final widgetHeight = tapedRenderBox.size.height;
 
