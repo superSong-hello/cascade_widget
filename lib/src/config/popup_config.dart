@@ -15,7 +15,7 @@ class PopupConfig {
     this.isShowFullPathFromSearch = true,
     this.isShowSearchInput = true,
     this.canRequestFocus = true,
-    this.isShowOverlay = false,
+    this.isShowOverlay = true,
     this.overlayColor = Colors.transparent,
     this.emptyText = 'No data',
     this.emptyTextStyle,

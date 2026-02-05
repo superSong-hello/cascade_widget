@@ -1,3 +1,7 @@
+## [3.0.5] - 2026-02-05
+
+- `SingleSelectWidget` and `MultipleSelectWidget` removed the `onTapOutside` callback from TapRegion.
+
 ## [3.0.4] - 2026-01-07
 
 ### Fixes
