@@ -456,6 +456,7 @@ class _CustomInputDecorator extends StatelessWidget {
                 ),
                 onTapInside: (PointerDownEvent event) {},
                 onTapOutside: (PointerDownEvent event) {
+                  return;
                   RenderBox? tapedRenderBox = buttonKey?.currentContext
                       ?.findRenderObject() as RenderBox?;
                   if (tapedRenderBox == null) {
