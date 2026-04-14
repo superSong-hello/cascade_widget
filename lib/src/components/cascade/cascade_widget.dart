@@ -183,6 +183,7 @@ class _CascadeWidgetState extends State<CascadeWidget>
   Widget build(BuildContext context) {
     return PopScope(
       canPop: !_cascadeController.isOpen,
+      /// ignore: deprecated_member_use
       onPopInvoked: (didPop) {
         if (didPop) return;
         hideOverlay();

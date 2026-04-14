@@ -20,7 +20,6 @@ class CustomText extends Text {
     super.locale,
     super.softWrap,
     this.wxOverflow = CustomTextOverflow.ellipsisMiddle,
-    super.textScaleFactor,
     super.maxLines,
     super.semanticsLabel,
     super.textWidthBasis,
