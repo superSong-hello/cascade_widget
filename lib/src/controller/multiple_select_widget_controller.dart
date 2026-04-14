@@ -47,6 +47,27 @@ class MultipleSelectWidgetController extends ChangeNotifier {
     _updateSelectionAndNotify();
   }
 
+  /// 重置选中的ids
+  void resetSelectedIds(List<String> ids) {
+    if (_list.isEmpty) return;
+
+    if (ids.isNotEmpty) {
+      _selectedList.clear();
+      for (final e in _list) {
+        if (e.isSelected == true) {
+          e.isSelected = false;
+        }
+      }
+      _updateSelectionFromIds(
+        _list,
+        ids,
+      );
+      _updateSelectionAndNotify();
+    } else {
+      cancelAllSelected();
+    }
+  }
+
   void setItems(List<DropDownMenuModel> options) {
     _list
       ..clear()

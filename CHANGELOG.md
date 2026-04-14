@@ -1,3 +1,7 @@
+## [3.0.6] - 2026-04-14
+
+- `SingleSelectWidget` and `MultipleSelectWidget` add `resetSelectedIds` function.
+
 ## [3.0.5] - 2026-02-05
 
 - `SingleSelectWidget` and `MultipleSelectWidget` removed the `onTapOutside` callback from TapRegion.
