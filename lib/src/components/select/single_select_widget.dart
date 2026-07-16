@@ -376,6 +376,22 @@ class _SingleSelectWidgetState extends State<SingleSelectWidget>
         _buttonKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
 
+    /// 已选中数据的情况下，如果输入框当前展示的还是失焦时自动回填的已选项名称
+    /// （即用户还没有输入新的检索内容），重新打开下拉时清空文本、重置检索词，
+    /// 已选项名称改为以 placeholder 形式展示，下拉框恢复展示全部数据
+    if (_multipleSelectWidgetController.selectedList.isNotEmpty) {
+      final selectedName =
+          _multipleSelectWidgetController.selectedList.first.name;
+      if (_textEditingController.text == selectedName) {
+        _isProgrammaticallyChangingText = true;
+        _textEditingController.clear();
+        _multipleSelectWidgetController.setSearchQuery('');
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _isProgrammaticallyChangingText = false;
+        });
+      }
+    }
+
     final position = renderBox.localToGlobal(
       Offset.zero,
       ancestor:
@@ -610,10 +626,11 @@ class _CustomInputDecorator extends StatelessWidget {
     return InputDecoration(
       isCollapsed: true,
       enabled: false,
-      hintText: multipleSelectWidgetController.selectedList.isEmpty &&
-              (textEditingController?.text ?? '').isEmpty
-          ? fieldDecoration.hintText
-          : '',
+      hintText: (textEditingController?.text ?? '').isNotEmpty
+          ? ''
+          : multipleSelectWidgetController.selectedList.isNotEmpty
+              ? multipleSelectWidgetController.selectedList.first.name
+              : fieldDecoration.hintText,
       hintStyle: fieldDecoration.hintStyle,
       filled: fieldDecoration.backgroundColor != null,
       fillColor: fieldDecoration.backgroundColor,
