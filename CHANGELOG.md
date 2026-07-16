@@ -1,3 +1,9 @@
+## [3.0.7] - 2026-07-16
+
+### Fixes
+
+- `SingleSelectWidget`: Reopening the dropdown while an item is selected now clears the search text (showing the selected value as a placeholder) and resets the search query, so the popup shows the full list instead of the stale filtered result.
+
 ## [3.0.6] - 2026-04-14
 
 - `SingleSelectWidget` and `MultipleSelectWidget` add `resetSelectedIds` function.
