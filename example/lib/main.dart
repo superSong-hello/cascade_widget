@@ -459,6 +459,38 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
+                const _Title(
+                    'Pure Single Select Widget (custom popup width)'),
+                SizedBox(
+                  width: 150,
+                  child: _Card(
+                    child: SingleSelectWidget(
+                      list: pureSingleList,
+                      selectedCallBack: (selectedList) {
+                        debugPrint('Pure single select callback:');
+                        for (final e in selectedList) {
+                          debugPrint('name:${e.name}, id:${e.id}');
+                        }
+                      },
+                      fieldDecoration: FieldDecoration(
+                        backgroundColor: Colors.white,
+                        hintText: 'Please select',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(4),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        showClearIcon: false,
+                      ),
+                      // The field above is only 150 wide, but overlayWidth
+                      // forces the popup to render at a fixed 320 wide
+                      // instead of auto-matching the field's width.
+                      popupConfig: const PopupConfig(
+                        isShowSearchInput: true,
+                        overlayWidth: 320,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

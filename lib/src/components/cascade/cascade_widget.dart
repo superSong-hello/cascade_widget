@@ -261,6 +261,18 @@ class _CascadeWidgetState extends State<CascadeWidget>
             double screenHeight = MediaQuery.of(context).size.height;
             final Color maskColor = widget.popupConfig.overlayColor;
 
+            // The tree view's actual width grows with the number of expanded
+            // levels (popupWidth * columns + 24); clamp the left offset so a
+            // wide popup doesn't overflow past the right edge of the screen.
+            final finalWidth = _textEditingController.text.isNotEmpty
+                ? width.toDouble()
+                : widget.popupConfig.popupWidth *
+                        _cascadeController.uiList.length +
+                    24;
+            final leftPosition = (position.dx + finalWidth > screenWidth)
+                ? (screenWidth - finalWidth).clamp(0.0, position.dx)
+                : position.dx;
+
             return Stack(
               children: [
                 if (widget.popupConfig.isShowOverlay) ...[
@@ -314,7 +326,7 @@ class _CascadeWidgetState extends State<CascadeWidget>
                   )
                 ],
                 Positioned(
-                  left: position.dx + 0,
+                  left: leftPosition,
                   top: position.dy + height,
                   child: Material(
                     color: Colors.transparent,
@@ -471,9 +483,18 @@ class _CustomInputDecorator extends StatelessWidget {
                   final contentWidth = cascadeController.isShopSearchView
                       ? (tapedRenderBox?.size.width ?? 0)
                       : (popupConfig.popupWidth *
-                          cascadeController.uiList.length);
+                              cascadeController.uiList.length +
+                          24);
+                  final screenWidth = MediaQuery.of(context).size.width;
+                  final fieldLeft = globalPosition?.dx ?? 0;
+                  // Mirror the same left-offset clamp used to position the
+                  // popup itself, so this hit-test rect stays in sync with
+                  // where the popup actually renders when it's clamped.
+                  final contentLeft = (fieldLeft + contentWidth > screenWidth)
+                      ? (screenWidth - contentWidth).clamp(0.0, fieldLeft)
+                      : fieldLeft;
                   Rect renderBoxFrame = Rect.fromLTWH(
-                    globalPosition?.dx ?? 0,
+                    contentLeft,
                     (globalPosition?.dy ?? 0) +
                         (tapedRenderBox?.size.height ?? 0),
                     contentWidth,

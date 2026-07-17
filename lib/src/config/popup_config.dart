@@ -7,6 +7,7 @@ class PopupConfig {
   /// Creates a configuration for the popup menu.
   const PopupConfig({
     this.popupWidth = 180,
+    this.overlayWidth,
     this.popupHeight = 350,
     this.checkBoxActiveColor,
     this.textStyle,
@@ -23,6 +24,11 @@ class PopupConfig {
 
   /// The width of each list view within the popup.
   final double popupWidth;
+
+  /// The width of the popup overlay for select widgets (e.g. [SingleSelectWidget],
+  /// [MultipleSelectWidget]). When null, the overlay automatically matches the
+  /// width of the trigger control.
+  final double? overlayWidth;
 
   /// The height of the popup menu.
   final double popupHeight;
