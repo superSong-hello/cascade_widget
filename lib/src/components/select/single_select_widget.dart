@@ -263,6 +263,15 @@ class _SingleSelectWidgetState extends State<SingleSelectWidget>
         double screenHeight = MediaQuery.of(context).size.height;
         final Color maskColor = widget.popupConfig.overlayColor;
 
+        // When a custom overlayWidth is wider than the available space to the
+        // right of the field, clamp the popup's left offset so it stays on
+        // screen instead of overflowing past the screen edge.
+        final finalWidth = widget.popupConfig.overlayWidth ?? width.toDouble();
+        final leftPosition =
+            (position.dx + finalWidth > screenWidth)
+                ? (screenWidth - finalWidth).clamp(0.0, position.dx)
+                : position.dx;
+
         return Stack(
           children: [
             if (widget.popupConfig.isShowOverlay) ...[
@@ -320,7 +329,7 @@ class _SingleSelectWidgetState extends State<SingleSelectWidget>
               )
             ],
             Positioned(
-              left: position.dx + 0,
+              left: leftPosition,
               top: topPosition,
               child: Material(
                 color: Colors.transparent,
@@ -346,7 +355,7 @@ class _SingleSelectWidgetState extends State<SingleSelectWidget>
                                 multipleSelectWidgetController:
                                     _multipleSelectWidgetController,
                                 listViewHeight: finalHeight,
-                                listViewWidth: width.toDouble(),
+                                listViewWidth: finalWidth,
                                 popupDecoration: widget.popupConfig,
                                 hideOverlay: hideOverlay,
                                 isPopupAbove: _isPopupAbove,

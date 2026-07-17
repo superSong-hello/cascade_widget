@@ -7,6 +7,7 @@ class PopupConfig {
   /// Creates a configuration for the popup menu.
   const PopupConfig({
     this.popupWidth = 180,
+    this.overlayWidth,
     this.popupHeight = 350,
     this.checkBoxActiveColor,
     this.textStyle,
@@ -22,7 +23,26 @@ class PopupConfig {
   });
 
   /// The width of each list view within the popup.
+  ///
+  /// For cascade widgets (e.g. [CascadeWidget], [SingleSelectCascadeWidget])
+  /// the popup's total width grows with the number of expanded levels
+  /// (`popupWidth * levels`), so it can exceed the screen width faster than
+  /// this value alone suggests. As with [overlayWidth], the popup is shifted
+  /// left to stay on screen but that shift is capped at the trigger
+  /// control's own left edge — a large [popupWidth] combined with many
+  /// levels can still overflow on the right.
   final double popupWidth;
+
+  /// The width of the popup overlay for select widgets (e.g. [SingleSelectWidget],
+  /// [MultipleSelectWidget]). When null, the overlay automatically matches the
+  /// width of the trigger control.
+  ///
+  /// If the overlay would extend past the right edge of the screen, it is
+  /// shifted left just enough to stay fully on screen. That shift is capped
+  /// at the trigger control's own left edge, so a value wider than the
+  /// available screen width will still overflow on the right — keep
+  /// [overlayWidth] within the width of the screens you support.
+  final double? overlayWidth;
 
   /// The height of the popup menu.
   final double popupHeight;

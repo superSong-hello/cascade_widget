@@ -1,3 +1,14 @@
+## [3.0.8] - 2026-07-17
+
+### Features
+
+- **Customizable Popup Width**: Added `overlayWidth` to `PopupConfig` for `SingleSelectWidget` and `MultipleSelectWidget`. When unset, the popup still auto-matches the trigger control's width (previous default behavior); set it to override with a fixed width.
+
+### Fixes
+
+- **Popup Screen-Edge Overflow**: The popup for `SingleSelectWidget`, `MultipleSelectWidget`, `CascadeWidget`, and `SingleSelectCascadeWidget` is now shifted left when it would otherwise render past the right edge of the screen (e.g. a wide `overlayWidth`, or a cascade with several expanded levels).
+- **Cascade Tap-Outside Detection**: Corrected the outside-tap hit-test area in `CascadeWidget` and `SingleSelectCascadeWidget` to account for the popup's actual rendered width/height (including the screen-edge shift above), preventing taps inside the popup from being misread as taps outside it.
+
 ## [3.0.7] - 2026-07-16
 
 ### Fixes
