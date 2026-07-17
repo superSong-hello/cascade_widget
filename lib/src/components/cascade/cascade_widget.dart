@@ -498,8 +498,13 @@ class _CustomInputDecorator extends StatelessWidget {
                     (globalPosition?.dy ?? 0) +
                         (tapedRenderBox?.size.height ?? 0),
                     contentWidth,
+                    // +16 matches the popup content's own outer padding
+                    // (see _PopupListContentWidget/_PopupTreeContentWidget's
+                    // `listViewHeight + 16`), so this rect matches its actual
+                    // rendered height.
                     (tapedRenderBox?.size.height ?? 0) +
-                        popupConfig.popupHeight,
+                        popupConfig.popupHeight +
+                        16,
                   );
                   Rect extraRenderBoxFrame = renderBoxFrame.inflate(5);
                   if (extraRenderBoxFrame.contains(event.position) &&
