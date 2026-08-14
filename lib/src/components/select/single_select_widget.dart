@@ -641,6 +641,7 @@ class _CustomInputDecorator extends StatelessWidget {
               ? multipleSelectWidgetController.selectedList.first.name
               : fieldDecoration.hintText,
       hintStyle: fieldDecoration.hintStyle,
+      hintMaxLines: 1,
       filled: fieldDecoration.backgroundColor != null,
       fillColor: fieldDecoration.backgroundColor,
       border: fieldDecoration.border ?? border,

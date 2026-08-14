@@ -271,6 +271,7 @@ final pureSingleList = [
   DropDownMenuModel(id: 's10', name: 'Simple Item 10', children: []),
   DropDownMenuModel(id: 's11', name: 'Simple Item 11', children: []),
   DropDownMenuModel(id: 's12', name: 'Simple Item 12', children: []),
+  DropDownMenuModel(id: 's13', name: 'Simple Item 13 test selected item length question', children: []),
 ];
 //endregion
 

@@ -1,3 +1,9 @@
+## [3.0.9] - 2026-08-14
+
+### Fixes
+
+- **`SingleSelectWidget` Placeholder Overflow**: The selected value shown as a placeholder when reopening the dropdown is now constrained to a single line with ellipsis truncation instead of wrapping onto multiple lines.
+
 ## [3.0.8] - 2026-07-17
 
 ### Features
